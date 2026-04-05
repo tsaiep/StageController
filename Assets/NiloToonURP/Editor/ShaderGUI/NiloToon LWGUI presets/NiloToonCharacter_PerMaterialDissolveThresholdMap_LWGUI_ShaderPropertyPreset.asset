@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fbcbca3fb14507af6ed5c104c40b84, type: 3}
+  m_Name: NiloToonCharacter_PerMaterialDissolveThresholdMap_LWGUI_ShaderPropertyPreset
+  m_EditorClassIdentifier: 
+  presets:
+  - presetName: (None)
+    propertyValues: []
+    enabledKeywords: []
+    disabledKeywords: []
+    enabledPasses: []
+    disabledPasses: []
+    renderQueue: -1
+  - presetName: LeftToRight
+    propertyValues:
+    - propertyName: _PerMaterialDissolveThresholdMap
+      propertyType: 4
+      floatValue: 0
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 2800000, guid: 0746ca37d1bbaac478f88c48cda26121, type: 3}
+    - propertyName: _PerMaterialDissolveThresholdMapInvertColor
+      propertyType: 2
+      floatValue: 0
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 0}
+    enabledKeywords: []
+    disabledKeywords: []
+    enabledPasses: []
+    disabledPasses: []
+    renderQueue: -1
+  - presetName: RightToLeft
+    propertyValues:
+    - propertyName: _PerMaterialDissolveThresholdMap
+      propertyType: 4
+      floatValue: 0
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 2800000, guid: 0746ca37d1bbaac478f88c48cda26121, type: 3}
+    - propertyName: _PerMaterialDissolveThresholdMapInvertColor
+      propertyType: 2
+      floatValue: 1
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 0}
+    enabledKeywords: []
+    disabledKeywords: []
+    enabledPasses: []
+    disabledPasses: []
+    renderQueue: -1
+  - presetName: BottomToTop
+    propertyValues:
+    - propertyName: _PerMaterialDissolveThresholdMap
+      propertyType: 4
+      floatValue: 0
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 2800000, guid: ecb70a0e4491c2b4cb068cd624dc3891, type: 3}
+    - propertyName: _PerMaterialDissolveThresholdMapInvertColor
+      propertyType: 2
+      floatValue: 0
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 0}
+    enabledKeywords: []
+    disabledKeywords: []
+    enabledPasses: []
+    disabledPasses: []
+    renderQueue: -1
+  - presetName: TopToBottom
+    propertyValues:
+    - propertyName: _PerMaterialDissolveThresholdMap
+      propertyType: 4
+      floatValue: 0
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 2800000, guid: ecb70a0e4491c2b4cb068cd624dc3891, type: 3}
+    - propertyName: _PerMaterialDissolveThresholdMapInvertColor
+      propertyType: 2
+      floatValue: 1
+      intValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      vectorValue: {x: 0, y: 0, z: 0, w: 0}
+      textureValue: {fileID: 0}
+    enabledKeywords: []
+    disabledKeywords: []
+    enabledPasses: []
+    disabledPasses: []
+    renderQueue: -1

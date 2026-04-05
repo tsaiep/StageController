@@ -1,0 +1,76 @@
+using UnityEngine;
+using UnityEngine.Playables;
+
+[System.Serializable]
+public class UnifiedStageBehaviour : PlayableBehaviour
+{
+    public Gradient clipGradient;
+    [Tooltip("總體亮度倍率")] public float clipIntensity;
+    [Tooltip("最低亮度")] public float minBrightness;
+    [Tooltip("靈敏度")] public float sensitivity;
+    [Tooltip("平滑度")] public float smoothness;
+    [Tooltip("光束角度")] public float beamAngle;
+    [Tooltip("散射模式")] public bool scatterMode;
+    public UnifiedStageController.RotationMode clipMode;
+    [Tooltip("旋轉速度")] public float rotationSpeed;
+    [Tooltip("旋轉幅度")] public float rotationRange;
+    [Tooltip("靜止偏移")] public Vector2 staticOffset;
+    [Tooltip("停頓時間")] public float pauseTime;
+    public Transform clipTarget;
+
+    [Header("播放控制")]
+    [Tooltip("啟用動作")] public bool enableMotion = true;
+    [Tooltip("動作強度")] public float motionStrength = 1.0f;
+
+    [Header("逐顆延遲")]
+    public AnimationCurve delayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    public float delayFactor = 0f;
+
+    /// <summary>
+    /// 取得 Clip 內的正規化時間 (0~1)
+    /// </summary>
+    public float GetNormalizedClipTime(Playable playable)
+    {
+        double time = playable.GetTime();
+        double duration = playable.GetDuration();
+        if (duration <= 0) return 0f;
+        return Mathf.Clamp01((float)(time / duration));
+    }
+
+    /// <summary>
+    /// 計算該 Clip 內部的有效運動進度 (絕對秒數)
+    /// </summary>
+    public float GetEffectiveLocalTime(Playable playable, bool globalActionEnable)
+    {
+        float localTime = (float)playable.GetTime();
+        if (!globalActionEnable || !enableMotion) return 0f;
+        return localTime;
+    }
+
+    /// <summary>
+    /// 根據運動模式計算一個循環的週期（秒）
+    /// 回傳 0 表示無固定循環（Static / Target）
+    /// </summary>
+    public static float GetMotionCyclePeriod(UnifiedStageController.RotationMode mode, float speed)
+    {
+        if (speed <= 0.0001f) return 0f;
+        switch (mode)
+        {
+            case UnifiedStageController.RotationMode.Scan:
+            case UnifiedStageController.RotationMode.VerticalSwing:
+            case UnifiedStageController.RotationMode.Cross:
+                return (2f * Mathf.PI) / speed; // sin 週期
+
+            case UnifiedStageController.RotationMode.Circle:
+                return 360f / (speed * 20f); // 一圈 = 360°/(speed*20°/s)
+
+            case UnifiedStageController.RotationMode.Random:
+                return 1f / speed; // 用速度決定漸層週期
+
+            case UnifiedStageController.RotationMode.Static:
+            case UnifiedStageController.RotationMode.Target:
+            default:
+                return 0f; // 無循環，用 clip normalizedTime 做 fallback
+        }
+    }
+}

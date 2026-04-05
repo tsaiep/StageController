@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f3a97a15880784f9aa2582680eb5d9, type: 3}
+  m_Name: IdolCute
+  m_EditorClassIdentifier: 
+  "\u71C8\u5149\u6F38\u8B8A":
+    serializedVersion: 2
+    key0: {r: 0.97647065, g: 0.8000001, b: 0.85098046, a: 1}
+    key1: {r: 0.8705883, g: 0.8000001, b: 0.49411768, a: 1}
+    key2: {r: 0.6431373, g: 0.96470594, b: 0.7294118, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 9445
+    ctime1: 19468
+    ctime2: 45296
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
+  "\u7E3D\u9AD4\u4EAE\u5EA6\u500D\u7387": 0.8
+  "\u6700\u4F4E\u4EAE\u5EA6": 0.1
+  "\u9748\u654F\u5EA6": 1
+  "\u5E73\u6ED1\u5EA6": 8
+  "\u65CB\u8F49\u6A21\u5F0F": 6
+  "\u65CB\u8F49\u901F\u5EA6": 1.5
+  "\u65CB\u8F49\u5E45\u5EA6": 110
