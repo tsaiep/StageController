@@ -223,8 +223,8 @@ public class UnifiedStageController : MonoBehaviour
                     }
                 }
 
-                unit.panTransform.localRotation = Quaternion.AngleAxis(unit.curPan, Vector3.up);
-                unit.tiltTransform.localRotation = Quaternion.AngleAxis(unit.curTilt, Vector3.left);
+                unit.panTransform.localRotation = Quaternion.AngleAxis(unit.curPan, GetSafeAxis(panRotationVector, Vector3.up));
+                unit.tiltTransform.localRotation = Quaternion.AngleAxis(unit.curTilt, GetSafeAxis(tiltRotationVector, Vector3.left));
             }
 
             // ===== 燈光 =====
@@ -335,16 +335,42 @@ public class UnifiedStageController : MonoBehaviour
     // ==========================================
     private Vector2 CalculateLookAtAngles(Transform pR, Transform tR, Transform target)
     {
-        Vector3 localPos = pR.parent.InverseTransformPoint(target.position);
-        Vector3 relativeDir = localPos - pR.localPosition;
+        if (pR == null || tR == null || target == null || pR.parent == null)
+            return new Vector2(panOffset, verticalBaseOffset + tiltOffset);
 
-        float pan = Mathf.Atan2(relativeDir.x, relativeDir.z) * Mathf.Rad2Deg;
-        float horizontalDist = new Vector2(relativeDir.x, relativeDir.z).magnitude;
-        float tilt = Mathf.Atan2(relativeDir.y, horizontalDist) * Mathf.Rad2Deg;
+        Vector3 panAxis = GetSafeAxis(panRotationVector, Vector3.up);
+        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+
+        Vector3 targetInPanParent = pR.parent.InverseTransformPoint(target.position) - pR.localPosition;
+        if (targetInPanParent.sqrMagnitude < 0.000001f)
+            return new Vector2(panOffset, verticalBaseOffset + tiltOffset);
+
+        float pan = SignedAngleOnAxis(Vector3.forward, targetInPanParent, panAxis);
+
+        Quaternion undoPan = Quaternion.AngleAxis(-pan, panAxis);
+        Vector3 targetInPanSpace = undoPan * targetInPanParent;
+        Vector3 targetFromTiltPivot = targetInPanSpace - tR.localPosition;
+        float tilt = SignedAngleOnAxis(Vector3.forward, targetFromTiltPivot, tiltAxis);
 
         tilt = invertVerticalTracking ? -tilt : tilt;
 
         return new Vector2(pan + panOffset, tilt + verticalBaseOffset + tiltOffset);
+    }
+
+    private static Vector3 GetSafeAxis(Vector3 axis, Vector3 fallback)
+    {
+        return axis.sqrMagnitude > 0.000001f ? axis.normalized : fallback;
+    }
+
+    private static float SignedAngleOnAxis(Vector3 from, Vector3 to, Vector3 axis)
+    {
+        Vector3 fromOnPlane = Vector3.ProjectOnPlane(from, axis);
+        Vector3 toOnPlane = Vector3.ProjectOnPlane(to, axis);
+
+        if (fromOnPlane.sqrMagnitude < 0.000001f || toOnPlane.sqrMagnitude < 0.000001f)
+            return 0f;
+
+        return Vector3.SignedAngle(fromOnPlane, toOnPlane, axis);
     }
 
     private float GetAverage(int s, int e)
