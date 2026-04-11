@@ -6,33 +6,32 @@ public class StageLightArranger : MonoBehaviour
 {
     public enum BuildMode
     {
-        [InspectorName("絬 (Linear)")] Linear,
-        [InspectorName("┓ (Arc)")] Arc,
-        [InspectorName("SΡ絬 (SShape)")] SShape
+        [InspectorName("Line")] Linear,
+        [InspectorName("Arc")] Arc,
+        [InspectorName("S-Shape")] SShape
     }
 
-    [Header("膀娄皌竚")]
-    [Tooltip("匡拒縊竝")]
+    [Header("Base Settings")]
+    [Tooltip("Layout used when generating the stage lights.")]
     public BuildMode buildMode = BuildMode.Linear;
 
-    [Tooltip("璶ネΘ縊ㄣ Prefab")]
+    [Tooltip("Prefab instantiated for each light.")]
     public GameObject lightPrefab;
 
     [Range(1, 30)]
     public int count = 8;
 
-    [Header("絬家Α把计")]
+    [Header("Line Settings")]
     public float spacing = 2.0f;
 
-    [Header("S家Α把计")]
+    [Header("S-Shape Settings")]
     [Range(-10f, 10f)] public float sIntensity = 2.0f;
     public bool invertS = false;
 
-    [Header("┓家Α把计")]
+    [Header("Arc Settings")]
     public float radius = 5.0f;
     [Range(0, 360)] public float arcAngle = 90f;
 
-    // --- 呸胯场だ玂ぃ跑 ---
     public void GenerateLights()
     {
         if (lightPrefab == null) return;
@@ -103,6 +102,7 @@ public class StageLightArranger : MonoBehaviour
             Quaternion rot = Quaternion.Euler(0, currentAngle, 0);
             return rot * Vector3.back * radius;
         }
+
         float totalWidth = (count - 1) * spacing;
         float xPos = -totalWidth / 2f + (index * spacing);
         float zOffset = 0;
@@ -111,6 +111,7 @@ public class StageLightArranger : MonoBehaviour
             float multiplier = invertS ? -1f : 1f;
             zOffset = Mathf.Sin(t * Mathf.PI * 2) * sIntensity * multiplier;
         }
+
         return new Vector3(xPos, 0, zOffset);
     }
 

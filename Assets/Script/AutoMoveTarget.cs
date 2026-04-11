@@ -1,24 +1,30 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class AutoMoveTarget : MonoBehaviour
 {
-    [Header("移動範圍設定")]
-    [Tooltip("移動的中心點")]
+    [Header("Movement Range")]
+    [Tooltip("Center point for the back-and-forth motion.")]
     public Vector3 centerPosition;
-    [Tooltip("前後移動的距離範圍")]
+
+    [Tooltip("Maximum distance traveled from the center.")]
     public float moveDistance = 5f;
-    [Tooltip("移動速度")]
+
+    [Tooltip("Oscillation speed.")]
     public float moveSpeed = 1f;
 
-    [Header("移動軸向")]
-    public bool 沿著Z軸移動 = true;
-    public bool 沿著X軸移動 = false;
+    [Header("Movement Axis")]
+    [FormerlySerializedAs("\u6cbf\u8457Z\u8ef8\u79fb\u52d5")]
+    public bool moveAlongZAxis = true;
+
+    [FormerlySerializedAs("\u6cbf\u8457X\u8ef8\u79fb\u52d5")]
+    public bool moveAlongXAxis = false;
 
     private float timer;
 
     void Start()
     {
-        // 如果沒有手動設定中心點，則以當前位置為準
+        // If the center was not configured manually, use the current position.
         if (centerPosition == Vector3.zero)
         {
             centerPosition = transform.position;
@@ -27,31 +33,31 @@ public class AutoMoveTarget : MonoBehaviour
 
     void Update()
     {
-        // 使用正弦波計算平滑的來回位移
+        // Use a sine wave to create smooth back-and-forth motion.
         timer += Time.deltaTime * moveSpeed;
         float offset = Mathf.Sin(timer) * moveDistance;
 
         Vector3 nextPos = centerPosition;
 
-        if (沿著Z軸移動) nextPos.z += offset;
-        if (沿著X軸移動) nextPos.x += offset;
+        if (moveAlongZAxis) nextPos.z += offset;
+        if (moveAlongXAxis) nextPos.x += offset;
 
         transform.position = nextPos;
     }
 
-    // 在 Scene 視窗畫出移動路徑，方便調校
+    // Draw the motion path in the Scene view for easier tuning.
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Vector3 start = centerPosition;
         Vector3 end = centerPosition;
 
-        if (沿著Z軸移動)
+        if (moveAlongZAxis)
         {
             start.z -= moveDistance;
             end.z += moveDistance;
         }
-        else if (沿著X軸移動)
+        else if (moveAlongXAxis)
         {
             start.x -= moveDistance;
             end.x += moveDistance;

@@ -10,18 +10,29 @@ public class AudioCameraSwitcherEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.Space();
-        EditorGUILayout.HelpBox("Level 2 運鏡掛件：根據音訊節奏自動從方案庫挑選鏡頭", MessageType.Info);
+        EditorGUILayout.HelpBox(
+            "Level 2 camera switching: pick camera presets from the library based on audio rhythm.",
+            MessageType.Info);
 
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("audioProcessor"), new GUIContent("音訊感應核心"));
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("audioProcessor"),
+            new GUIContent("Audio Controller"));
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("鏡頭方案清單 (Level 1 樣板)", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("cameraPresets"), new GUIContent("鏡頭庫 (全身/半身/特寫)"), true);
+        EditorGUILayout.LabelField("Camera Presets (Level 1 Templates)", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("cameraPresets"),
+            new GUIContent("Camera Library"),
+            true);
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("切換邏輯設定", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("threshold"), new GUIContent("切換靈敏度"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("cooldown"), new GUIContent("最短切換間隔 (秒)"));
+        EditorGUILayout.LabelField("Switch Settings", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("threshold"),
+            new GUIContent("Trigger Sensitivity"));
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("cooldown"),
+            new GUIContent("Minimum Switch Interval (sec)"));
 
         serializedObject.ApplyModifiedProperties();
     }

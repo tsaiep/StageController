@@ -1,6 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using System.Collections.Generic;
 
 [CustomEditor(typeof(StagePresetMaster))]
 public class StagePresetMasterEditor : Editor
@@ -37,25 +36,23 @@ public class StagePresetMasterEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.Space(5);
-        EditorGUILayout.LabelField("舞台燈光管理中心 (Master)", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Stage Preset Master", EditorStyles.boldLabel);
 
         for (int i = 0; i < master.lightGroups.Count; i++)
         {
             var group = master.lightGroups[i];
 
-            // --- 核心修正：使用 SessionState 儲存展開狀態 ---
-            // 產出一個唯一的 Key 值 (物件 ID + 索引)
             string sessionKey = $"StagePreset_{master.GetInstanceID()}_{i}_Expanded";
             bool isExpanded = SessionState.GetBool(sessionKey, true);
 
             EditorGUILayout.BeginVertical("helpbox");
-
             EditorGUILayout.BeginHorizontal();
 
-            // 繪製 Foldout，但不把值存回 group.isExpanded (避開 Undo)
-            bool nextExpanded = EditorGUILayout.Foldout(isExpanded, string.IsNullOrEmpty(group.groupName) ? "新燈光群組" : group.groupName, true);
+            bool nextExpanded = EditorGUILayout.Foldout(
+                isExpanded,
+                string.IsNullOrEmpty(group.groupName) ? "New Light Group" : group.groupName,
+                true);
 
-            // 如果狀態改變，存入 SessionState (這不會被 Ctrl+Z 影響)
             if (nextExpanded != isExpanded)
             {
                 SessionState.SetBool(sessionKey, nextExpanded);
@@ -75,14 +72,17 @@ public class StagePresetMasterEditor : Editor
             GUI.backgroundColor = Color.white;
             EditorGUILayout.EndHorizontal();
 
-            // 根據 SessionState 的值決定是否展開
             if (nextExpanded)
             {
                 EditorGUI.indentLevel++;
 
                 EditorGUI.BeginChangeCheck();
-                string newName = EditorGUILayout.TextField("群組名稱", group.groupName);
-                StageLightArranger newArranger = (StageLightArranger)EditorGUILayout.ObjectField("關聯 Arranger", group.arranger, typeof(StageLightArranger), true);
+                string newName = EditorGUILayout.TextField("Group Name", group.groupName);
+                StageLightArranger newArranger = (StageLightArranger)EditorGUILayout.ObjectField(
+                    "Linked Arranger",
+                    group.arranger,
+                    typeof(StageLightArranger),
+                    true);
 
                 if (EditorGUI.EndChangeCheck())
                 {
@@ -99,8 +99,9 @@ public class StagePresetMasterEditor : Editor
                 }
                 else
                 {
-                    EditorGUILayout.HelpBox("請分配一個 StageLightArranger 物件。", MessageType.Info);
+                    EditorGUILayout.HelpBox("Assign a StageLightArranger object.", MessageType.Info);
                 }
+
                 EditorGUI.indentLevel--;
             }
 
@@ -108,7 +109,7 @@ public class StagePresetMasterEditor : Editor
             EditorGUILayout.Space(2);
         }
 
-        if (GUILayout.Button("+ 新增燈光群組", GUILayout.Height(30)))
+        if (GUILayout.Button("+ Add Light Group", GUILayout.Height(30)))
         {
             Undo.RecordObject(master, "Add New Light Group");
             master.lightGroups.Add(new StagePresetMaster.LightGroupData());
@@ -117,12 +118,10 @@ public class StagePresetMasterEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    // --- 以下 DrawEmbeddedTransform 與 DrawArrangerDetails 邏輯不變，確保數據與 Undo 連動 ---
-
     private void DrawEmbeddedTransform(Transform targetTransform)
     {
         EditorGUILayout.BeginVertical("box");
-        EditorGUILayout.LabelField("物件座標 (Transform)", EditorStyles.miniBoldLabel);
+        EditorGUILayout.LabelField("Transform", EditorStyles.miniBoldLabel);
         CreateCachedEditor(targetTransform, null, ref transformEditor);
         if (transformEditor != null)
         {
@@ -139,31 +138,30 @@ public class StagePresetMasterEditor : Editor
 
     private void DrawArrangerDetails(StageLightArranger arranger)
     {
-        EditorGUILayout.LabelField("燈光排列參數", EditorStyles.miniBoldLabel);
+        EditorGUILayout.LabelField("Light Layout Settings", EditorStyles.miniBoldLabel);
         SerializedObject so = new SerializedObject(arranger);
         so.Update();
 
         EditorGUI.BeginChangeCheck();
 
-        // 使用 GUIContent 來自定義顯示名稱
-        EditorGUILayout.PropertyField(so.FindProperty("buildMode"), new GUIContent("佈署模式"));
-        EditorGUILayout.PropertyField(so.FindProperty("lightPrefab"), new GUIContent("燈具 Prefab"));
-        EditorGUILayout.PropertyField(so.FindProperty("count"), new GUIContent("燈光數量"));
+        EditorGUILayout.PropertyField(so.FindProperty("buildMode"), new GUIContent("Build Mode"));
+        EditorGUILayout.PropertyField(so.FindProperty("lightPrefab"), new GUIContent("Light Prefab"));
+        EditorGUILayout.PropertyField(so.FindProperty("count"), new GUIContent("Light Count"));
 
         StageLightArranger.BuildMode mode = (StageLightArranger.BuildMode)so.FindProperty("buildMode").enumValueIndex;
 
         if (mode == StageLightArranger.BuildMode.Arc)
         {
-            EditorGUILayout.PropertyField(so.FindProperty("radius"), new GUIContent("弧形半徑 (Radius)"));
-            EditorGUILayout.PropertyField(so.FindProperty("arcAngle"), new GUIContent("張開角度 (Angle)"));
+            EditorGUILayout.PropertyField(so.FindProperty("radius"), new GUIContent("Arc Radius"));
+            EditorGUILayout.PropertyField(so.FindProperty("arcAngle"), new GUIContent("Arc Angle"));
         }
         else
         {
-            EditorGUILayout.PropertyField(so.FindProperty("spacing"), new GUIContent("燈光間距"));
+            EditorGUILayout.PropertyField(so.FindProperty("spacing"), new GUIContent("Spacing"));
             if (mode == StageLightArranger.BuildMode.SShape)
             {
-                EditorGUILayout.PropertyField(so.FindProperty("sIntensity"), new GUIContent("S 彎曲強度"));
-                EditorGUILayout.PropertyField(so.FindProperty("invertS"), new GUIContent("反轉 S 方向"));
+                EditorGUILayout.PropertyField(so.FindProperty("sIntensity"), new GUIContent("S Curve Intensity"));
+                EditorGUILayout.PropertyField(so.FindProperty("invertS"), new GUIContent("Invert S Direction"));
             }
         }
 

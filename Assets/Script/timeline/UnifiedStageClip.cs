@@ -31,6 +31,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Header("燈光逐顆延遲")]
     [Tooltip("每顆燈依 index remap 到 0~1 後取樣此曲線，取得延遲係數 DV")]
     public AnimationCurve delayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+
     [Tooltip("實際延遲(秒) = 延遲係數 × DV × 燈數")]
     public float delayFactor = 0f;
 
@@ -69,25 +70,24 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
     {
         var playable = ScriptPlayable<UnifiedStageBehaviour>.Create(graph);
-        var b = playable.GetBehaviour();
+        var behaviour = playable.GetBehaviour();
 
-        b.clipGradient = lightGradient;
-        b.clipIntensity = intensityMultiplier;
-        b.minBrightness = minBrightness;
-        b.sensitivity = sensitivity;
-        b.smoothness = smoothness;
-        b.beamAngle = beamAngle;
-        b.scatterMode = enableScatterMode;
-        b.clipMode = rotationMode;
-        b.rotationSpeed = rotationSpeed;
-        b.rotationRange = rotationRange;
-        b.staticOffset = staticAngleOffset;
-        b.pauseTime = cyclePauseTime;
-        b.clipTarget = trackingTarget.Resolve(graph.GetResolver());
+        behaviour.clipGradient = lightGradient;
+        behaviour.clipIntensity = intensityMultiplier;
+        behaviour.minBrightness = minBrightness;
+        behaviour.sensitivity = sensitivity;
+        behaviour.smoothness = smoothness;
+        behaviour.beamAngle = beamAngle;
+        behaviour.scatterMode = enableScatterMode;
+        behaviour.clipMode = rotationMode;
+        behaviour.rotationSpeed = rotationSpeed;
+        behaviour.rotationRange = rotationRange;
+        behaviour.staticOffset = staticAngleOffset;
+        behaviour.pauseTime = cyclePauseTime;
+        behaviour.clipTarget = trackingTarget.Resolve(graph.GetResolver());
 
-        // 逐顆延遲
-        b.delayCurve = delayCurve;
-        b.delayFactor = delayFactor;
+        behaviour.delayCurve = delayCurve;
+        behaviour.delayFactor = delayFactor;
 
         return playable;
     }

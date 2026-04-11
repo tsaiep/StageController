@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class AudioVFXSwitcher : MonoBehaviour
 {
-    // 改回最原始標籤，確保不報錯
     public UnifiedStageController audioSourceProcessor;
     public GameObject[] vfxPresets;
     public float threshold = 0.5f;
@@ -15,7 +14,7 @@ public class AudioVFXSwitcher : MonoBehaviour
     {
         if (audioSourceProcessor == null || vfxPresets == null || vfxPresets.Length == 0) return;
 
-        // 取得平滑後的能量 (請確保 AudioGradientLight 裡面有公開這個變數或方法)
+        // Use the smoothed low-band energy to drive VFX switching.
         float currentEnergy = audioSourceProcessor.GetLowEnergy();
 
         if (currentEnergy > threshold && Time.time > lastSwitchTime + cooldown)

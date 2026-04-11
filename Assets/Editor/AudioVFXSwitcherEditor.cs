@@ -10,18 +10,29 @@ public class AudioVFXSwitcherEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.Space();
-        EditorGUILayout.HelpBox("癟疭╰参沮竊笆ち传ぃ疭家舱", MessageType.Info);
+        EditorGUILayout.HelpBox(
+            "Audio-driven VFX switching: rotate effect presets automatically based on the beat.",
+            MessageType.Info);
 
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("audioSourceProcessor"), new GUIContent("癟稰莱み"));
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("audioSourceProcessor"),
+            new GUIContent("Audio Controller"));
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("疭よ睲虫", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("vfxPresets"), new GUIContent("ち传疭"), true);
+        EditorGUILayout.LabelField("VFX Presets", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("vfxPresets"),
+            new GUIContent("VFX Library"),
+            true);
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("笆ち传把计", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("threshold"), new GUIContent("牟祇艶庇"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("cooldown"), new GUIContent("ち传程丁筳"));
+        EditorGUILayout.LabelField("Switch Settings", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("threshold"),
+            new GUIContent("Trigger Sensitivity"));
+        EditorGUILayout.PropertyField(
+            serializedObject.FindProperty("cooldown"),
+            new GUIContent("Minimum Switch Interval"));
 
         serializedObject.ApplyModifiedProperties();
     }
