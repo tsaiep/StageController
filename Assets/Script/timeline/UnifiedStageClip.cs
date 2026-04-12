@@ -24,6 +24,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("旋轉幅度")] public float rotationRange = 45.0f;
     [Tooltip("靜止偏移角度")] public Vector2 staticAngleOffset;
     [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f;
+    [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
+    [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
@@ -58,6 +60,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             rotationRange = applyTemplate.rotationRange;
             staticAngleOffset = applyTemplate.staticAngleOffset;
             cyclePauseTime = applyTemplate.cyclePauseTime;
+            animationOffset = applyTemplate.animationOffset;
 
             delayCurve = applyTemplate.delayCurve;
             delayFactor = applyTemplate.delayFactor;
@@ -88,6 +91,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 
         behaviour.delayCurve = delayCurve;
         behaviour.delayFactor = delayFactor;
+        behaviour.animationOffset = animationOffset;
+        behaviour.freezeUseClipGradient = freezeUseClipGradient;
 
         return playable;
     }

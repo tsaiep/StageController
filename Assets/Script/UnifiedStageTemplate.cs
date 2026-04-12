@@ -21,6 +21,7 @@ public class UnifiedStageTemplate : ScriptableObject
     [Tooltip("旋轉幅度")] public float rotationRange = 45f;
     [Tooltip("靜止角度偏移")] public Vector2 staticAngleOffset;
     [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f; // 用於解決硬直與調整暫停
+    [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
 
     [Header("燈光逐顆延遲")]
     [Tooltip("延遲曲線")] public AnimationCurve delayCurve = AnimationCurve.Linear(0, 0, 1, 1);

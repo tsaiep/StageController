@@ -26,4 +26,7 @@ public struct ActiveClipInfo
     public AnimationCurve delayCurve; // 逐顆延遲曲線
     public float delayFactor;         // 延遲係數（秒）
     public float randomStrength;      // 0~1，Random 模式兩段式混合強度
+    public float animationOffset;     // 動畫起點時間偏移（秒）
+    public bool isFreezeFrame;        // 是否為 FreezeFrame 凍結模式
+    public bool freezeUseClipGradient;// FreezeFrame: 啟用時以 Clip 自身 Gradient 取色（頭尾對應0-1）
 }

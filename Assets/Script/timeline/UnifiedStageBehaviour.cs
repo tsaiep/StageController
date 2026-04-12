@@ -26,6 +26,13 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     public AnimationCurve delayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     public float delayFactor = 0f;
 
+    [Header("動畫起點偏移")]
+    [Tooltip("動畫循環起點的時間偏移（秒）")] public float animationOffset = 0f;
+
+    [Header("凍結前幀設定")]
+    [Tooltip("啟用後改為以 Clip 自身的 Light Gradient 取色（Clip 頭尾對應 0-1 取樣），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")]
+    public bool freezeUseClipGradient = false;
+
     /// <summary>
     /// 取得 Clip 內的正規化時間 (0~1)
     /// </summary>
@@ -69,6 +76,7 @@ public class UnifiedStageBehaviour : PlayableBehaviour
 
             case UnifiedStageController.RotationMode.Static:
             case UnifiedStageController.RotationMode.Target:
+            case UnifiedStageController.RotationMode.FreezeFrame:
             default:
                 return 0f; // 無循環，用 clip normalizedTime 做 fallback
         }

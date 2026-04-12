@@ -13,4 +13,6 @@ public class SLMUnit : MonoBehaviour
     [Tooltip("動作位移")] public float motionOffset = 0f;
 
     [HideInInspector] public float curPan, curTilt, velPan, velTilt;
+    [HideInInspector] public float frozenPan, frozenTilt;
+    [HideInInspector] public Color frozenColor;
 }

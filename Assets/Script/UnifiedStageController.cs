@@ -12,7 +12,8 @@ public class UnifiedStageController : MonoBehaviour
         [InspectorName("隨機跳動")] Random,
         [InspectorName("目標追蹤")] Target,
         [InspectorName("上下搖擺")] VerticalSwing,
-        [InspectorName("交叉掃描")] Cross
+        [InspectorName("交叉掃描")] Cross,
+        [InspectorName("凍結前幀")] FreezeFrame
     }
 
     [Header("受控單元配置")]
@@ -64,7 +65,8 @@ public class UnifiedStageController : MonoBehaviour
         List<ActiveClipInfo> clips, float[] spec, bool isTimeJump,
         float mixedInten, float mixedBase, float mixedSense, float mixedSmooth,
         float mixedBeamAngle, bool activeScatter,
-        float totalMotionWeight, float weightedEffectiveTime)
+        float totalMotionWeight, float weightedEffectiveTime,
+        bool freezeJustActivated)
     {
         // 1. 頻譜分析（全域）
         System.Array.Copy(spec, spectrum, 256);
@@ -107,6 +109,14 @@ public class UnifiedStageController : MonoBehaviour
             float targetModeWeight = 0f; // Target 模式的混合權重
             bool hasContinuousRotation = false;
 
+            // --- FreezeFrame Rising Edge: 快取此 unit 的現在狀態 ---
+            if (freezeJustActivated)
+            {
+                unit.frozenPan   = unit.curPan;
+                unit.frozenTilt  = unit.curTilt;
+                unit.frozenColor = (unit.targetLight != null) ? unit.targetLight.color : Color.black;
+            }
+
             // --- 逐 Clip 計算 ---
             for (int ci = 0; ci < clips.Count; ci++)
             {
@@ -123,25 +133,47 @@ public class UnifiedStageController : MonoBehaviour
 
                 // 全域有效時間（所有 unit 共用）
                 float globalEt = Mathf.Max(0, clip.effectiveTime - clip.pauseTime);
-                // Per-unit 帶延遲的有效時間（相位偏移，不做 clamp）
-                float unitEt = globalEt - unitDelay;
+                // Per-unit 帶延遲的有效時間（相位偏移）
+                // AnimationOffset 不適用於 Static 與 FreezeFrame
+                bool applyAnimOffset = clip.mode != RotationMode.Static && clip.mode != RotationMode.FreezeFrame;
+                float unitEt = globalEt - unitDelay + (applyAnimOffset ? clip.animationOffset : 0f);
 
                 // ===== 顏色（動態循環取樣）=====
                 if (enableColorUpdate)
                 {
-                    float cyclePeriod = UnifiedStageBehaviour.GetMotionCyclePeriod(clip.mode, clip.speed);
-                    float colorPhase;
-                    if (cyclePeriod > 0.0001f)
+                    Color clipColor;
+                    if (clip.isFreezeFrame)
                     {
-                        colorPhase = unitEt / cyclePeriod;
-                        colorPhase = colorPhase - Mathf.Floor(colorPhase); // frac（處理負數）
+                        if (clip.freezeUseClipGradient)
+                        {
+                            // FreezeFrame + useClipGradient: 以 Clip 自身 Gradient 取色，
+                            // 以 normalizedClipTime (0~1) 為取樣點（如同靜止模式），
+                            // 並透過 weight 與前後 Clip 正常 Blending
+                            clipColor = (clip.gradient != null)
+                                ? clip.gradient.Evaluate(clip.normalizedClipTime)
+                                : Color.white;
+                        }
+                        else
+                        {
+                            // FreezeFrame 預設: 使用快取的凍結顏色
+                            clipColor = unit.frozenColor;
+                        }
                     }
                     else
                     {
-                        colorPhase = clip.normalizedClipTime; // Static / Target fallback
+                        float cyclePeriod = UnifiedStageBehaviour.GetMotionCyclePeriod(clip.mode, clip.speed);
+                        float colorPhase;
+                        if (cyclePeriod > 0.0001f)
+                        {
+                            colorPhase = unitEt / cyclePeriod;
+                            colorPhase = colorPhase - Mathf.Floor(colorPhase); // frac（處理負數）
+                        }
+                        else
+                        {
+                            colorPhase = clip.normalizedClipTime;
+                        }
+                        clipColor = (clip.gradient != null) ? clip.gradient.Evaluate(colorPhase) : Color.white;
                     }
-
-                    Color clipColor = (clip.gradient != null) ? clip.gradient.Evaluate(colorPhase) : Color.white;
                     unitColor += clipColor * clip.weight;
                 }
 
@@ -150,19 +182,26 @@ public class UnifiedStageController : MonoBehaviour
 
                 float clipPan, clipTilt;
 
-                if (clip.mode == RotationMode.Target)
+                if (clip.isFreezeFrame)
+                {
+                    // --- FreezeFrame: 使用凍結的 pan/tilt ---
+                    clipPan  = unit.frozenPan;
+                    clipTilt = unit.frozenTilt;
+                    // 不累加 targetModeWeight，物理更新使用一般 smooth
+                }
+                else if (clip.mode == RotationMode.Target)
                 {
                     // --- 目標追蹤：LookAt 角度 ---
                     Transform finalTarget = (clip.target != null) ? clip.target : defaultTarget;
                     if (finalTarget != null)
                     {
                         Vector2 look = CalculateLookAtAngles(unit.panTransform, unit.tiltTransform, finalTarget);
-                        clipPan = look.x;
+                        clipPan  = look.x;
                         clipTilt = look.y;
                     }
                     else
                     {
-                        clipPan = clip.staticOffset.x;
+                        clipPan  = clip.staticOffset.x;
                         clipTilt = clip.staticOffset.y;
                     }
                     // Target 不套用 invert
@@ -178,11 +217,11 @@ public class UnifiedStageController : MonoBehaviour
                         clip.mode, clip.speed, clip.range,
                         adjustedEt, ui, clip.staticOffset, clip.randomStrength
                     );
-                    clipPan = angles.x;
+                    clipPan  = angles.x;
                     clipTilt = angles.y;
 
                     // 套用對稱反轉
-                    clipPan = (unit.invertPan ^ invertControllerPan) ? -clipPan : clipPan;
+                    clipPan  = (unit.invertPan  ^ invertControllerPan)  ? -clipPan  : clipPan;
                     clipTilt = (unit.invertTilt ^ invertControllerTilt) ? -clipTilt : clipTilt;
 
                     if (clip.mode == RotationMode.Circle) hasContinuousRotation = true;
