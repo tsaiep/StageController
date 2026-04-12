@@ -59,28 +59,30 @@ public class UnifiedStageClipInspector : Editor
 
                 var t = clip.applyTemplate;
 
-                // 2. 數據同步
-                clip.lightGradient = t.lightGradient;
-                clip.intensityMultiplier = t.intensityMultiplier;
-                clip.minBrightness = t.minBrightness;
-                clip.sensitivity = t.sensitivity;
-                clip.smoothness = t.smoothness;
-                clip.beamAngle = t.beamAngle;
-                clip.enableScatterMode = t.enableScatterMode;
-                clip.rotationMode = t.rotationMode;
-                clip.rotationSpeed = t.rotationSpeed;
-                clip.rotationRange = t.rotationRange;
-                clip.staticAngleOffset = t.staticAngleOffset;
-                clip.cyclePauseTime = t.cyclePauseTime;
-                clip.delayCurve = t.delayCurve;
-                clip.delayFactor = t.delayFactor;
+                // 2. 數據同步（完整欄位）
+                clip.lightGradient          = t.lightGradient;
+                clip.intensityMultiplier    = t.intensityMultiplier;
+                clip.minBrightness          = t.minBrightness;
+                clip.sensitivity            = t.sensitivity;
+                clip.smoothness             = t.smoothness;
+                clip.beamAngle              = t.beamAngle;
+                clip.enableScatterMode      = t.enableScatterMode;
+                clip.rotationMode           = t.rotationMode;
+                clip.rotationSpeed          = t.rotationSpeed;
+                clip.rotationRange          = t.rotationRange;
+                clip.staticAngleOffset      = t.staticAngleOffset;
+                clip.cyclePauseTime         = t.cyclePauseTime;
+                clip.animationOffset        = t.animationOffset;
+                clip.groupDelayCurve        = t.groupDelayCurve;
+                clip.groupDelayFactor       = t.groupDelayFactor;
+                clip.lightDelayCurve        = t.lightDelayCurve;
+                clip.lightDelayFactor       = t.lightDelayFactor;
 
                 // 3. 設定內部名稱
                 string newName = t.name;
                 clip.clipDisplayName = newName;
 
-                // --- 核心修正：強制同步修改 Timeline 軌道上的名稱 ---
-                // 找到目前正在編輯這個資產的 TimelineClip 物件
+                // 核心修正：強制同步修改 Timeline 軌道上的名稱
                 var timelineClip = TimelineEditor.selectedClips.FirstOrDefault(c => c.asset == clip);
                 if (timelineClip != null)
                 {
@@ -91,8 +93,6 @@ public class UnifiedStageClipInspector : Editor
 
                 // 4. 強制保存與刷新
                 EditorUtility.SetDirty(clip);
-
-                // 強制刷新 Timeline 視窗
                 TimelineEditor.Refresh(RefreshReason.ContentsModified);
 
                 feedbackMessage = "✔ 模板已成功套用且名稱已更新！";
@@ -135,20 +135,23 @@ public class UnifiedStageClipInspector : Editor
     private void ExportToTemplate(UnifiedStageClip clip)
     {
         UnifiedStageTemplate newAsset = ScriptableObject.CreateInstance<UnifiedStageTemplate>();
-        newAsset.lightGradient = clip.lightGradient;
+        newAsset.lightGradient       = clip.lightGradient;
         newAsset.intensityMultiplier = clip.intensityMultiplier;
-        newAsset.minBrightness = clip.minBrightness;
-        newAsset.sensitivity = clip.sensitivity;
-        newAsset.smoothness = clip.smoothness;
-        newAsset.beamAngle = clip.beamAngle;
-        newAsset.enableScatterMode = clip.enableScatterMode;
-        newAsset.rotationMode = clip.rotationMode;
-        newAsset.rotationSpeed = clip.rotationSpeed;
-        newAsset.rotationRange = clip.rotationRange;
-        newAsset.staticAngleOffset = clip.staticAngleOffset;
-        newAsset.cyclePauseTime = clip.cyclePauseTime;
-        newAsset.delayCurve = clip.delayCurve;
-        newAsset.delayFactor = clip.delayFactor;
+        newAsset.minBrightness       = clip.minBrightness;
+        newAsset.sensitivity         = clip.sensitivity;
+        newAsset.smoothness          = clip.smoothness;
+        newAsset.beamAngle           = clip.beamAngle;
+        newAsset.enableScatterMode   = clip.enableScatterMode;
+        newAsset.rotationMode        = clip.rotationMode;
+        newAsset.rotationSpeed       = clip.rotationSpeed;
+        newAsset.rotationRange       = clip.rotationRange;
+        newAsset.staticAngleOffset   = clip.staticAngleOffset;
+        newAsset.cyclePauseTime      = clip.cyclePauseTime;
+        newAsset.animationOffset     = clip.animationOffset;
+        newAsset.groupDelayCurve     = clip.groupDelayCurve;
+        newAsset.groupDelayFactor    = clip.groupDelayFactor;
+        newAsset.lightDelayCurve     = clip.lightDelayCurve;
+        newAsset.lightDelayFactor    = clip.lightDelayFactor;
 
         string path = EditorUtility.SaveFilePanelInProject("儲存新模板", "NewStageTemplate", "asset", "請輸入模板名稱");
         if (!string.IsNullOrEmpty(path))

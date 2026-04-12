@@ -22,9 +22,17 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("啟用動作")] public bool enableMotion = true;
     [Tooltip("動作強度")] public float motionStrength = 1.0f;
 
-    [Header("逐顆延遲")]
-    public AnimationCurve delayCurve = AnimationCurve.Linear(0, 0, 1, 1);
-    public float delayFactor = 0f;
+    [Header("分組延遲")]
+    [Tooltip("分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）")]
+    public AnimationCurve groupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Tooltip("分組延遲係數（秒）")]
+    public float groupDelayFactor = 0f;
+
+    [Header("組內逐顆延遲")]
+    [Tooltip("組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
+    public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Tooltip("組內延遲係數（秒）")]
+    public float lightDelayFactor = 0f;
 
     [Header("動畫起點偏移")]
     [Tooltip("動畫循環起點的時間偏移（秒）")] public float animationOffset = 0f;

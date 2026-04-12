@@ -5,8 +5,8 @@ public class UnifiedStageTemplate : ScriptableObject
 {
     [Header("燈具物理設定")]
     [Tooltip("光束角度")]
-    [Range(1f, 179f)] public float beamAngle = 5f; // 回應使用者反饋 1：調整胖瘦
-    [Tooltip("開啟散射模式")] public bool enableScatterMode = false; // 取代邊緣柔化，用於控制 Volumetric Cookie HD 開關
+    [Range(1f, 179f)] public float beamAngle = 5f;
+    [Tooltip("開啟散射模式")] public bool enableScatterMode = false;
 
     [Header("燈光感應設定")]
     [Tooltip("燈光漸變")] public Gradient lightGradient;
@@ -20,10 +20,18 @@ public class UnifiedStageTemplate : ScriptableObject
     [Tooltip("旋轉速度")] public float rotationSpeed = 2f;
     [Tooltip("旋轉幅度")] public float rotationRange = 45f;
     [Tooltip("靜止角度偏移")] public Vector2 staticAngleOffset;
-    [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f; // 用於解決硬直與調整暫停
+    [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f;
     [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
 
-    [Header("燈光逐顆延遲")]
-    [Tooltip("延遲曲線")] public AnimationCurve delayCurve = AnimationCurve.Linear(0, 0, 1, 1);
-    [Tooltip("延遲係數")] public float delayFactor = 0f;
+    [Header("分組延遲")]
+    [Tooltip("分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）")]
+    public AnimationCurve groupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Tooltip("分組延遲係數（秒），group 延遲 = curve(t) × factor × groupCount")]
+    public float groupDelayFactor = 0f;
+
+    [Header("組內逐顆延遲")]
+    [Tooltip("組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
+    public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Tooltip("組內延遲係數（秒），light 延遲 = curve(t) × factor × groupSize")]
+    public float lightDelayFactor = 0f;
 }

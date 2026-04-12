@@ -30,12 +30,21 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
 
-    [Header("燈光逐顆延遲")]
-    [Tooltip("每顆燈依 index remap 到 0~1 後取樣此曲線，取得延遲係數 DV")]
-    public AnimationCurve delayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Header("分組延遲")]
+    [Tooltip("分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）\n" +
+             "group 延遲 = groupDelayCurve(t) × groupDelayFactor × groupCount")]
+    public AnimationCurve groupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
-    [Tooltip("實際延遲(秒) = 延遲係數 × DV × 燈數")]
-    public float delayFactor = 0f;
+    [Tooltip("分組延遲係數（秒）")]
+    public float groupDelayFactor = 0f;
+
+    [Header("組內逐顆延遲")]
+    [Tooltip("組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）\n" +
+             "light 延遲 = lightDelayCurve(t) × lightDelayFactor × groupSize")]
+    public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+
+    [Tooltip("組內延遲係數（秒）")]
+    public float lightDelayFactor = 0f;
 
     public ClipCaps clipCaps => ClipCaps.Blending;
 
@@ -47,51 +56,55 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     {
         if (applyTemplate != null)
         {
-            lightGradient = applyTemplate.lightGradient;
+            lightGradient       = applyTemplate.lightGradient;
             intensityMultiplier = applyTemplate.intensityMultiplier;
-            minBrightness = applyTemplate.minBrightness;
-            sensitivity = applyTemplate.sensitivity;
-            smoothness = applyTemplate.smoothness;
+            minBrightness       = applyTemplate.minBrightness;
+            sensitivity         = applyTemplate.sensitivity;
+            smoothness          = applyTemplate.smoothness;
 
-            beamAngle = applyTemplate.beamAngle;
-            enableScatterMode = applyTemplate.enableScatterMode;
-            rotationMode = applyTemplate.rotationMode;
-            rotationSpeed = applyTemplate.rotationSpeed;
-            rotationRange = applyTemplate.rotationRange;
-            staticAngleOffset = applyTemplate.staticAngleOffset;
-            cyclePauseTime = applyTemplate.cyclePauseTime;
-            animationOffset = applyTemplate.animationOffset;
+            beamAngle           = applyTemplate.beamAngle;
+            enableScatterMode   = applyTemplate.enableScatterMode;
+            rotationMode        = applyTemplate.rotationMode;
+            rotationSpeed       = applyTemplate.rotationSpeed;
+            rotationRange       = applyTemplate.rotationRange;
+            staticAngleOffset   = applyTemplate.staticAngleOffset;
+            cyclePauseTime      = applyTemplate.cyclePauseTime;
+            animationOffset     = applyTemplate.animationOffset;
 
-            delayCurve = applyTemplate.delayCurve;
-            delayFactor = applyTemplate.delayFactor;
+            groupDelayCurve     = applyTemplate.groupDelayCurve;
+            groupDelayFactor    = applyTemplate.groupDelayFactor;
+            lightDelayCurve     = applyTemplate.lightDelayCurve;
+            lightDelayFactor    = applyTemplate.lightDelayFactor;
 
-            clipDisplayName = applyTemplate.name;
-            applyTemplate = null;
+            clipDisplayName     = applyTemplate.name;
+            applyTemplate       = null;
         }
     }
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
     {
-        var playable = ScriptPlayable<UnifiedStageBehaviour>.Create(graph);
+        var playable  = ScriptPlayable<UnifiedStageBehaviour>.Create(graph);
         var behaviour = playable.GetBehaviour();
 
-        behaviour.clipGradient = lightGradient;
-        behaviour.clipIntensity = intensityMultiplier;
-        behaviour.minBrightness = minBrightness;
-        behaviour.sensitivity = sensitivity;
-        behaviour.smoothness = smoothness;
-        behaviour.beamAngle = beamAngle;
-        behaviour.scatterMode = enableScatterMode;
-        behaviour.clipMode = rotationMode;
-        behaviour.rotationSpeed = rotationSpeed;
-        behaviour.rotationRange = rotationRange;
-        behaviour.staticOffset = staticAngleOffset;
-        behaviour.pauseTime = cyclePauseTime;
-        behaviour.clipTarget = trackingTarget.Resolve(graph.GetResolver());
+        behaviour.clipGradient          = lightGradient;
+        behaviour.clipIntensity         = intensityMultiplier;
+        behaviour.minBrightness         = minBrightness;
+        behaviour.sensitivity           = sensitivity;
+        behaviour.smoothness            = smoothness;
+        behaviour.beamAngle             = beamAngle;
+        behaviour.scatterMode           = enableScatterMode;
+        behaviour.clipMode              = rotationMode;
+        behaviour.rotationSpeed         = rotationSpeed;
+        behaviour.rotationRange         = rotationRange;
+        behaviour.staticOffset          = staticAngleOffset;
+        behaviour.pauseTime             = cyclePauseTime;
+        behaviour.clipTarget            = trackingTarget.Resolve(graph.GetResolver());
 
-        behaviour.delayCurve = delayCurve;
-        behaviour.delayFactor = delayFactor;
-        behaviour.animationOffset = animationOffset;
+        behaviour.groupDelayCurve       = groupDelayCurve;
+        behaviour.groupDelayFactor      = groupDelayFactor;
+        behaviour.lightDelayCurve       = lightDelayCurve;
+        behaviour.lightDelayFactor      = lightDelayFactor;
+        behaviour.animationOffset       = animationOffset;
         behaviour.freezeUseClipGradient = freezeUseClipGradient;
 
         return playable;

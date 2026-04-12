@@ -101,7 +101,7 @@ public class UnifiedStageController : MonoBehaviour
             var unit = slmUnits[ui];
             if (unit == null) continue;
 
-            float normalizedIndex = (unitCount > 1) ? (float)ui / (unitCount - 1) : 0f;
+
 
             // --- 累加變數 ---
             Color unitColor = Color.black;
@@ -122,13 +122,34 @@ public class UnifiedStageController : MonoBehaviour
             {
                 var clip = clips[ci];
 
-                // ===== Per-unit 延遲 =====
+                // ===== Per-unit 延遲（兩層：分組延遲 + 組內逐顆延遲）=====
                 float unitDelay = 0f;
                 bool isRandomMode = (clip.mode == RotationMode.Random);
-                if (!isRandomMode && clip.delayCurve != null && clip.delayFactor > 0f)
+                if (!isRandomMode)
                 {
-                    float dv = clip.delayCurve.Evaluate(normalizedIndex);
-                    unitDelay = clip.delayFactor * dv * unitCount;
+                    // 層一：分組延遲（以 groupIndex/(groupCount-1) 取樣曲線）
+                    float groupDelay = 0f;
+                    if (clip.groupDelayCurve != null && clip.groupDelayFactor > 0f)
+                    {
+                        float normalizedGroup = (unit.groupCount > 1)
+                            ? (float)unit.groupIndex / (unit.groupCount - 1)
+                            : 0f;
+                        float gv = clip.groupDelayCurve.Evaluate(normalizedGroup);
+                        groupDelay = clip.groupDelayFactor * gv * unit.groupCount;
+                    }
+
+                    // 層二：組內逐顆延遲（以 indexInGroup/(groupSize-1) 取樣曲線）
+                    float lightDelay = 0f;
+                    if (clip.lightDelayCurve != null && clip.lightDelayFactor > 0f)
+                    {
+                        float normalizedInGroup = (unit.groupSize > 1)
+                            ? (float)unit.indexInGroup / (unit.groupSize - 1)
+                            : 0f;
+                        float lv = clip.lightDelayCurve.Evaluate(normalizedInGroup);
+                        lightDelay = clip.lightDelayFactor * lv * unit.groupSize;
+                    }
+
+                    unitDelay = groupDelay + lightDelay;
                 }
 
                 // 全域有效時間（所有 unit 共用）
@@ -227,7 +248,15 @@ public class UnifiedStageController : MonoBehaviour
                     if (clip.mode == RotationMode.Circle) hasContinuousRotation = true;
                 }
 
-                totalPan += clipPan * clip.weight;
+                // ── 正規化角度：確保每個 Clip 的角度在 curPan/curTilt 的 ±180° 範圍內 ──
+                // 這解決了 Circle 模式累積大角度與其他 Clip 混合時的反轉問題：
+                // 加權平均前先把所有角度映射到以 curPan 為中心的連續範圍，
+                // 使 weighted sum 等同於物理上正確的中間角度。
+                // 同時修正 FreezeFrame 繼承累積角度後混合的問題。
+                clipPan  = unit.curPan  + Mathf.DeltaAngle(unit.curPan,  clipPan);
+                clipTilt = unit.curTilt + Mathf.DeltaAngle(unit.curTilt, clipTilt);
+
+                totalPan  += clipPan  * clip.weight;
                 totalTilt += clipTilt * clip.weight;
             }
 

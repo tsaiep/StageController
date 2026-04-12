@@ -23,8 +23,15 @@ public struct ActiveClipInfo
     public float smoothness;
     public float beamAngle;
     public float motionWeight;
-    public AnimationCurve delayCurve; // 逐顆延遲曲線
-    public float delayFactor;         // 延遲係數（秒）
+
+    // ── 分組延遲 ──
+    public AnimationCurve groupDelayCurve; // 分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）
+    public float groupDelayFactor;         // 分組延遲係數（秒）
+
+    // ── 組內逐顆延遲 ──
+    public AnimationCurve lightDelayCurve; // 組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）
+    public float lightDelayFactor;         // 組內延遲係數（秒）
+
     public float randomStrength;      // 0~1，Random 模式兩段式混合強度
     public float animationOffset;     // 動畫起點時間偏移（秒）
     public bool isFreezeFrame;        // 是否為 FreezeFrame 凍結模式
