@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -546,13 +546,13 @@ MonoBehaviour:
     m_Start: 24.516666666666666
     m_ClipIn: 0
     m_Asset: {fileID: -4052776539553695854}
-    m_Duration: 3.843150202557446
+    m_Duration: 5.150000000000002
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5822625822241726420}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: 0.6500000000000021
-    m_BlendOutDuration: 0.9931502025574446
+    m_BlendOutDuration: 1.7333333333333343
     m_MixInCurve:
       serializedVersion: 2
       m_Curve:
@@ -610,9 +610,9 @@ MonoBehaviour:
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: aaa
+    m_DisplayName: Freeze
   - m_Version: 1
-    m_Start: 27.366666666666667
+    m_Start: 27.933333333333334
     m_ClipIn: 0
     m_Asset: {fileID: -893920833066935106}
     m_Duration: 18.616666666666656
@@ -620,7 +620,7 @@ MonoBehaviour:
     m_ParentTrack: {fileID: -5822625822241726420}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
-    m_BlendInDuration: 0.9931502025574446
+    m_BlendInDuration: 1.7333333333333343
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
@@ -902,7 +902,7 @@ MonoBehaviour:
   m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -1109,7 +1109,7 @@ MonoBehaviour:
   m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -1201,7 +1201,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips: []
   m_Markers:
@@ -1272,7 +1272,7 @@ MonoBehaviour:
   smoothness: 8
   beamAngle: 5
   enableScatterMode: 0
-  rotationMode: 5
+  rotationMode: 1
   rotationSpeed: 2
   rotationRange: 30
   staticAngleOffset: {x: 0, y: 0}
@@ -1306,7 +1306,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  groupDelayFactor: 0
+  groupDelayFactor: 0.15
   lightDelayCurve:
     serializedVersion: 2
     m_Curve:
@@ -1331,7 +1331,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  lightDelayFactor: 0
+  lightDelayFactor: 0.15
   applyTemplate: {fileID: 0}
   clipDisplayName: 
 --- !u!114 &-704304110217332506
@@ -1568,15 +1568,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Version: 0
   m_Tracks:
-  - {fileID: -3276490981137179216}
-  - {fileID: -6676116823275653043}
-  - {fileID: 7071585426333478819}
-  - {fileID: 139117145902619024}
-  - {fileID: -1479268785582764399}
-  - {fileID: -2563981641250829473}
-  - {fileID: 4943678404744431787}
-  - {fileID: 7990132267099471584}
   - {fileID: -5822625822241726420}
+  - {fileID: 4587827101828643159}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
@@ -1601,7 +1594,7 @@ MonoBehaviour:
   m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -1964,6 +1957,37 @@ MonoBehaviour:
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
   clipDisplayName: NewStageTemplate
+--- !u!114 &4587827101828643159
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0fc6f5187a81dc47999eefade6f0935, type: 3}
+  m_Name: Track Group
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children:
+  - {fileID: -3276490981137179216}
+  - {fileID: -6676116823275653043}
+  - {fileID: 7071585426333478819}
+  - {fileID: 139117145902619024}
+  - {fileID: -1479268785582764399}
+  - {fileID: -2563981641250829473}
+  - {fileID: 4943678404744431787}
+  - {fileID: 7990132267099471584}
+  m_Clips: []
+  m_Markers:
+    m_Objects: []
 --- !u!114 &4887755560148466424
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2092,7 +2116,7 @@ MonoBehaviour:
   m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -2434,8 +2458,8 @@ MonoBehaviour:
   smoothness: 8
   beamAngle: 5
   enableScatterMode: 0
-  rotationMode: 5
-  rotationSpeed: 3
+  rotationMode: 2
+  rotationSpeed: 6
   rotationRange: 30
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
@@ -2468,7 +2492,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  groupDelayFactor: 0.1
+  groupDelayFactor: 0.25
   lightDelayCurve:
     serializedVersion: 2
     m_Curve:
@@ -2493,7 +2517,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  lightDelayFactor: 0
+  lightDelayFactor: 0.25
   applyTemplate: {fileID: 0}
   clipDisplayName: 
 --- !u!114 &7071585426333478819
@@ -2514,7 +2538,7 @@ MonoBehaviour:
   m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -3051,7 +3075,7 @@ MonoBehaviour:
   m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 4587827101828643159}
   m_Children: []
   m_Clips:
   - m_Version: 1
