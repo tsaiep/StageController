@@ -115,6 +115,24 @@ public class StageLightArranger : MonoBehaviour
              "控制燈光的俯仰傾斜角度，Z 軸固定為 0")] 
     public float facingTiltX = 0f;
 
+    // ── Light & Beam Settings ────────────────────────────────────
+    [Header("Light & Beam Settings")]
+    [Tooltip("Light component 的 Range")]
+    public float lightRange = 12f;
+
+    [Tooltip("VolumetricLightBeamHD 的 Side Softness")]
+    public float vlbSideSoftness = 0.0001f;
+
+    [Tooltip("VolumetricLightBeamHD 的 Attenuation Equation（0=Linear, 1=Quadratic）")]
+    public VLB.AttenuationEquationHD vlbAttenuationEquation = VLB.AttenuationEquationHD.Linear;
+
+    [Tooltip("VolumetricLightBeamHD 的 3D Noise > Enabled")]
+    public VLB.NoiseMode vlbNoiseMode = VLB.NoiseMode.Disabled;
+
+    [Tooltip("VolumetricLightBeamHD 的 3D Noise > Intensity")]
+    [Range(0f, 1f)]
+    public float vlbNoiseIntensity = 0.5f;
+
     // ============================================================
     //  Generate / Clear
     // ============================================================
@@ -180,6 +198,46 @@ public class StageLightArranger : MonoBehaviour
                 lightGO.transform.SetLocalPositionAndRotation(localPos, rot);
 #endif
                 lightGO.name = $"Light_{buildMode}_{g:D1}_{i:D2}";
+
+                // 套用 Light component 設定（遍歷所有子物件中的 Light）
+                foreach (var lightComp in lightGO.GetComponentsInChildren<Light>(true))
+                {
+#if UNITY_EDITOR
+                    if (!Application.isPlaying)
+                    {
+                        var lightSO = new SerializedObject(lightComp);
+                        lightSO.FindProperty("m_Range").floatValue = lightRange;
+                        lightSO.ApplyModifiedProperties();
+                    }
+                    else
+#endif
+                    {
+                        lightComp.range = lightRange;
+                    }
+                }
+
+                // 套用 VolumetricLightBeamHD component 設定（遍歷所有子物件中的 VLB HD）
+                foreach (var vlbHD in lightGO.GetComponentsInChildren<VLB.VolumetricLightBeamHD>(true))
+                {
+#if UNITY_EDITOR
+                    if (!Application.isPlaying)
+                    {
+                        var vlbSO = new SerializedObject(vlbHD);
+                        vlbSO.FindProperty("m_SideSoftness").floatValue         = vlbSideSoftness;
+                        vlbSO.FindProperty("m_AttenuationEquation").enumValueIndex = (int)vlbAttenuationEquation;
+                        vlbSO.FindProperty("m_NoiseMode").enumValueIndex        = (int)vlbNoiseMode;
+                        vlbSO.FindProperty("m_NoiseIntensity").floatValue       = vlbNoiseIntensity;
+                        vlbSO.ApplyModifiedProperties();
+                    }
+                    else
+#endif
+                    {
+                        vlbHD.sideSoftness       = vlbSideSoftness;
+                        vlbHD.attenuationEquation = vlbAttenuationEquation;
+                        vlbHD.noiseMode          = vlbNoiseMode;
+                        vlbHD.noiseIntensity     = vlbNoiseIntensity;
+                    }
+                }
 
                 // 寫入 SLMUnit 分組資訊
                 var unit = lightGO.GetComponent<SLMUnit>();
@@ -469,8 +527,9 @@ public class StageLightArrangerEditor : Editor
     SerializedProperty polygonSidesProp, polygonRadiusProp, distributeAlongEdgesProp;
     SerializedProperty compoundModeProp, compoundGroupCountProp, compoundStepProp, gridSecondaryAxisProp;
     SerializedProperty lightFacingProp, customFacingEulerProp, facingTiltXProp;
+    SerializedProperty lightRangeProp, vlbSideSoftnessProp, vlbAttenuationEquationProp, vlbNoiseModeProp, vlbNoiseIntensityProp;
 
-    static bool foldBase = true, foldShape = true, foldCompound = true, foldFacing = true;
+    static bool foldBase = true, foldShape = true, foldCompound = true, foldFacing = true, foldBeamSettings = true;
 
     void OnEnable()
     {
@@ -494,6 +553,11 @@ public class StageLightArrangerEditor : Editor
         lightFacingProp           = serializedObject.FindProperty("lightFacing");
         customFacingEulerProp     = serializedObject.FindProperty("customFacingEuler");
         facingTiltXProp           = serializedObject.FindProperty("facingTiltX");
+        lightRangeProp            = serializedObject.FindProperty("lightRange");
+        vlbSideSoftnessProp       = serializedObject.FindProperty("vlbSideSoftness");
+        vlbAttenuationEquationProp = serializedObject.FindProperty("vlbAttenuationEquation");
+        vlbNoiseModeProp          = serializedObject.FindProperty("vlbNoiseMode");
+        vlbNoiseIntensityProp     = serializedObject.FindProperty("vlbNoiseIntensity");
     }
 
     public override void OnInspectorGUI()
@@ -631,6 +695,34 @@ public class StageLightArrangerEditor : Editor
                         "YLayer 疊層模式：Y 偏移不影響水平Pan計算，各層旋轉一致。",
                         MessageType.Info);
                 }
+            }
+        }
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+        // ── Light & Beam Settings ────────────────────────────────
+        foldBeamSettings = EditorGUILayout.BeginFoldoutHeaderGroup(foldBeamSettings, "Light & Beam Settings（燈光統一設定）");
+        if (foldBeamSettings)
+        {
+            using (new EditorGUILayout.VerticalScope("box"))
+            {
+                EditorGUILayout.LabelField("Light Component", EditorStyles.boldLabel);
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(lightRangeProp, new GUIContent("Range（範圍）"));
+                EditorGUI.indentLevel--;
+
+                EditorGUILayout.Space(4);
+                EditorGUILayout.LabelField("Volumetric Light Beam HD", EditorStyles.boldLabel);
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(vlbSideSoftnessProp,        new GUIContent("Side Softness"));
+                EditorGUILayout.PropertyField(vlbAttenuationEquationProp,  new GUIContent("Attenuation Equation"));
+                EditorGUILayout.LabelField("3D Noise", EditorStyles.miniLabel);
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(vlbNoiseModeProp,       new GUIContent("Enabled"));
+                EditorGUILayout.PropertyField(vlbNoiseIntensityProp,  new GUIContent("Intensity"));
+                EditorGUI.indentLevel--;
+                EditorGUI.indentLevel--;
+
+                EditorGUILayout.HelpBox("以上設定將在點擊 Generate Lights 時套用到所有已生成燈光的對應 Component。", MessageType.Info);
             }
         }
         EditorGUILayout.EndFoldoutHeaderGroup();
