@@ -279,14 +279,33 @@ public class UnifiedStageController : MonoBehaviour
 
                     Vector2 angles = CalculateAnglesForUnit(
                         clip.mode, clip.speed, clip.range,
-                        adjustedEt, ui, clip.staticOffset, clip.randomStrength
+                        adjustedEt, ui, clip.randomStrength
                     );
                     clipPan  = angles.x;
                     clipTilt = angles.y;
 
-                    // 套用對稱反轉
-                    clipPan  = (unit.invertPan  ^ invertControllerPan)  ? -clipPan  : clipPan;
-                    clipTilt = (unit.invertTilt ^ invertControllerTilt) ? -clipTilt : clipTilt;
+                    // 套用對稱反轉（只反轉動態部分）
+                    // Cross 模式的交替已內建於 panSide，跳過 invert 避免 tilt 基底被反轉
+                    if (clip.mode != RotationMode.Cross)
+                    {
+                        clipPan  = (unit.invertPan  ^ invertControllerPan)  ? -clipPan  : clipPan;
+                        clipTilt = (unit.invertTilt ^ invertControllerTilt) ? -clipTilt : clipTilt;
+                    }
+
+                    // 反轉後再加上 staticOffset
+                    if (clip.mode == RotationMode.Cross)
+                    {
+                        // Cross 模式 pan 在 ±90°，tilt 是 pan 的子物件，
+                        // staticOffset.x 乘以 panSide 使視覺偏移方向一致（不會交替相反）
+                        float crossPanSign = (ui % 2 == 0) ? 1f : -1f;
+                        clipPan  += clip.staticOffset.x * crossPanSign;
+                        clipTilt += clip.staticOffset.y;
+                    }
+                    else
+                    {
+                        clipPan  += clip.staticOffset.x;
+                        clipTilt += clip.staticOffset.y;
+                    }
 
                     if (clip.mode == RotationMode.Circle) hasContinuousRotation = true;
                 }
@@ -370,38 +389,39 @@ public class UnifiedStageController : MonoBehaviour
     // ==========================================
     private Vector2 CalculateAnglesForUnit(
         RotationMode mode, float speed, float range,
-        float et, int index, Vector2 staticOffset, float randomStrength)
+        float et, int index, float randomStrength)
     {
         float p = 0, t = 0;
 
         switch (mode)
         {
             case RotationMode.Static:
-                p = staticOffset.x;
-                t = staticOffset.y;
+                // offset 在外部加
+                p = 0;
+                t = 0;
                 break;
 
             case RotationMode.Scan:
-                p = Mathf.Sin(et * speed) * range + staticOffset.x;
-                t = 45f + staticOffset.y;
+                p = Mathf.Sin(et * speed) * range;
+                t = 45f;
                 break;
 
             case RotationMode.Circle:
-                p = (et * speed * 20f) + staticOffset.x;
-                t = range + staticOffset.y;
+                p = (et * speed * 20f);
+                t = range;
                 break;
 
             case RotationMode.VerticalSwing:
-                p = staticOffset.x;
-                t = Mathf.Sin(et * speed) * range + staticOffset.y;
+                p = 0;
+                t = Mathf.Sin(et * speed) * range;
                 break;
 
             case RotationMode.Random:
                 // 兩段式混合：randomStrength 控制噪波強度
-                float initP = (Mathf.PerlinNoise(0f, index * 0.5f) - 0.5f) * 2f * range + staticOffset.x;
-                float initT = (Mathf.PerlinNoise(index * 0.5f, 0f) - 0.5f) * 2f * range + staticOffset.y;
-                float fullP = (Mathf.PerlinNoise(et * speed, index * 0.5f) - 0.5f) * 2f * range + staticOffset.x;
-                float fullT = (Mathf.PerlinNoise(index * 0.5f, et * speed) - 0.5f) * 2f * range + staticOffset.y;
+                float initP = (Mathf.PerlinNoise(0f, index * 0.5f) - 0.5f) * 2f * range;
+                float initT = (Mathf.PerlinNoise(index * 0.5f, 0f) - 0.5f) * 2f * range;
+                float fullP = (Mathf.PerlinNoise(et * speed, index * 0.5f) - 0.5f) * 2f * range;
+                float fullT = (Mathf.PerlinNoise(index * 0.5f, et * speed) - 0.5f) * 2f * range;
                 p = Mathf.Lerp(initP, fullP, randomStrength);
                 t = Mathf.Lerp(initT, fullT, randomStrength);
                 break;
@@ -409,8 +429,8 @@ public class UnifiedStageController : MonoBehaviour
             case RotationMode.Cross:
                 // 每個 unit 直接計算自己的角度（panSide 基於 index）
                 float panSide = (index % 2 == 0) ? 1f : -1f;
-                p = (90f * panSide) + staticOffset.x;
-                t = (Mathf.Sin(et * speed) * range) + 35f + staticOffset.y + 10f;
+                p = (90f * panSide);
+                t = (Mathf.Sin(et * speed) * range) + 35f + 10f;
                 break;
         }
 
