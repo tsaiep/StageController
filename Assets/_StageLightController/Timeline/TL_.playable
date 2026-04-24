@@ -1,5 +1,115 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9199394900594882922
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe8df909a39c96e419c38f4f03b30403, type: 3}
+  m_Name: UnifiedStageClip(Clone)(Clone)(Clone)(Clone)
+  m_EditorClassIdentifier: 
+  lightGradient:
+    serializedVersion: 2
+    key0: {r: 0, g: 0, b: 0, a: 1}
+    key1: {r: 1, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 1}
+    key3: {r: 0, g: 1, b: 0, a: 0}
+    key4: {r: 0, g: 1, b: 0, a: 0}
+    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 8651
+    ctime2: 65535
+    ctime3: 65535
+    ctime4: 65535
+    ctime5: 65535
+    ctime6: 65535
+    ctime7: 65535
+    atime0: 0
+    atime1: 15731
+    atime2: 65535
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: 0
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 3
+  intensityMultiplier: 1
+  minBrightness: 0.1
+  sensitivity: 1.5
+  smoothness: 8
+  beamAngle: 1.5
+  enableScatterMode: 0
+  rotationMode: 0
+  rotationSpeed: 2
+  rotationRange: 15
+  staticAngleOffset: {x: 0, y: -41.1}
+  cyclePauseTime: 0
+  animationOffset: 0
+  freezeUseClipGradient: 1
+  trackingTarget:
+    exposedName: 0dfeeaf1d1b1dea4b86b7a4ef217eba7
+    defaultValue: {fileID: 0}
+  groupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  groupDelayFactor: 0.25
+  lightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lightDelayFactor: 0
+  applyTemplate: {fileID: 0}
+  clipDisplayName: aaa
 --- !u!114 &-8787781067529205703
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -495,13 +605,13 @@ MonoBehaviour:
     m_Start: 0
     m_ClipIn: 0
     m_Asset: {fileID: 5887876298903159098}
-    m_Duration: 25.166666666666668
+    m_Duration: 11.733333333333333
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5822625822241726420}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
-    m_BlendOutDuration: 0.6500000000000021
+    m_BlendOutDuration: 0.14999999999999858
     m_MixInCurve:
       serializedVersion: 2
       m_Curve: []
@@ -525,16 +635,16 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: UnifiedStageClip
   - m_Version: 1
-    m_Start: 24.516666666666666
+    m_Start: 11.583333333333334
     m_ClipIn: 0
     m_Asset: {fileID: -4052776539553695854}
-    m_Duration: 5.150000000000002
+    m_Duration: 1.0166666666666657
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5822625822241726420}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
-    m_BlendInDuration: 0.6500000000000021
-    m_BlendOutDuration: 1.7333333333333343
+    m_BlendInDuration: 0.14999999999999858
+    m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
       m_Curve: []
@@ -558,7 +668,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: Freeze
   - m_Version: 1
-    m_Start: 27.933333333333334
+    m_Start: 45.083333333333336
     m_ClipIn: 0
     m_Asset: {fileID: -893920833066935106}
     m_Duration: 18.616666666666656
@@ -566,7 +676,7 @@ MonoBehaviour:
     m_ParentTrack: {fileID: -5822625822241726420}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
-    m_BlendInDuration: 1.7333333333333343
+    m_BlendInDuration: -1
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
@@ -590,6 +700,39 @@ MonoBehaviour:
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
     m_DisplayName: UnifiedStageClip
+  - m_Version: 1
+    m_Start: 14.366666666666667
+    m_ClipIn: 0
+    m_Asset: {fileID: -9199394900594882922}
+    m_Duration: 1.966666666666665
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -5822625822241726420}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: Freeze
   m_Markers:
     m_Objects: []
 --- !u!114 &-5705703980454676506
@@ -860,7 +1003,7 @@ MonoBehaviour:
   smoothness: 8
   beamAngle: 5
   enableScatterMode: 0
-  rotationMode: 7
+  rotationMode: 0
   rotationSpeed: 2
   rotationRange: 15
   staticAngleOffset: {x: 0, y: 0}
@@ -1528,7 +1671,7 @@ MonoBehaviour:
   minBrightness: 0.1
   sensitivity: 1.5
   smoothness: 8
-  beamAngle: 5
+  beamAngle: 1
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 2
@@ -1730,7 +1873,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
-  m_Name: New Timeline
+  m_Name: TL_
   m_EditorClassIdentifier: 
   m_Version: 0
   m_Tracks:
@@ -2139,7 +2282,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 0
+  m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
@@ -2823,10 +2966,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lightGradient:
     serializedVersion: 2
-    key0: {r: 0, g: 1, b: 0, a: 1}
-    key1: {r: 0, g: 0.7905779, b: 1, a: 1}
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0.696815, g: 0, b: 1, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
+    key3: {r: 1, g: 1, b: 1, a: 0}
     key4: {r: 0, g: 1, b: 0, a: 0}
     key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
@@ -2855,12 +2998,12 @@ MonoBehaviour:
   minBrightness: 0.1
   sensitivity: 1.5
   smoothness: 8
-  beamAngle: 20
-  enableScatterMode: 1
+  beamAngle: 1.5
+  enableScatterMode: 0
   rotationMode: 5
-  rotationSpeed: 2
-  rotationRange: 45
-  staticAngleOffset: {x: 0, y: 0}
+  rotationSpeed: 1
+  rotationRange: 30
+  staticAngleOffset: {x: 0, y: -26.1}
   cyclePauseTime: 0
   animationOffset: 0
   freezeUseClipGradient: 1
@@ -2900,7 +3043,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  groupDelayFactor: 0.25
+  groupDelayFactor: 0.1
   lightDelayCurve:
     serializedVersion: 2
     m_Curve:
