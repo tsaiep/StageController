@@ -34,4 +34,8 @@ public class UnifiedStageTemplate : ScriptableObject
     public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("組內延遲係數（秒），light 延遲 = curve(t) × factor × groupSize")]
     public float lightDelayFactor = 0f;
+
+    [Header("靜止模式顏色選項")]
+    [Tooltip("靜止模式顏色動畫完成後的行為：Clamp — 停在漸層末端 / Loop — 循環回起點")]
+    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
 }

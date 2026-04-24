@@ -16,6 +16,15 @@ public class UnifiedStageController : MonoBehaviour
         [InspectorName("凍結前幀")] FreezeFrame
     }
 
+    /// <summary>
+    /// 靜止模式顏色動畫完成後的行為
+    /// </summary>
+    public enum ColorFinishMode
+    {
+        [InspectorName("夾緊（停在漸層末端）")] Clamp,
+        [InspectorName("循環（回到漸層起點）")] Loop
+    }
+
     [Header("受控單元配置")]
     public SLMUnit[] slmUnits;
     public Transform defaultTarget;
@@ -179,6 +188,40 @@ public class UnifiedStageController : MonoBehaviour
                             // FreezeFrame 預設: 使用快取的凍結顏色
                             clipColor = unit.frozenColor;
                         }
+                    }
+                    else if (clip.mode == RotationMode.Static)
+                    {
+                        // ── Static 模式：延遲後在剩餘窗口內 normalize，確保每顆燈都能走完完整漸層 ──
+                        // delayShift: 延遲占 Clip 總長的比例（0~1）
+                        // 可用窗口: [delayShift, 1]，長度 = window = 1 - delayShift
+                        // 將 normalizedClipTime 在此窗口內 remap 成 0~1
+                        float delayShift = (clip.clipDuration > 0.0001f) ? unitDelay / clip.clipDuration : 0f;
+                        float rawPhase = clip.normalizedClipTime - delayShift;
+                        float window = Mathf.Max(1f - delayShift, 0.0001f);
+
+                        float phase;
+                        switch (clip.staticColorFinishMode)
+                        {
+                            case ColorFinishMode.Loop:
+                                // 延遲期間（rawPhase < 0）固定在漸層起點
+                                // 之後在可用窗口內從 0 跑到 1 再循環
+                                if (rawPhase < 0f)
+                                    phase = 0f;
+                                else
+                                {
+                                    float t = rawPhase / window;
+                                    phase = t - Mathf.Floor(t);
+                                }
+                                break;
+                            default: // Clamp
+                                // rawPhase < 0  → 固定在起點（0）
+                                // rawPhase 在 [0, window] → 線性走至 1
+                                // rawPhase > window → 停在末端（1）
+                                phase = Mathf.Clamp01(rawPhase / window);
+                                break;
+                        }
+
+                        clipColor = (clip.gradient != null) ? clip.gradient.Evaluate(phase) : Color.white;
                     }
                     else
                     {

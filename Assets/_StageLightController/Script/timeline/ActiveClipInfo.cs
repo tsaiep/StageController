@@ -36,4 +36,8 @@ public struct ActiveClipInfo
     public float animationOffset;     // 動畫起點時間偏移（秒）
     public bool isFreezeFrame;        // 是否為 FreezeFrame 凍結模式
     public bool freezeUseClipGradient;// FreezeFrame: 啟用時以 Clip 自身 Gradient 取色（頭尾對應0-1）
+
+    // ── Static 模式顏色選項 ──
+    public UnifiedStageController.ColorFinishMode staticColorFinishMode; // 動畫完成後的行為
+    public float clipDuration;        // Clip 長度（秒），供 Static 延遲偏移計算用
 }

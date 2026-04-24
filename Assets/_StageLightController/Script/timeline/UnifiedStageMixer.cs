@@ -136,7 +136,9 @@ public class UnifiedStageMixer : PlayableBehaviour
                 randomStrength      = randomStrength,
                 animationOffset     = b.animationOffset,
                 isFreezeFrame       = isFreezeFrame,
-                freezeUseClipGradient = b.freezeUseClipGradient
+                freezeUseClipGradient = b.freezeUseClipGradient,
+                staticColorFinishMode = b.staticColorFinishMode,
+                clipDuration        = (float)inputPlayable.GetDuration()
             });
         }
 

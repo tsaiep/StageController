@@ -77,6 +77,7 @@ public class UnifiedStageClipInspector : Editor
                 clip.groupDelayFactor       = t.groupDelayFactor;
                 clip.lightDelayCurve        = t.lightDelayCurve;
                 clip.lightDelayFactor       = t.lightDelayFactor;
+                clip.staticColorFinishMode  = t.staticColorFinishMode;
 
                 // 3. 設定內部名稱
                 string newName = t.name;
@@ -152,6 +153,7 @@ public class UnifiedStageClipInspector : Editor
         newAsset.groupDelayFactor    = clip.groupDelayFactor;
         newAsset.lightDelayCurve     = clip.lightDelayCurve;
         newAsset.lightDelayFactor    = clip.lightDelayFactor;
+        newAsset.staticColorFinishMode = clip.staticColorFinishMode;
 
         string path = EditorUtility.SaveFilePanelInProject("儲存新模板", "NewStageTemplate", "asset", "請輸入模板名稱");
         if (!string.IsNullOrEmpty(path))

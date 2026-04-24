@@ -27,6 +27,10 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
+    [Header("靜止模式顏色選項")]
+    [Tooltip("靜止模式顏色動畫完成後的行為：Clamp —停在漸層末端 / Loop —循環回起點")]
+    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
+
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
 
@@ -75,6 +79,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             groupDelayFactor    = applyTemplate.groupDelayFactor;
             lightDelayCurve     = applyTemplate.lightDelayCurve;
             lightDelayFactor    = applyTemplate.lightDelayFactor;
+            staticColorFinishMode = applyTemplate.staticColorFinishMode;
 
             clipDisplayName     = applyTemplate.name;
             applyTemplate       = null;
@@ -106,6 +111,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.lightDelayFactor      = lightDelayFactor;
         behaviour.animationOffset       = animationOffset;
         behaviour.freezeUseClipGradient = freezeUseClipGradient;
+        behaviour.staticColorFinishMode = staticColorFinishMode;
 
         return playable;
     }
