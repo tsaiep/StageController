@@ -12,7 +12,7 @@ public struct ActiveClipInfo
     public float speed;
     public float range;
     public float pauseTime;
-    public Vector2 staticOffset;
+    public Vector2 staticOffset;    // x=pan偏移, y=tilt偏移
     public float effectiveTime;       // clip 內的有效時間（秒）
     public float normalizedClipTime;  // clip 內的正規化時間 (0~1)
     public Transform target;

@@ -55,10 +55,17 @@ public class UnifiedStageController : MonoBehaviour
     public float maxRotationSpeed = 300f;
     public float trackingSmoothTime = 0.15f;
 
+    [Header("Debug")]
+    [Tooltip("在 Scene 視窗繪製每顆燈光的局部平面")] public bool debugDrawLocalPlane = false;
+    [Tooltip("局部平面繪製大小")] public float debugPlaneSize = 0.5f;
+
     // --- 內部狀態 ---
     private float[] spectrum = new float[256];
     private float lowMax = 0.1f, midMax = 0.1f, highMax = 0.1f;
     private float curLow, curMid, curHigh;
+
+    // Per-unit 靜態中心方向快取（pan-parent 局部空間），由 UpdateStage 寫入，由 OnDrawGizmos 讀取
+    private Vector3[] _dbgCenterDir;
 
     public float GetLowEnergy() { return curLow; }
     public float GetMidEnergy() { return curMid; }
@@ -105,6 +112,10 @@ public class UnifiedStageController : MonoBehaviour
         if (slmUnits == null) return;
         int unitCount = slmUnits.Length;
 
+        // 確保 debug 快取陣列大小
+        if (debugDrawLocalPlane && (_dbgCenterDir == null || _dbgCenterDir.Length != unitCount))
+            _dbgCenterDir = new Vector3[unitCount];
+
         for (int ui = 0; ui < unitCount; ui++)
         {
             var unit = slmUnits[ui];
@@ -115,8 +126,7 @@ public class UnifiedStageController : MonoBehaviour
             // --- 累加變數 ---
             Color unitColor = Color.black;
             float totalPan = 0f, totalTilt = 0f;
-            float targetModeWeight = 0f; // Target 模式的混合權重
-            bool hasContinuousRotation = false;
+            float targetModeWeight = 0f;
 
             // --- FreezeFrame Rising Edge: 快取此 unit 的現在狀態 ---
             if (freezeJustActivated)
@@ -273,41 +283,29 @@ public class UnifiedStageController : MonoBehaviour
                 }
                 else
                 {
-                    // --- 非追蹤模式 ---
+                    // --- 非追蹤模式：直接 pan/tilt 計算 ---
                     float unitTimeOffset = unit.motionOffset * waveIntensity;
                     float adjustedEt = unitEt + unitTimeOffset;
 
-                    Vector2 angles = CalculateAnglesForUnit(
-                        clip.mode, clip.speed, clip.range,
-                        adjustedEt, ui, clip.randomStrength
-                    );
-                    clipPan  = angles.x;
-                    clipTilt = angles.y;
-
-                    // 套用對稱反轉（只反轉動態部分）
-                    // Cross 模式的交替已內建於 panSide，跳過 invert 避免 tilt 基底被反轉
-                    if (clip.mode != RotationMode.Cross)
+                    Vector2 angles;
+                    if (clip.mode == RotationMode.Circle)
                     {
-                        clipPan  = (unit.invertPan  ^ invertControllerPan)  ? -clipPan  : clipPan;
-                        clipTilt = (unit.invertTilt ^ invertControllerTilt) ? -clipTilt : clipTilt;
-                    }
-
-                    // 反轉後再加上 staticOffset
-                    if (clip.mode == RotationMode.Cross)
-                    {
-                        // Cross 模式 pan 在 ±90°，tilt 是 pan 的子物件，
-                        // staticOffset.x 乘以 panSide 使視覺偏移方向一致（不會交替相反）
-                        float crossPanSign = (ui % 2 == 0) ? 1f : -1f;
-                        clipPan  += clip.staticOffset.x * crossPanSign;
-                        clipTilt += clip.staticOffset.y;
+                        // Circle：幾何圓錐方向式 solver（正確等速圓）
+                        angles = CalculateCircleAngles(adjustedEt, clip.speed, clip.range, clip.staticOffset);
                     }
                     else
                     {
-                        clipPan  += clip.staticOffset.x;
-                        clipTilt += clip.staticOffset.y;
+                        angles = CalculateAnglesForUnit(
+                            clip.mode, clip.speed, clip.range,
+                            adjustedEt, ui, clip.staticOffset, clip.randomStrength
+                        );
                     }
+                    clipPan  = angles.x;
+                    clipTilt = angles.y;
 
-                    if (clip.mode == RotationMode.Circle) hasContinuousRotation = true;
+                    // 套用對稱反轉
+                    clipPan  = (unit.invertPan  ^ invertControllerPan)  ? -clipPan  : clipPan;
+                    clipTilt = (unit.invertTilt ^ invertControllerTilt) ? -clipTilt : clipTilt;
                 }
 
                 // ── 正規化角度：確保每個 Clip 的角度在 curPan/curTilt 的 ±180° 範圍內 ──
@@ -320,6 +318,16 @@ public class UnifiedStageController : MonoBehaviour
 
                 totalPan  += clipPan  * clip.weight;
                 totalTilt += clipTilt * clip.weight;
+            }
+
+            // 快取這張 Clip 的静態中心方向，供 Gizmo 使用
+            if (debugDrawLocalPlane && _dbgCenterDir != null && ui < _dbgCenterDir.Length && clips.Count > 0)
+            {
+                // 找權重最大的 Clip
+                var domClip = clips[0];
+                for (int ci = 1; ci < clips.Count; ci++)
+                    if (clips[ci].weight > domClip.weight) domClip = clips[ci];
+                _dbgCenterDir[ui] = ComputeStaticCenterDir(domClip.mode, ui, domClip.staticOffset);
             }
 
             // ===== 物理更新 =====
@@ -340,17 +348,9 @@ public class UnifiedStageController : MonoBehaviour
                 else
                 {
                     sTime = Mathf.Max(sTime, 0.02f);
-                    if (hasContinuousRotation)
-                    {
-                        // 圓周運動：用 SmoothDamp（不包角），避免 360°→0° 反轉
-                        unit.curPan = Mathf.SmoothDamp(unit.curPan, totalPan, ref unit.velPan, sTime, mSpeed, physicalDt);
-                        unit.curTilt = Mathf.SmoothDamp(unit.curTilt, totalTilt, ref unit.velTilt, sTime, mSpeed, physicalDt);
-                    }
-                    else
-                    {
-                        unit.curPan = Mathf.SmoothDampAngle(unit.curPan, totalPan, ref unit.velPan, sTime, mSpeed, physicalDt);
-                        unit.curTilt = Mathf.SmoothDampAngle(unit.curTilt, totalTilt, ref unit.velTilt, sTime, mSpeed, physicalDt);
-                    }
+                    // Circle 模式輸出已改為有界的 sin/cos，統一用 SmoothDampAngle
+                    unit.curPan  = Mathf.SmoothDampAngle(unit.curPan,  totalPan,  ref unit.velPan,  sTime, mSpeed, physicalDt);
+                    unit.curTilt = Mathf.SmoothDampAngle(unit.curTilt, totalTilt, ref unit.velTilt, sTime, mSpeed, physicalDt);
                 }
 
                 unit.panTransform.localRotation = Quaternion.AngleAxis(unit.curPan, GetSafeAxis(panRotationVector, Vector3.up));
@@ -386,55 +386,135 @@ public class UnifiedStageController : MonoBehaviour
 
     // ==========================================
     //  角度計算（per-unit，含 Random 兩段式）
+    //  直接輸出 pan/tilt 角度，包含 staticOffset
     // ==========================================
     private Vector2 CalculateAnglesForUnit(
         RotationMode mode, float speed, float range,
-        float et, int index, float randomStrength)
+        float et, int index, Vector2 staticOffset, float randomStrength)
     {
         float p = 0, t = 0;
 
         switch (mode)
         {
             case RotationMode.Static:
-                // offset 在外部加
-                p = 0;
-                t = 0;
+                p = staticOffset.x;
+                t = staticOffset.y;
                 break;
 
             case RotationMode.Scan:
-                p = Mathf.Sin(et * speed) * range;
-                t = 45f;
+                p = Mathf.Sin(et * speed) * range + staticOffset.x;
+                t = 45f + staticOffset.y;
                 break;
 
             case RotationMode.Circle:
-                p = (et * speed * 20f);
-                t = range;
+                // Euler 空間圓：pan/tilt 各自 sin/cos，相位差 90°
+                // staticOffset 控制圓心， range 是角度半徑，與軸向設定無關
+                float theta = et * speed * 20f * Mathf.Deg2Rad;
+                p = Mathf.Sin(theta) * range + staticOffset.x;
+                t = Mathf.Cos(theta) * range + staticOffset.y;
                 break;
 
             case RotationMode.VerticalSwing:
-                p = 0;
-                t = Mathf.Sin(et * speed) * range;
+                p = staticOffset.x;
+                t = Mathf.Sin(et * speed) * range + staticOffset.y;
                 break;
 
             case RotationMode.Random:
-                // 兩段式混合：randomStrength 控制噪波強度
-                float initP = (Mathf.PerlinNoise(0f, index * 0.5f) - 0.5f) * 2f * range;
-                float initT = (Mathf.PerlinNoise(index * 0.5f, 0f) - 0.5f) * 2f * range;
-                float fullP = (Mathf.PerlinNoise(et * speed, index * 0.5f) - 0.5f) * 2f * range;
-                float fullT = (Mathf.PerlinNoise(index * 0.5f, et * speed) - 0.5f) * 2f * range;
+                float initP = (Mathf.PerlinNoise(0f, index * 0.5f) - 0.5f) * 2f * range + staticOffset.x;
+                float initT = (Mathf.PerlinNoise(index * 0.5f, 0f) - 0.5f) * 2f * range + staticOffset.y;
+                float fullP = (Mathf.PerlinNoise(et * speed, index * 0.5f) - 0.5f) * 2f * range + staticOffset.x;
+                float fullT = (Mathf.PerlinNoise(index * 0.5f, et * speed) - 0.5f) * 2f * range + staticOffset.y;
                 p = Mathf.Lerp(initP, fullP, randomStrength);
                 t = Mathf.Lerp(initT, fullT, randomStrength);
                 break;
 
             case RotationMode.Cross:
-                // 每個 unit 直接計算自己的角度（panSide 基於 index）
                 float panSide = (index % 2 == 0) ? 1f : -1f;
-                p = (90f * panSide);
-                t = (Mathf.Sin(et * speed) * range) + 35f + 10f;
+                p = (90f * panSide) + staticOffset.x;
+                t = (Mathf.Sin(et * speed) * range) + 35f + staticOffset.y + 10f;
                 break;
         }
 
         return new Vector2(p, t);
+    }
+
+    // ==========================================
+    //  Circle 模式：幾何圓錐方向式 solver
+    //  適用於 beam-along-localY 燈具（tiltTransform.up 為光束方向）
+    //  staticOffset 定義圓心， range=角度半徑， speed=繞圓速度
+    //  輸出經 DeltaAngle 正規化後，由 SmoothDampAngle 連續追蹤
+    // ==========================================
+    private Vector2 CalculateCircleAngles(float et, float speed, float range, Vector2 staticOffset)
+    {
+        Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
+        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+
+        // 1. 圓心方向：beam(P0, T0) = AngleAxis(P0, panAxis) * AngleAxis(T0, tiltAxis) * Vector3.up
+        Quaternion centerPanQ  = Quaternion.AngleAxis(staticOffset.x, panAxis);
+        Quaternion centerTiltQ = Quaternion.AngleAxis(staticOffset.y, tiltAxis);
+        Vector3 centerDir = centerPanQ * centerTiltQ * Vector3.up;
+
+        // 2. 圓錐邊緣起點：tilt 多居移 range 度
+        Quaternion startTiltQ = Quaternion.AngleAxis(staticOffset.y + range, tiltAxis);
+        Vector3 startEdge = centerPanQ * startTiltQ * Vector3.up;
+
+        // 3. 繞 centerDir 旋轉 theta 度，產生幾何等速圓
+        float thetaDeg = et * speed * 20f;
+        Vector3 finalDir = Quaternion.AngleAxis(thetaDeg, centerDir) * startEdge;
+
+        // 4. 反解 pan：以「T=90°時的水平投影方向」為 pan=0° 參考
+        //    不需磁白就能適用於任意 tiltAxis
+        Vector3 panRef = Vector3.ProjectOnPlane(
+            Quaternion.AngleAxis(90f, tiltAxis) * Vector3.up,
+            panAxis
+        ).normalized;
+
+        Vector3 hProj = Vector3.ProjectOnPlane(finalDir, panAxis);
+        float pan;
+        if (hProj.sqrMagnitude < 0.0001f)
+            pan = staticOffset.x; // 近天頂/底部：保持參考 pan
+        else
+            pan = SignedAngleOnAxis(panRef, hProj, panAxis);
+
+        // 5. 反解 tilt：消除 pan 後，從 Vector3.up（T=0 的光束方向）量起
+        Quaternion undoPan = Quaternion.AngleAxis(-pan, panAxis);
+        Vector3 undone = undoPan * finalDir;
+        float tilt = SignedAngleOnAxis(Vector3.up, undone, tiltAxis);
+
+        return new Vector2(pan, tilt);
+    }
+
+    // ==========================================
+    //  計算各模式的「静態中心方向」（含模式預設角度）
+    //  用於 Gizmo 圖示展示
+    // ==========================================
+    private Vector3 ComputeStaticCenterDir(RotationMode mode, int unitIdx, Vector2 staticOffset)
+    {
+        Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
+        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+
+        float pan, tilt;
+        switch (mode)
+        {
+            case RotationMode.Scan:
+                pan  = staticOffset.x;
+                tilt = 45f + staticOffset.y;   // Scan 預設 tilt=45°
+                break;
+            case RotationMode.Cross:
+                float panSide = (unitIdx % 2 == 0) ? 1f : -1f;
+                pan  = 90f * panSide + staticOffset.x;
+                tilt = 45f + staticOffset.y;   // Cross 預設 tilt=45° (35+10)
+                break;
+            default: // Static, Circle, VerticalSwing, Random
+                pan  = staticOffset.x;
+                tilt = staticOffset.y;
+                break;
+        }
+
+        // beam(pan, tilt) 在 pan-parent 局部空間的方向（beam-along-localY）
+        return Quaternion.AngleAxis(pan, panAxis)
+             * Quaternion.AngleAxis(tilt, tiltAxis)
+             * Vector3.up;
     }
 
     // ==========================================
@@ -509,5 +589,80 @@ public class UnifiedStageController : MonoBehaviour
         float sum = 0;
         for (int i = s; i <= e; i++) sum += spectrum[i];
         return sum / (e - s + 1);
+    }
+
+    // ==========================================
+    //  Debug Gizmo：繪製每顆燈的静態中心方向與居部平面
+    //  不跟著動画移動，顯示 staticOffset 所定義的圓心 / 標準朝向
+    //  模式預設角度（Scan/Cross 的 45°）已納入計算
+    // ==========================================
+    void OnDrawGizmos()
+    {
+        if (!debugDrawLocalPlane || slmUnits == null) return;
+
+        float s = debugPlaneSize;
+        Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
+        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+
+        for (int i = 0; i < slmUnits.Length; i++)
+        {
+            var unit = slmUnits[i];
+            if (unit == null || unit.tiltTransform == null || unit.panTransform == null) continue;
+
+            Vector3 origin = unit.tiltTransform.position;
+
+            // 取 pan-parent Transform
+            Transform panParent = unit.panTransform.parent;
+
+            // 送展後  静態中心方向（世界空間）
+            Vector3 centerDir;
+            if (_dbgCenterDir != null && i < _dbgCenterDir.Length && _dbgCenterDir[i].sqrMagnitude > 0.0001f)
+            {
+                // 由 UpdateStage 快取的平面局部空間方向，轉到世界空間
+                centerDir = panParent != null
+                    ? panParent.TransformDirection(_dbgCenterDir[i])
+                    : _dbgCenterDir[i];
+            }
+            else
+            {
+                // 未播放時的 fallback：用現在 tiltTransform.up 看似方向
+                centerDir = unit.tiltTransform.up;
+            }
+
+            // pan 軸（世界空間）
+            Vector3 wPanAxis = panParent != null ? panParent.TransformDirection(panAxis) : panAxis;
+
+            // 垃直於 centerDir 的居部軸
+            Vector3 wRight = Vector3.Cross(wPanAxis, centerDir);
+            if (wRight.sqrMagnitude < 0.0001f)
+            {
+                // 天頂/底部 gimbal：fall back to tilt axis direction
+                wRight = panParent != null
+                    ? panParent.TransformDirection(Quaternion.AngleAxis(90f, panAxis) * Vector3.right)
+                    : Vector3.right;
+            }
+            else wRight = wRight.normalized;
+            Vector3 wUp = Vector3.Cross(centerDir, wRight).normalized;
+
+            // 黃色線：静態中心方向
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(origin, centerDir * s * 2f);
+
+            // 青色方框：垃直於 centerDir 的平面
+            Gizmos.color = Color.cyan;
+            Vector3 r = wRight * s;
+            Vector3 u = wUp * s;
+            Vector3 c = origin + centerDir * s;
+            Gizmos.DrawLine(c - r - u, c + r - u);
+            Gizmos.DrawLine(c + r - u, c + r + u);
+            Gizmos.DrawLine(c + r + u, c - r + u);
+            Gizmos.DrawLine(c - r + u, c - r - u);
+
+            // 紅：pan 軸；綠：tilt 軸
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(origin, wPanAxis * s * 0.5f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(origin, unit.panTransform.TransformDirection(tiltAxis) * s * 0.5f);
+        }
     }
 }

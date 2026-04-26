@@ -22,7 +22,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("旋轉模式")] public UnifiedStageController.RotationMode rotationMode;
     [Tooltip("旋轉速度")] public float rotationSpeed = 1.0f;
     [Tooltip("旋轉幅度")] public float rotationRange = 45.0f;
-    [Tooltip("靜止偏移角度")] public Vector2 staticAngleOffset;
+    [Tooltip("静止角度偏移 (x=pan基底, y=tilt基底)")] public Vector2 staticAngleOffset;
     [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f;
     [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;

@@ -14,7 +14,7 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     public UnifiedStageController.RotationMode clipMode;
     [Tooltip("旋轉速度")] public float rotationSpeed;
     [Tooltip("旋轉幅度")] public float rotationRange;
-    [Tooltip("靜止偏移")] public Vector2 staticOffset;
+    [Tooltip("靜止偏移 (x=pan, y=tilt)")] public Vector2 staticOffset;
     [Tooltip("停頓時間")] public float pauseTime;
     public Transform clipTarget;
 

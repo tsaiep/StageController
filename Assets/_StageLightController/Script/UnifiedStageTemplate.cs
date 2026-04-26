@@ -19,7 +19,7 @@ public class UnifiedStageTemplate : ScriptableObject
     [Tooltip("旋轉模式")] public UnifiedStageController.RotationMode rotationMode;
     [Tooltip("旋轉速度")] public float rotationSpeed = 2f;
     [Tooltip("旋轉幅度")] public float rotationRange = 45f;
-    [Tooltip("靜止角度偏移")] public Vector2 staticAngleOffset;
+    [Tooltip("静止角度偏移 (x=pan基底, y=tilt基底)")] public Vector2 staticAngleOffset;
     [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f;
     [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
 
