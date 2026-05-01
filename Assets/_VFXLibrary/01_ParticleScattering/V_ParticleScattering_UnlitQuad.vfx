@@ -1938,7 +1938,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614854}
   m_ExposedName: Gravity
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 5
   m_Category: Force
   m_Min:
     m_Type:
@@ -2019,7 +2019,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614856}
   m_ExposedName: Drag
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 8
   m_Category: Force
   m_Min:
     m_Type:
@@ -2544,7 +2544,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614871}
   m_ExposedName: Lifetime Range
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 9
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -3456,7 +3456,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614898}
   m_ExposedName: Turbulence Strength
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 4
   m_Category: Force
   m_Min:
     m_Type:
@@ -3537,7 +3537,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614900}
   m_ExposedName: Turbulence Frequency
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 3
   m_Category: Force
   m_Min:
     m_Type:
@@ -3618,7 +3618,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614902}
   m_ExposedName: Spawn Box Size
   m_Exposed: 1
-  m_Order: 9
+  m_Order: 10
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -4004,7 +4004,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614914}
   m_ExposedName: Particle Size Range
   m_Exposed: 1
-  m_Order: 10
+  m_Order: 11
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -4227,7 +4227,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614920}
   m_ExposedName: Color 1
   m_Exposed: 1
-  m_Order: 12
+  m_Order: 13
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -4444,7 +4444,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614926}
   m_ExposedName: Color 2
   m_Exposed: 1
-  m_Order: 13
+  m_Order: 14
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -5595,7 +5595,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615004}
   m_ExposedName: Particle Texture
   m_Exposed: 1
-  m_Order: 11
+  m_Order: 12
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -5874,7 +5874,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615013}
   m_ExposedName: Size Over Lifetime
   m_Exposed: 1
-  m_Order: 14
+  m_Order: 15
   m_Category: Lifetime Animation
   m_Min:
     m_Type:
@@ -5955,7 +5955,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615015}
   m_ExposedName: Color Over Lifetime
   m_Exposed: 1
-  m_Order: 15
+  m_Order: 16
   m_Category: Lifetime Animation
   m_Min:
     m_Type:
@@ -7736,7 +7736,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615071}
   m_ExposedName: Initial Velocity
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: Force
   m_Min:
     m_Type:
@@ -7919,7 +7919,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615076}
   m_ExposedName: Spawn Control
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 6
   m_Category: 
   m_Min:
     m_Type:
@@ -8245,7 +8245,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615085}
   m_ExposedName: Fade Out by Spawn Control
   m_Exposed: 1
-  m_Order: 16
+  m_Order: 17
   m_Category: 
   m_Min:
     m_Type:
@@ -9576,7 +9576,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615133}
   m_ExposedName: Vortex Strength
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 7
   m_Category: Force
   m_Min:
     m_Type:
@@ -9856,7 +9856,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615143}
   m_ExposedName: Sparkling Speed
   m_Exposed: 1
-  m_Order: 17
+  m_Order: 18
   m_Category: Lifetime Animation
   m_Min:
     m_Type:
@@ -11376,7 +11376,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615189}
   m_ExposedName: Initial Velocity Randomize
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: Force
   m_Min:
     m_Type:
