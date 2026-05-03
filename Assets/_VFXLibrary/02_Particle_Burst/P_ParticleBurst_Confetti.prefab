@@ -41,7 +41,7 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1734800154594232502}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 220d9f788107220448dd8e4261052c87, type: 3}
+  m_Asset: {fileID: 8926484042661614526, guid: aaefbc98742e281489e8c52f3f028109, type: 3}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -78,12 +78,15 @@ VisualEffect:
       - m_Value: 1
         m_Name: Turbulence Strength
         m_Overridden: 1
+      - m_Value: 0.85
+        m_Name: Smoothness
+        m_Overridden: 1
     m_Vector2f:
       m_Array:
       - m_Value: {x: 0.5, y: 2}
         m_Name: Lifetime Range
         m_Overridden: 1
-      - m_Value: {x: 0.25, y: 1}
+      - m_Value: {x: 0.25, y: 1.5}
         m_Name: Rotation Speed Range
         m_Overridden: 1
       - m_Value: {x: 0.2, y: 0.6}
@@ -102,7 +105,39 @@ VisualEffect:
     m_AnimationCurve:
       m_Array: []
     m_Gradient:
-      m_Array: []
+      m_Array:
+      - m_Value:
+          serializedVersion: 2
+          key0: {r: 0, g: 0.18741083, b: 1, a: 1}
+          key1: {r: 1, g: 0.51870775, b: 0, a: 1}
+          key2: {r: 0.03810525, g: 1, b: 0, a: 1}
+          key3: {r: 1, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 16769
+          ctime1: 31033
+          ctime2: 44911
+          ctime3: 65535
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 0
+          atime1: 65535
+          atime2: 65535
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 1
+          m_ColorSpace: 1
+          m_NumColorKeys: 4
+          m_NumAlphaKeys: 2
+        m_Name: Color Gradient
+        m_Overridden: 1
     m_NamedObject:
       m_Array: []
     m_Bool:

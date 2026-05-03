@@ -41,9 +41,9 @@ MonoBehaviour:
   uiBounds:
     serializedVersion: 2
     x: -804
-    y: -1435
-    width: 2130
-    height: 2978
+    y: -1433
+    width: 2131
+    height: 2993
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -262,7 +262,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Color, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":0.0}'
+      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":1.0}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -278,7 +278,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Color, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":0.0}'
+      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":1.0}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -1759,7 +1759,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614854}
   m_ExposedName: Gravity
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 11
   m_Category: Force
   m_Min:
     m_Type:
@@ -1840,7 +1840,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614856}
   m_ExposedName: Drag
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 16
   m_Category: Force
   m_Min:
     m_Type:
@@ -2365,7 +2365,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614871}
   m_ExposedName: Lifetime Range
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -3277,7 +3277,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614898}
   m_ExposedName: Turbulence Strength
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 9
   m_Category: Force
   m_Min:
     m_Type:
@@ -3358,7 +3358,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614900}
   m_ExposedName: Turbulence Frequency
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 7
   m_Category: Force
   m_Min:
     m_Type:
@@ -3439,7 +3439,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614902}
   m_ExposedName: Spawn Box Size
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 5
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -3825,7 +3825,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614914}
   m_ExposedName: Particle Size Range
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 8
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -4041,14 +4041,14 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
   - {fileID: 8926484042661614920}
   m_ExposedName: Color 1
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 13
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -4100,7 +4100,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Color, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":0.0}'
+      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":1.0}'
     m_Space: -1
   m_Property:
     name: o
@@ -4258,14 +4258,14 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
   - {fileID: 8926484042661614926}
   m_ExposedName: Color 2
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 14
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -4317,7 +4317,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Color, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":0.0}'
+      m_SerializableObject: '{"r":1.0,"g":1.0,"b":1.0,"a":1.0}'
     m_Space: -1
   m_Property:
     name: o
@@ -5416,7 +5416,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615004}
   m_ExposedName: Base Map
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 12
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -5497,7 +5497,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615013}
   m_ExposedName: Size Over Lifetime
   m_Exposed: 1
-  m_Order: 15
+  m_Order: 19
   m_Category: Lifetime Animation
   m_Min:
     m_Type:
@@ -5578,7 +5578,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615015}
   m_ExposedName: Color Over Lifetime
   m_Exposed: 1
-  m_Order: 16
+  m_Order: 20
   m_Category: Lifetime Animation
   m_Min:
     m_Type:
@@ -7359,7 +7359,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615071}
   m_ExposedName: Initial Velocity
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 3
   m_Category: Force
   m_Min:
     m_Type:
@@ -7542,7 +7542,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615076}
   m_ExposedName: Spawn Control
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: 
   m_Min:
     m_Type:
@@ -7771,7 +7771,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615085}
   m_ExposedName: Fade Out by Spawn Control
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 4
   m_Category: 
   m_Min:
     m_Type:
@@ -9005,7 +9005,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615133}
   m_ExposedName: Vortex Strength
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 15
   m_Category: Force
   m_Min:
     m_Type:
@@ -10495,7 +10495,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615190}
   m_ExposedName: Rotation Speed Range
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 6
   m_Category: Force
   m_Min:
     m_Type:
@@ -10648,7 +10648,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615194}
   m_ExposedName: Spawn Mesh
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 10
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -10729,7 +10729,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615196}
   m_ExposedName: Smoothness
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 17
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -10812,7 +10812,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615198}
   m_ExposedName: Metallic
   m_Exposed: 1
-  m_Order: 9
+  m_Order: 18
   m_Category: Spawn
   m_Min:
     m_Type:
