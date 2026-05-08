@@ -51,7 +51,7 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 4
+      - m_Value: 8
         m_Name: Spawn Count
         m_Overridden: 1
       - m_Value: 1
@@ -68,11 +68,14 @@ VisualEffect:
         m_Overridden: 1
     m_Vector2f:
       m_Array:
-      - m_Value: {x: 0.05, y: 0.25}
+      - m_Value: {x: 0.025, y: 0.15}
         m_Name: Particle Size Range
         m_Overridden: 1
       - m_Value: {x: 0.2, y: 0.3}
         m_Name: Rotation Speed Range
+        m_Overridden: 1
+      - m_Value: {x: 1.5, y: 2}
+        m_Name: Lifetime Range
         m_Overridden: 1
     m_Vector3f:
       m_Array: []
@@ -125,7 +128,7 @@ VisualEffect:
       m_Array:
       - m_Value:
           serializedVersion: 2
-          key0: {r: 3.9999995, g: 1.9303213, b: 0, a: 0}
+          key0: {r: 3.795317, g: 2.601196, b: 1.4679996, a: 0}
           key1: {r: 1, g: 1, b: 1, a: 1}
           key2: {r: 0, g: 0, b: 0, a: 1}
           key3: {r: 0, g: 0, b: 0, a: 0}
@@ -134,7 +137,7 @@ VisualEffect:
           key6: {r: 0, g: 0, b: 0, a: 0}
           key7: {r: 0, g: 0, b: 0, a: 0}
           ctime0: 0
-          ctime1: 40162
+          ctime1: 16703
           ctime2: 0
           ctime3: 0
           ctime4: 0
