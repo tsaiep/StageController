@@ -10860,7 +10860,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618490}
   m_ExposedName: Child Lifetime
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 3
   m_Category: Child
   m_Min:
     m_Type:
@@ -25342,7 +25342,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619139}
   m_ExposedName: Child Spawn Radius
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: Child
   m_Min:
     m_Type:
@@ -27253,7 +27253,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619197}
   m_ExposedName: Spawn Rate
   m_Exposed: 1
-  m_Order: 16
+  m_Order: 17
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -27334,7 +27334,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619202}
   m_ExposedName: Target Height Range
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: Parent
   m_Min:
     m_Type:

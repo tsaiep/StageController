@@ -4090,7 +4090,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618167}
   m_ExposedName: Parent Base Map
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 6
   m_Category: Parent
   m_Min:
     m_Type:
@@ -4171,7 +4171,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618173}
   m_ExposedName: Gravity
   m_Exposed: 1
-  m_Order: 11
+  m_Order: 14
   m_Category: Force
   m_Min:
     m_Type:
@@ -4297,7 +4297,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618175}
   m_ExposedName: Turbulence Strength
   m_Exposed: 1
-  m_Order: 13
+  m_Order: 15
   m_Category: Force
   m_Min:
     m_Type:
@@ -4405,7 +4405,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618177}
   m_ExposedName: Turbulence Frequency
   m_Exposed: 1
-  m_Order: 14
+  m_Order: 16
   m_Category: Force
   m_Min:
     m_Type:
@@ -4513,7 +4513,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618179}
   m_ExposedName: Color Gradient
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 7
   m_Category: Parent
   m_Min:
     m_Type:
@@ -6948,7 +6948,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618331}
   m_ExposedName: Burst Speed Range
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 9
   m_Category: Force
   m_Min:
     m_Type:
@@ -7101,7 +7101,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618335}
   m_ExposedName: Burst Drag
   m_Exposed: 1
-  m_Order: 10
+  m_Order: 13
   m_Category: Force
   m_Min:
     m_Type:
@@ -10805,7 +10805,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618486}
   m_ExposedName: Child Base Map
   m_Exposed: 1
-  m_Order: 9
+  m_Order: 12
   m_Category: Child
   m_Min:
     m_Type:
@@ -10886,7 +10886,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618488}
   m_ExposedName: Child Hue Variety
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 10
   m_Category: Child
   m_Min:
     m_Type:
@@ -10969,7 +10969,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618490}
   m_ExposedName: Child Lifetime
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: Child
   m_Min:
     m_Type:
@@ -17141,7 +17141,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618759}
   m_ExposedName: Sparkling Speed
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 8
   m_Category: Child
   m_Min:
     m_Type:
@@ -23050,7 +23050,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618970}
   m_ExposedName: Trail Lifetime
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 4
   m_Category: Child
   m_Min:
     m_Type:
@@ -23270,7 +23270,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618976}
   m_ExposedName: Trail Alpha
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 11
   m_Category: Child
   m_Min:
     m_Type:
@@ -24517,7 +24517,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619089}
   m_ExposedName: Spawn Range
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 3
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -24704,7 +24704,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619094}
   m_ExposedName: Spawn Rate
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: Spawn
   m_Min:
     m_Type:
@@ -25578,7 +25578,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619157}
   m_ExposedName: Target Height Range
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 5
   m_Category: Parent
   m_Min:
     m_Type:

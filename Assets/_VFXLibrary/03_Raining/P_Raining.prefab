@@ -54,7 +54,7 @@ VisualEffect:
       - m_Value: 1
         m_Name: Spawn Control
         m_Overridden: 1
-      - m_Value: 0.319
+      - m_Value: 0.242
         m_Name: Wind Direction
         m_Overridden: 1
       - m_Value: 1
@@ -66,14 +66,23 @@ VisualEffect:
       - m_Value: 1000
         m_Name: Spawn Rate
         m_Overridden: 1
-      - m_Value: 24
+      - m_Value: 36
         m_Name: Particle Stretch
         m_Overridden: 1
-      - m_Value: 20
+      - m_Value: 30
         m_Name: Rain Velocity
         m_Overridden: 1
       - m_Value: 3
         m_Name: Turbulence Frequency
+        m_Overridden: 1
+      - m_Value: 0.1
+        m_Name: Ground Height
+        m_Overridden: 1
+      - m_Value: 1
+        m_Name: Ripple Lifetime
+        m_Overridden: 1
+      - m_Value: 1
+        m_Name: Splash Lifetime
         m_Overridden: 1
     m_Vector2f:
       m_Array:
