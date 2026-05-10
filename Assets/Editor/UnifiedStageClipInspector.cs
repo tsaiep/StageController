@@ -62,11 +62,17 @@ public class UnifiedStageClipInspector : Editor
                 // 2. 數據同步（完整欄位）
                 clip.lightGradient          = t.lightGradient;
                 clip.intensityMultiplier    = t.intensityMultiplier;
-                clip.minBrightness          = t.minBrightness;
                 clip.sensitivity            = t.sensitivity;
                 clip.smoothness             = t.smoothness;
                 clip.beamAngle              = t.beamAngle;
                 clip.enableScatterMode      = t.enableScatterMode;
+                clip.colorSampleMode        = t.colorSampleMode;
+                clip.bpm                    = t.bpm;
+                clip.beatTimeRef            = t.beatTimeRef;
+                clip.beatPhaseOffset        = t.beatPhaseOffset;
+                clip.beatSnapColors         = t.beatSnapColors;
+                clip.globalColor            = t.globalColor;
+                clip.staticColorFinishMode  = t.staticColorFinishMode;
                 clip.rotationMode           = t.rotationMode;
                 clip.rotationSpeed          = t.rotationSpeed;
                 clip.rotationRange          = t.rotationRange;
@@ -77,7 +83,6 @@ public class UnifiedStageClipInspector : Editor
                 clip.groupDelayFactor       = t.groupDelayFactor;
                 clip.lightDelayCurve        = t.lightDelayCurve;
                 clip.lightDelayFactor       = t.lightDelayFactor;
-                clip.staticColorFinishMode  = t.staticColorFinishMode;
 
                 // 3. 設定內部名稱
                 string newName = t.name;
@@ -138,11 +143,17 @@ public class UnifiedStageClipInspector : Editor
         UnifiedStageTemplate newAsset = ScriptableObject.CreateInstance<UnifiedStageTemplate>();
         newAsset.lightGradient       = clip.lightGradient;
         newAsset.intensityMultiplier = clip.intensityMultiplier;
-        newAsset.minBrightness       = clip.minBrightness;
         newAsset.sensitivity         = clip.sensitivity;
         newAsset.smoothness          = clip.smoothness;
         newAsset.beamAngle           = clip.beamAngle;
         newAsset.enableScatterMode   = clip.enableScatterMode;
+        newAsset.colorSampleMode     = clip.colorSampleMode;
+        newAsset.bpm                 = clip.bpm;
+        newAsset.beatTimeRef         = clip.beatTimeRef;
+        newAsset.beatPhaseOffset     = clip.beatPhaseOffset;
+        newAsset.beatSnapColors      = clip.beatSnapColors;
+        newAsset.globalColor         = clip.globalColor;
+        newAsset.staticColorFinishMode = clip.staticColorFinishMode;
         newAsset.rotationMode        = clip.rotationMode;
         newAsset.rotationSpeed       = clip.rotationSpeed;
         newAsset.rotationRange       = clip.rotationRange;
@@ -153,7 +164,6 @@ public class UnifiedStageClipInspector : Editor
         newAsset.groupDelayFactor    = clip.groupDelayFactor;
         newAsset.lightDelayCurve     = clip.lightDelayCurve;
         newAsset.lightDelayFactor    = clip.lightDelayFactor;
-        newAsset.staticColorFinishMode = clip.staticColorFinishMode;
 
         string path = EditorUtility.SaveFilePanelInProject("儲存新模板", "NewStageTemplate", "asset", "請輸入模板名稱");
         if (!string.IsNullOrEmpty(path))

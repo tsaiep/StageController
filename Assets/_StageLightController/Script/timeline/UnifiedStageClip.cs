@@ -10,9 +10,22 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Header("燈光感應設定")]
     [Tooltip("燈光漸變")] public Gradient lightGradient = new Gradient();
     [Tooltip("總體亮度倍率")] public float intensityMultiplier = 1.0f;
-    [Tooltip("最低亮度")] public float minBrightness = 0.1f;
-    [Tooltip("靈敏度")] public float sensitivity = 1.5f;
-    [Tooltip("平滑度")] public float smoothness = 8.0f;
+
+    [Header("顏色取樣設定")]
+    [Tooltip("顏色取樣模式")] public UnifiedStageController.ColorSampleMode colorSampleMode = UnifiedStageController.ColorSampleMode.MotionCycle;
+
+    [Tooltip("靈敏度（AlongAudioSource 模式：音量放大倍率）")] public float sensitivity = 1.5f;
+    [Tooltip("平滑度（AlongAudioSource 模式：音量追蹤速度，越低越不易閃爍）")] public float smoothness = 8.0f;
+
+    [Tooltip("節拍速度（BPM）")] public float bpm = 120f;
+    [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
+    [Tooltip("節拍相位偏移（秒），Timeline Global 模式下用來微調節拍與畫面的同步")] public float beatPhaseOffset = 0f;
+    [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
+    [ColorUsage(true, true), Tooltip("全域顏色乘算（HDR），作用在所有模式最終輸出的顏色上")] public Color globalColor = Color.white;
+
+    [Header("靜止模式顏色選項")]
+    [Tooltip("片段進度模式顏色動畫完成後的行為：Clamp — 停在漸層末端 / Loop — 循環回起點")]
+    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
 
     [Header("燈具物理設定")]
     [Tooltip("光束角度")] public float beamAngle = 5.0f;
@@ -26,10 +39,6 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f;
     [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
-
-    [Header("靜止模式顏色選項")]
-    [Tooltip("靜止模式顏色動畫完成後的行為：Clamp —停在漸層末端 / Loop —循環回起點")]
-    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
 
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
@@ -62,9 +71,16 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         {
             lightGradient       = applyTemplate.lightGradient;
             intensityMultiplier = applyTemplate.intensityMultiplier;
-            minBrightness       = applyTemplate.minBrightness;
             sensitivity         = applyTemplate.sensitivity;
             smoothness          = applyTemplate.smoothness;
+
+            colorSampleMode     = applyTemplate.colorSampleMode;
+            bpm                 = applyTemplate.bpm;
+            beatTimeRef         = applyTemplate.beatTimeRef;
+            beatPhaseOffset     = applyTemplate.beatPhaseOffset;
+            beatSnapColors      = applyTemplate.beatSnapColors;
+            globalColor         = applyTemplate.globalColor;
+            staticColorFinishMode = applyTemplate.staticColorFinishMode;
 
             beamAngle           = applyTemplate.beamAngle;
             enableScatterMode   = applyTemplate.enableScatterMode;
@@ -79,7 +95,6 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             groupDelayFactor    = applyTemplate.groupDelayFactor;
             lightDelayCurve     = applyTemplate.lightDelayCurve;
             lightDelayFactor    = applyTemplate.lightDelayFactor;
-            staticColorFinishMode = applyTemplate.staticColorFinishMode;
 
             clipDisplayName     = applyTemplate.name;
             applyTemplate       = null;
@@ -93,7 +108,6 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 
         behaviour.clipGradient          = lightGradient;
         behaviour.clipIntensity         = intensityMultiplier;
-        behaviour.minBrightness         = minBrightness;
         behaviour.sensitivity           = sensitivity;
         behaviour.smoothness            = smoothness;
         behaviour.beamAngle             = beamAngle;
@@ -112,6 +126,13 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.animationOffset       = animationOffset;
         behaviour.freezeUseClipGradient = freezeUseClipGradient;
         behaviour.staticColorFinishMode = staticColorFinishMode;
+
+        behaviour.colorSampleMode       = colorSampleMode;
+        behaviour.bpm                   = bpm;
+        behaviour.beatTimeRef           = beatTimeRef;
+        behaviour.beatPhaseOffset       = beatPhaseOffset;
+        behaviour.beatSnapColors        = beatSnapColors;
+        behaviour.globalColor           = globalColor;
 
         return playable;
     }

@@ -11,9 +11,20 @@ public class UnifiedStageTemplate : ScriptableObject
     [Header("燈光感應設定")]
     [Tooltip("燈光漸變")] public Gradient lightGradient;
     [Tooltip("總體亮度倍率")] public float intensityMultiplier = 1f;
-    [Tooltip("最低亮度")] public float minBrightness = 0.1f;
-    [Tooltip("靈敏度")] public float sensitivity = 1.5f;
-    [Tooltip("平滑度")] public float smoothness = 8f;
+
+    [Header("顏色取樣設定")]
+    [Tooltip("顏色取樣模式")] public UnifiedStageController.ColorSampleMode colorSampleMode = UnifiedStageController.ColorSampleMode.MotionCycle;
+    [Tooltip("靈敏度（AlongAudioSource 模式：音量放大倍率）")] public float sensitivity = 1.5f;
+    [Tooltip("平滑度（AlongAudioSource 模式：音量追蹤速度，越低越不易閃爍）")] public float smoothness = 8f;
+    [Tooltip("節拍速度（BPM）")] public float bpm = 120f;
+    [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
+    [Tooltip("節拍相位偏移（秒）")] public float beatPhaseOffset = 0f;
+    [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
+    [ColorUsage(true, true), Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
+
+    [Header("靜止模式顏色選項")]
+    [Tooltip("片段進度模式顏色動畫完成後的行為：Clamp — 停在漸層末端 / Loop — 循環回起點")]
+    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
 
     [Header("旋轉動作設定")]
     [Tooltip("旋轉模式")] public UnifiedStageController.RotationMode rotationMode;
@@ -34,8 +45,4 @@ public class UnifiedStageTemplate : ScriptableObject
     public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("組內延遲係數（秒），light 延遲 = curve(t) × factor × groupSize")]
     public float lightDelayFactor = 0f;
-
-    [Header("靜止模式顏色選項")]
-    [Tooltip("靜止模式顏色動畫完成後的行為：Clamp — 停在漸層末端 / Loop — 循環回起點")]
-    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
 }

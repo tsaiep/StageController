@@ -6,7 +6,6 @@ public class UnifiedStageBehaviour : PlayableBehaviour
 {
     public Gradient clipGradient;
     [Tooltip("總體亮度倍率")] public float clipIntensity;
-    [Tooltip("最低亮度")] public float minBrightness;
     [Tooltip("靈敏度")] public float sensitivity;
     [Tooltip("平滑度")] public float smoothness;
     [Tooltip("光束角度")] public float beamAngle;
@@ -44,6 +43,15 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Header("靜止模式顏色選項")]
     [Tooltip("顏色動畫完成後的行為：Clamp 停在漸層末端 / Loop 循環回起點")]
     public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
+
+    [Header("顏色取樣設定")]
+    [Tooltip("顏色取樣模式")]
+    public UnifiedStageController.ColorSampleMode colorSampleMode = UnifiedStageController.ColorSampleMode.MotionCycle;
+    [Tooltip("節拍速度（BPM）")] public float bpm = 120f;
+    [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
+    [Tooltip("節拍相位偏移（秒），用於微調全域節拍與畫面的同步")] public float beatPhaseOffset = 0f;
+    [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
+    [Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
 
     /// <summary>
     /// 取得 Clip 內的正規化時間 (0~1)

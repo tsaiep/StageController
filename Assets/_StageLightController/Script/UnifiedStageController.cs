@@ -25,6 +25,21 @@ public class UnifiedStageController : MonoBehaviour
         [InspectorName("循環（回到漸層起點）")] Loop
     }
 
+    public enum ColorSampleMode
+    {
+        [InspectorName("動作循環")]              MotionCycle,
+        [InspectorName("片段進度")]              ClipProgress,
+        [InspectorName("跟隨節拍（漸層取樣）")] BeatGradient,
+        [InspectorName("跟隨節拍（瞬間切換）")] BeatSnap,
+        [InspectorName("跟隨音樂")]              AlongAudioSource,
+    }
+
+    public enum BeatTimeReference
+    {
+        [InspectorName("Clip 起點為第一拍")] ClipLocal,
+        [InspectorName("Timeline 全域時間")] TimelineGlobal,
+    }
+
     [Header("受控單元配置")]
     public SLMUnit[] slmUnits;
     public Transform defaultTarget;
@@ -67,11 +82,11 @@ public class UnifiedStageController : MonoBehaviour
     // Per-unit 靜態中心方向快取（pan-parent 局部空間），由 UpdateStage 寫入，由 OnDrawGizmos 讀取
     private Vector3[] _dbgCenterDir;
 
-    public float GetLowEnergy() { return curLow; }
-    public float GetMidEnergy() { return curMid; }
+    public float GetLowEnergy()  { return curLow; }
+    public float GetMidEnergy()  { return curMid; }
     public float GetHighEnergy() { return curHigh; }
-    public float LowEnergy => curLow;
-    public float MidEnergy => curMid;
+    public float LowEnergy  => curLow;
+    public float MidEnergy  => curMid;
     public float HighEnergy => curHigh;
 
     // ==========================================
@@ -79,18 +94,34 @@ public class UnifiedStageController : MonoBehaviour
     // ==========================================
     public void UpdateStage(
         List<ActiveClipInfo> clips, float[] spec, bool isTimeJump,
-        float mixedInten, float mixedBase, float mixedSense, float mixedSmooth,
-        float mixedBeamAngle, bool activeScatter,
+        float mixedInten, float mixedBeamAngle, bool activeScatter,
         float totalMotionWeight, float weightedEffectiveTime,
-        bool freezeJustActivated)
+        bool freezeJustActivated, float rootTime)
     {
-        // 1. 頻譜分析（全域）
-        System.Array.Copy(spec, spectrum, 256);
         float dt = Application.isPlaying ? Time.deltaTime : 0.02f;
-        ProcessSpectrum(mixedSmooth, mixedSense, isTimeJump, dt);
 
-        float energy = ((curLow + curMid + curHigh) / 3f) * mixedSense;
-        float normalizedEnergy = Mathf.Clamp01(energy);
+        // 1. 頻譜分析（僅 AlongAudioSource 模式使用）
+        bool hasAudioMode = false;
+        float audioWeightedSmooth = 0f, audioTotalWeight = 0f;
+        for (int i = 0; i < clips.Count; i++)
+        {
+            if (clips[i].colorSampleMode == ColorSampleMode.AlongAudioSource)
+            {
+                hasAudioMode = true;
+                audioWeightedSmooth += clips[i].smoothness * clips[i].weight;
+                audioTotalWeight    += clips[i].weight;
+            }
+        }
+        if (hasAudioMode && audioTotalWeight > 0f)
+        {
+            System.Array.Copy(spec, spectrum, 256);
+            ProcessSpectrum(audioWeightedSmooth / audioTotalWeight, isTimeJump, dt);
+        }
+        else if (isTimeJump)
+        {
+            curLow = curMid = curHigh = 0f;
+            lowMax = midMax = highMax = 0.01f;
+        }
 
         // 2. 物理 dt
         bool isMoving = enableMotion && totalMotionWeight > 0.01f;
@@ -178,76 +209,10 @@ public class UnifiedStageController : MonoBehaviour
                 bool applyAnimOffset = clip.mode != RotationMode.Static && clip.mode != RotationMode.FreezeFrame;
                 float unitEt = globalEt - unitDelay + (applyAnimOffset ? clip.animationOffset : 0f);
 
-                // ===== 顏色（動態循環取樣）=====
+                // ===== 顏色（依 ColorSampleMode 計算）=====
                 if (enableColorUpdate)
                 {
-                    Color clipColor;
-                    if (clip.isFreezeFrame)
-                    {
-                        if (clip.freezeUseClipGradient)
-                        {
-                            // FreezeFrame + useClipGradient: 以 Clip 自身 Gradient 取色，
-                            // 以 normalizedClipTime (0~1) 為取樣點（如同靜止模式），
-                            // 並透過 weight 與前後 Clip 正常 Blending
-                            clipColor = (clip.gradient != null)
-                                ? clip.gradient.Evaluate(clip.normalizedClipTime)
-                                : Color.white;
-                        }
-                        else
-                        {
-                            // FreezeFrame 預設: 使用快取的凍結顏色
-                            clipColor = unit.frozenColor;
-                        }
-                    }
-                    else if (clip.mode == RotationMode.Static)
-                    {
-                        // ── Static 模式：延遲後在剩餘窗口內 normalize，確保每顆燈都能走完完整漸層 ──
-                        // delayShift: 延遲占 Clip 總長的比例（0~1）
-                        // 可用窗口: [delayShift, 1]，長度 = window = 1 - delayShift
-                        // 將 normalizedClipTime 在此窗口內 remap 成 0~1
-                        float delayShift = (clip.clipDuration > 0.0001f) ? unitDelay / clip.clipDuration : 0f;
-                        float rawPhase = clip.normalizedClipTime - delayShift;
-                        float window = Mathf.Max(1f - delayShift, 0.0001f);
-
-                        float phase;
-                        switch (clip.staticColorFinishMode)
-                        {
-                            case ColorFinishMode.Loop:
-                                // 延遲期間（rawPhase < 0）固定在漸層起點
-                                // 之後在可用窗口內從 0 跑到 1 再循環
-                                if (rawPhase < 0f)
-                                    phase = 0f;
-                                else
-                                {
-                                    float t = rawPhase / window;
-                                    phase = t - Mathf.Floor(t);
-                                }
-                                break;
-                            default: // Clamp
-                                // rawPhase < 0  → 固定在起點（0）
-                                // rawPhase 在 [0, window] → 線性走至 1
-                                // rawPhase > window → 停在末端（1）
-                                phase = Mathf.Clamp01(rawPhase / window);
-                                break;
-                        }
-
-                        clipColor = (clip.gradient != null) ? clip.gradient.Evaluate(phase) : Color.white;
-                    }
-                    else
-                    {
-                        float cyclePeriod = UnifiedStageBehaviour.GetMotionCyclePeriod(clip.mode, clip.speed);
-                        float colorPhase;
-                        if (cyclePeriod > 0.0001f)
-                        {
-                            colorPhase = unitEt / cyclePeriod;
-                            colorPhase = colorPhase - Mathf.Floor(colorPhase); // frac（處理負數）
-                        }
-                        else
-                        {
-                            colorPhase = clip.normalizedClipTime;
-                        }
-                        clipColor = (clip.gradient != null) ? clip.gradient.Evaluate(colorPhase) : Color.white;
-                    }
+                    Color clipColor = ComputeClipColor(clip, unit, rootTime, unitEt, unitDelay);
                     unitColor += clipColor * clip.weight;
                 }
 
@@ -360,8 +325,7 @@ public class UnifiedStageController : MonoBehaviour
             // ===== 燈光 =====
             if (unit.targetLight != null)
             {
-                float fI = Mathf.Lerp(mixedBase, 1.0f, normalizedEnergy);
-                unit.targetLight.intensity = fI * baseIntensity * mixedInten;
+                unit.targetLight.intensity = baseIntensity * mixedInten;
 
                 Color targetColor = unitColor;
                 Color finalColor = isTimeJump ? targetColor : Color.Lerp(unit.targetLight.color, targetColor, dt * 25f);
@@ -520,7 +484,86 @@ public class UnifiedStageController : MonoBehaviour
     // ==========================================
     //  頻譜處理
     // ==========================================
-    private void ProcessSpectrum(float smooth, float sense, bool isTimeJump, float dt)
+    // ==========================================
+    //  顏色計算（依 ColorSampleMode 分支）
+    // ==========================================
+    private Color ComputeClipColor(ActiveClipInfo clip, SLMUnit unit, float rootTime, float unitEt, float unitDelay)
+    {
+        // FreezeFrame: 維持原有邏輯，不受 colorSampleMode 影響
+        if (clip.isFreezeFrame)
+        {
+            Color fc = clip.freezeUseClipGradient
+                ? ((clip.gradient != null) ? clip.gradient.Evaluate(clip.normalizedClipTime) : Color.white)
+                : unit.frozenColor;
+            return fc * clip.globalColor;
+        }
+
+        Color baseColor;
+        switch (clip.colorSampleMode)
+        {
+            case ColorSampleMode.MotionCycle:
+            {
+                float cyclePeriod = UnifiedStageBehaviour.GetMotionCyclePeriod(clip.mode, clip.speed);
+                float t;
+                if (cyclePeriod > 0.0001f)
+                {
+                    t = unitEt / cyclePeriod;
+                    t = t - Mathf.Floor(t);
+                }
+                else
+                    t = clip.normalizedClipTime;
+                baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(t) : Color.white;
+                break;
+            }
+            case ColorSampleMode.ClipProgress:
+            {
+                float delayShift = (clip.clipDuration > 0.0001f) ? unitDelay / clip.clipDuration : 0f;
+                float rawPhase   = clip.normalizedClipTime - delayShift;
+                float window     = Mathf.Max(1f - delayShift, 0.0001f);
+                float phase;
+                if (clip.staticColorFinishMode == ColorFinishMode.Loop)
+                    phase = rawPhase < 0f ? 0f : (rawPhase / window) - Mathf.Floor(rawPhase / window);
+                else
+                    phase = Mathf.Clamp01(rawPhase / window);
+                baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(phase) : Color.white;
+                break;
+            }
+            case ColorSampleMode.BeatGradient:
+            {
+                float beatTime        = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
+                float beatLen         = 60f / Mathf.Max(clip.bpm, 0.001f);
+                float t               = (beatTime + clip.beatPhaseOffset) / beatLen;
+                t = t - Mathf.Floor(t);
+                if (t < 0f) t += 1f;
+                baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(t) : Color.white;
+                break;
+            }
+            case ColorSampleMode.BeatSnap:
+            {
+                if (clip.beatSnapColors == null || clip.beatSnapColors.Length == 0)
+                    return Color.white * clip.globalColor;
+                float beatTime  = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
+                float beatLen   = 60f / Mathf.Max(clip.bpm, 0.001f);
+                int   beatIdx   = Mathf.FloorToInt((beatTime + clip.beatPhaseOffset) / beatLen);
+                if (beatIdx < 0) beatIdx = 0;
+                baseColor = clip.beatSnapColors[beatIdx % clip.beatSnapColors.Length];
+                break;
+            }
+            case ColorSampleMode.AlongAudioSource:
+            {
+                float energy = ((curLow + curMid + curHigh) / 3f) * clip.sensitivity;
+                float t      = Mathf.Clamp01(energy);
+                baseColor    = (clip.gradient != null) ? clip.gradient.Evaluate(t) : Color.white;
+                break;
+            }
+            default:
+                baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(clip.normalizedClipTime) : Color.white;
+                break;
+        }
+        return baseColor * clip.globalColor;
+    }
+
+    private void ProcessSpectrum(float smooth, bool isTimeJump, float dt)
     {
         if (!enableColorUpdate) return;
 
@@ -532,12 +575,12 @@ public class UnifiedStageController : MonoBehaviour
 
         if (isTimeJump) { curLow = 0; curMid = 0; curHigh = 0; lowMax = 0.01f; midMax = 0.01f; highMax = 0.01f; }
 
-        lowMax = Mathf.Max(lowMax * 0.99f, rL, 0.005f);
-        midMax = Mathf.Max(midMax * 0.99f, rM, 0.005f);
+        lowMax  = Mathf.Max(lowMax  * 0.99f, rL, 0.005f);
+        midMax  = Mathf.Max(midMax  * 0.99f, rM, 0.005f);
         highMax = Mathf.Max(highMax * 0.99f, rH, 0.005f);
 
-        curLow = Mathf.Lerp(curLow, Mathf.Clamp01(rL / lowMax), dt * smooth * 15f);
-        curMid = Mathf.Lerp(curMid, Mathf.Clamp01(rM / midMax), dt * smooth * 15f);
+        curLow  = Mathf.Lerp(curLow,  Mathf.Clamp01(rL / lowMax),  dt * smooth * 15f);
+        curMid  = Mathf.Lerp(curMid,  Mathf.Clamp01(rM / midMax),  dt * smooth * 15f);
         curHigh = Mathf.Lerp(curHigh, Mathf.Clamp01(rH / highMax), dt * smooth * 15f);
     }
 

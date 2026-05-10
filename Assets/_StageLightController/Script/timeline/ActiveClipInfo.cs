@@ -18,7 +18,6 @@ public struct ActiveClipInfo
     public Transform target;
     public bool scatterMode;
     public float intensity;
-    public float baseLevel;
     public float sensitivity;
     public float smoothness;
     public float beamAngle;
@@ -40,4 +39,14 @@ public struct ActiveClipInfo
     // ── Static 模式顏色選項 ──
     public UnifiedStageController.ColorFinishMode staticColorFinishMode; // 動畫完成後的行為
     public float clipDuration;        // Clip 長度（秒），供 Static 延遲偏移計算用
+
+    // ── 顏色取樣模式 ──
+    public UnifiedStageController.ColorSampleMode colorSampleMode;
+    public float bpm;                          // 節拍速度（Beat 系列模式使用）
+    public UnifiedStageController.BeatTimeReference beatTimeRef; // 節拍時間基準
+    public float beatPhaseOffset;              // 全域節拍相位偏移（秒）
+    public Color[] beatSnapColors;             // BeatSnap 顏色列表（依拍順序循環）
+    public Color globalColor;                  // 全域顏色乘算（HDR，乘在所有模式輸出上）
+    public float clipStartTime;                // Clip 在 Timeline 上的絕對起始時間（秒）
+                                               // = rootTime - effectiveTime，供 BeatTimeRef.TimelineGlobal 使用
 }

@@ -9,7 +9,7 @@ public class UnifiedStageMixer : PlayableBehaviour
 
     // ── FreezeFrame 狀態 ──
     private bool _lastFreezeFrameActive = false;
-    private float _frozenInten, _frozenBase, _frozenSense, _frozenSmooth, _frozenBeamAngle;
+    private float _frozenInten, _frozenBeamAngle;
     private bool  _frozenScatter;
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
@@ -49,12 +49,9 @@ public class UnifiedStageMixer : PlayableBehaviour
                 var bPrev = ((ScriptPlayable<UnifiedStageBehaviour>)playable.GetInput(i)).GetBehaviour();
                 if (bPrev.clipMode != UnifiedStageController.RotationMode.FreezeFrame)
                 {
-                    _frozenInten    = bPrev.clipIntensity;
-                    _frozenBase     = bPrev.minBrightness;
-                    _frozenSense    = bPrev.sensitivity;
-                    _frozenSmooth   = bPrev.smoothness;
-                    _frozenBeamAngle= bPrev.beamAngle;
-                    _frozenScatter  = bPrev.scatterMode;
+                    _frozenInten     = bPrev.clipIntensity;
+                    _frozenBeamAngle = bPrev.beamAngle;
+                    _frozenScatter   = bPrev.scatterMode;
                     break;
                 }
             }
@@ -63,8 +60,7 @@ public class UnifiedStageMixer : PlayableBehaviour
         _lastFreezeFrameActive = freezeFrameActiveNow;
 
         // ── 預混合全域值 ──
-        float mInten = 0, mBase = 0, mSense = 0, mSmooth = 0;
-        float mBeamAngle = 0, totalMotionWeight = 0;
+        float mInten = 0, mBeamAngle = 0, totalMotionWeight = 0;
         float weightedEffectiveTime = 0f;
         bool activeScatter = false;
         float maxWeight = -1f;
@@ -93,21 +89,18 @@ public class UnifiedStageMixer : PlayableBehaviour
             }
 
             // ── 全域值累加（FreezeFrame 使用凍結值替代）──
-            float useInten  = isFreezeFrame ? _frozenInten     : b.clipIntensity;
-            float useBase   = isFreezeFrame ? _frozenBase      : b.minBrightness;
-            float useSense  = isFreezeFrame ? _frozenSense     : b.sensitivity;
-            float useSmooth = isFreezeFrame ? _frozenSmooth    : b.smoothness;
-            float useBeam   = isFreezeFrame ? _frozenBeamAngle : b.beamAngle;
-            bool  useScatter= isFreezeFrame ? _frozenScatter   : b.scatterMode;
+            float useInten   = isFreezeFrame ? _frozenInten     : b.clipIntensity;
+            float useBeam    = isFreezeFrame ? _frozenBeamAngle : b.beamAngle;
+            bool  useScatter = isFreezeFrame ? _frozenScatter   : b.scatterMode;
 
-            mInten       += useInten   * weight;
-            mBase        += useBase    * weight;
-            mSense       += useSense   * weight;
-            mSmooth      += useSmooth  * weight;
-            mBeamAngle   += useBeam    * weight;
+            mInten     += useInten * weight;
+            mBeamAngle += useBeam  * weight;
             totalMotionWeight += (b.enableMotion ? b.motionStrength : 0f) * weight;
 
             if (weight > maxWeight) { maxWeight = weight; activeScatter = useScatter; }
+
+            // Clip 在 Timeline 上的絕對起始時間（供 BeatTimeRef.TimelineGlobal 使用）
+            float clipStartTime = (float)(rootTime - inputPlayable.GetTime());
 
             // ── 建立 ActiveClipInfo ──
             _clipInfos.Add(new ActiveClipInfo
@@ -124,7 +117,6 @@ public class UnifiedStageMixer : PlayableBehaviour
                 target              = b.clipTarget,
                 scatterMode         = b.scatterMode,
                 intensity           = b.clipIntensity,
-                baseLevel           = b.minBrightness,
                 sensitivity         = b.sensitivity,
                 smoothness          = b.smoothness,
                 beamAngle           = b.beamAngle,
@@ -138,13 +130,20 @@ public class UnifiedStageMixer : PlayableBehaviour
                 isFreezeFrame       = isFreezeFrame,
                 freezeUseClipGradient = b.freezeUseClipGradient,
                 staticColorFinishMode = b.staticColorFinishMode,
-                clipDuration        = (float)inputPlayable.GetDuration()
+                clipDuration        = (float)inputPlayable.GetDuration(),
+                colorSampleMode     = b.colorSampleMode,
+                bpm                 = b.bpm,
+                beatTimeRef         = b.beatTimeRef,
+                beatPhaseOffset     = b.beatPhaseOffset,
+                beatSnapColors      = b.beatSnapColors,
+                globalColor         = b.globalColor,
+                clipStartTime       = clipStartTime,
             });
         }
 
         if (totalWeight <= 0) return;
 
-        // ── 頻譜採樣 ──
+        // ── 頻譜採樣（供 AlongAudioSource 模式使用）──
         float[] simSpectrum = new float[256];
         if (controller.audioSource != null && controller.audioSource.clip != null)
         {
@@ -161,9 +160,9 @@ public class UnifiedStageMixer : PlayableBehaviour
         // ── 傳遞資料給 Controller ──
         controller.UpdateStage(
             _clipInfos, simSpectrum, isTimeJump,
-            mInten, mBase, mSense, mSmooth, mBeamAngle, activeScatter,
+            mInten, mBeamAngle, activeScatter,
             totalMotionWeight, weightedEffectiveTime,
-            freezeJustActivated
+            freezeJustActivated, (float)rootTime
         );
 
         _lastRootTime = rootTime;
