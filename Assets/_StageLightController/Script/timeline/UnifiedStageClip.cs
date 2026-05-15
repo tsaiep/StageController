@@ -8,6 +8,7 @@ using System.ComponentModel;
 public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 {
     [Header("燈光感應設定")]
+    [ColorUsage(true, true), Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
     [Tooltip("燈光漸變")] public Gradient lightGradient = new Gradient();
     [Tooltip("總體亮度倍率")] public float intensityMultiplier = 1.0f;
 
@@ -21,7 +22,6 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
     [Tooltip("節拍相位偏移（秒），Timeline Global 模式下用來微調節拍與畫面的同步")] public float beatPhaseOffset = 0f;
     [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
-    [ColorUsage(true, true), Tooltip("全域顏色乘算（HDR），作用在所有模式最終輸出的顏色上")] public Color globalColor = Color.white;
 
     [Header("靜止模式顏色選項")]
     [Tooltip("片段進度模式顏色動畫完成後的行為：Clamp — 停在漸層末端 / Loop — 循環回起點")]
