@@ -112,6 +112,7 @@ public class UnifiedStageController : MonoBehaviour
                 audioTotalWeight    += clips[i].weight;
             }
         }
+
         if (hasAudioMode && audioTotalWeight > 0f)
         {
             System.Array.Copy(spec, spectrum, 256);
@@ -132,7 +133,14 @@ public class UnifiedStageController : MonoBehaviour
         {
             physicalDt = 0f;
             if (slmUnits != null)
-                foreach (var u in slmUnits) { if (u != null) { u.velPan = 0; u.velTilt = 0; } }
+                foreach (var u in slmUnits)
+                {
+                    if (u != null)
+                    {
+                        u.velPan = 0;
+                        u.velTilt = 0;
+                    }
+                }
         }
         else if (Application.isPlaying)
         {
@@ -152,7 +160,10 @@ public class UnifiedStageController : MonoBehaviour
             var unit = slmUnits[ui];
             if (unit == null) continue;
 
-
+            // 更新 tiltAxisSignCache，供 ApplyBaseToTransforms 參考正確的 eulerAngles.x
+            // 注意：這裡使用處理後的 tiltRotationVector，也就是 X 乘上 -1 後的軸向。
+            float tAxisX = GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left).x;
+            unit.tiltAxisSignCache = (tAxisX >= 0f) ? 1f : -1f;
 
             // --- 累加變數 ---
             Color unitColor = Color.black;
@@ -204,6 +215,7 @@ public class UnifiedStageController : MonoBehaviour
 
                 // 全域有效時間（所有 unit 共用）
                 float globalEt = Mathf.Max(0, clip.effectiveTime - clip.pauseTime);
+
                 // Per-unit 帶延遲的有效時間（相位偏移）
                 // AnimationOffset 不適用於 Static 與 FreezeFrame
                 bool applyAnimOffset = clip.mode != RotationMode.Static && clip.mode != RotationMode.FreezeFrame;
@@ -243,6 +255,7 @@ public class UnifiedStageController : MonoBehaviour
                         clipPan  = clip.staticOffset.x;
                         clipTilt = clip.staticOffset.y;
                     }
+
                     // Target 不套用 invert
                     targetModeWeight += clip.weight;
                 }
@@ -265,8 +278,15 @@ public class UnifiedStageController : MonoBehaviour
                             adjustedEt, ui, clip.staticOffset, clip.randomStrength
                         );
                     }
+
                     clipPan  = angles.x;
                     clipTilt = angles.y;
+
+                    // ── 套用每盞燈的旋轉基準偏移（rotationBase）──
+                    // 在 invertTilt 之前加入，使其與 staticOffset 走同一條路，
+                    // 避免 invertTilt 導致兩者方向相反而互相抵銷。
+                    clipPan  += unit.rotationBase.x;
+                    clipTilt += unit.rotationBase.y;
 
                     // 套用對稱反轉
                     clipPan  = (unit.invertPan  ^ invertControllerPan)  ? -clipPan  : clipPan;
@@ -285,13 +305,14 @@ public class UnifiedStageController : MonoBehaviour
                 totalTilt += clipTilt * clip.weight;
             }
 
-            // 快取這張 Clip 的静態中心方向，供 Gizmo 使用
+            // 快取這張 Clip 的靜態中心方向，供 Gizmo 使用
             if (debugDrawLocalPlane && _dbgCenterDir != null && ui < _dbgCenterDir.Length && clips.Count > 0)
             {
                 // 找權重最大的 Clip
                 var domClip = clips[0];
                 for (int ci = 1; ci < clips.Count; ci++)
                     if (clips[ci].weight > domClip.weight) domClip = clips[ci];
+
                 _dbgCenterDir[ui] = ComputeStaticCenterDir(domClip.mode, ui, domClip.staticOffset);
             }
 
@@ -313,13 +334,17 @@ public class UnifiedStageController : MonoBehaviour
                 else
                 {
                     sTime = Mathf.Max(sTime, 0.02f);
+
                     // Circle 模式輸出已改為有界的 sin/cos，統一用 SmoothDampAngle
                     unit.curPan  = Mathf.SmoothDampAngle(unit.curPan,  totalPan,  ref unit.velPan,  sTime, mSpeed, physicalDt);
                     unit.curTilt = Mathf.SmoothDampAngle(unit.curTilt, totalTilt, ref unit.velTilt, sTime, mSpeed, physicalDt);
                 }
 
-                unit.panTransform.localRotation = Quaternion.AngleAxis(unit.curPan, GetSafeAxis(panRotationVector, Vector3.up));
-                unit.tiltTransform.localRotation = Quaternion.AngleAxis(unit.curTilt, GetSafeAxis(tiltRotationVector, Vector3.left));
+                unit.panTransform.localRotation =
+                    Quaternion.AngleAxis(unit.curPan, GetSafeAxis(panRotationVector, Vector3.up));
+
+                unit.tiltTransform.localRotation =
+                    Quaternion.AngleAxis(unit.curTilt, GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left));
             }
 
             // ===== 燈光 =====
@@ -367,12 +392,12 @@ public class UnifiedStageController : MonoBehaviour
 
             case RotationMode.Scan:
                 p = Mathf.Sin(et * speed) * range + staticOffset.x;
-                t = 45f + staticOffset.y;
+                t = staticOffset.y;
                 break;
 
             case RotationMode.Circle:
                 // Euler 空間圓：pan/tilt 各自 sin/cos，相位差 90°
-                // staticOffset 控制圓心， range 是角度半徑，與軸向設定無關
+                // staticOffset 控制圓心，range 是角度半徑，與軸向設定無關
                 float theta = et * speed * 20f * Mathf.Deg2Rad;
                 p = Mathf.Sin(theta) * range + staticOffset.x;
                 t = Mathf.Cos(theta) * range + staticOffset.y;
@@ -395,7 +420,7 @@ public class UnifiedStageController : MonoBehaviour
             case RotationMode.Cross:
                 float panSide = (index % 2 == 0) ? 1f : -1f;
                 p = (90f * panSide) + staticOffset.x;
-                t = (Mathf.Sin(et * speed) * range) + 35f + staticOffset.y + 10f;
+                t = (Mathf.Sin(et * speed) * range) + staticOffset.y;
                 break;
         }
 
@@ -405,20 +430,20 @@ public class UnifiedStageController : MonoBehaviour
     // ==========================================
     //  Circle 模式：幾何圓錐方向式 solver
     //  適用於 beam-along-localY 燈具（tiltTransform.up 為光束方向）
-    //  staticOffset 定義圓心， range=角度半徑， speed=繞圓速度
+    //  staticOffset 定義圓心，range=角度半徑，speed=繞圓速度
     //  輸出經 DeltaAngle 正規化後，由 SmoothDampAngle 連續追蹤
     // ==========================================
     private Vector2 CalculateCircleAngles(float et, float speed, float range, Vector2 staticOffset)
     {
         Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
-        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+        Vector3 tiltAxis = GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left);
 
         // 1. 圓心方向：beam(P0, T0) = AngleAxis(P0, panAxis) * AngleAxis(T0, tiltAxis) * Vector3.up
         Quaternion centerPanQ  = Quaternion.AngleAxis(staticOffset.x, panAxis);
         Quaternion centerTiltQ = Quaternion.AngleAxis(staticOffset.y, tiltAxis);
         Vector3 centerDir = centerPanQ * centerTiltQ * Vector3.up;
 
-        // 2. 圓錐邊緣起點：tilt 多居移 range 度
+        // 2. 圓錐邊緣起點：tilt 多偏移 range 度
         Quaternion startTiltQ = Quaternion.AngleAxis(staticOffset.y + range, tiltAxis);
         Vector3 startEdge = centerPanQ * startTiltQ * Vector3.up;
 
@@ -427,7 +452,7 @@ public class UnifiedStageController : MonoBehaviour
         Vector3 finalDir = Quaternion.AngleAxis(thetaDeg, centerDir) * startEdge;
 
         // 4. 反解 pan：以「T=90°時的水平投影方向」為 pan=0° 參考
-        //    不需磁白就能適用於任意 tiltAxis
+        //    不需寫死就能適用於任意 tiltAxis
         Vector3 panRef = Vector3.ProjectOnPlane(
             Quaternion.AngleAxis(90f, tiltAxis) * Vector3.up,
             panAxis
@@ -449,26 +474,28 @@ public class UnifiedStageController : MonoBehaviour
     }
 
     // ==========================================
-    //  計算各模式的「静態中心方向」（含模式預設角度）
+    //  計算各模式的「靜態中心方向」（含模式預設角度）
     //  用於 Gizmo 圖示展示
     // ==========================================
     private Vector3 ComputeStaticCenterDir(RotationMode mode, int unitIdx, Vector2 staticOffset)
     {
         Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
-        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+        Vector3 tiltAxis = GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left);
 
         float pan, tilt;
         switch (mode)
         {
             case RotationMode.Scan:
                 pan  = staticOffset.x;
-                tilt = 45f + staticOffset.y;   // Scan 預設 tilt=45°
+                tilt = staticOffset.y;
                 break;
+
             case RotationMode.Cross:
                 float panSide = (unitIdx % 2 == 0) ? 1f : -1f;
                 pan  = 90f * panSide + staticOffset.x;
-                tilt = 45f + staticOffset.y;   // Cross 預設 tilt=45° (35+10)
+                tilt = staticOffset.y;
                 break;
+
             default: // Static, Circle, VerticalSwing, Random
                 pan  = staticOffset.x;
                 tilt = staticOffset.y;
@@ -482,9 +509,6 @@ public class UnifiedStageController : MonoBehaviour
     }
 
     // ==========================================
-    //  頻譜處理
-    // ==========================================
-    // ==========================================
     //  顏色計算（依 ColorSampleMode 分支）
     // ==========================================
     private Color ComputeClipColor(ActiveClipInfo clip, SLMUnit unit, float rootTime, float unitEt, float unitDelay)
@@ -495,6 +519,7 @@ public class UnifiedStageController : MonoBehaviour
             Color fc = clip.freezeUseClipGradient
                 ? ((clip.gradient != null) ? clip.gradient.Evaluate(clip.normalizedClipTime) : Color.white)
                 : unit.frozenColor;
+
             return fc * clip.globalColor;
         }
 
@@ -511,58 +536,78 @@ public class UnifiedStageController : MonoBehaviour
                     t = t - Mathf.Floor(t);
                 }
                 else
+                {
                     t = clip.normalizedClipTime;
+                }
+
                 baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(t) : Color.white;
                 break;
             }
+
             case ColorSampleMode.ClipProgress:
             {
                 float delayShift = (clip.clipDuration > 0.0001f) ? unitDelay / clip.clipDuration : 0f;
                 float rawPhase   = clip.normalizedClipTime - delayShift;
                 float window     = Mathf.Max(1f - delayShift, 0.0001f);
                 float phase;
+
                 if (clip.staticColorFinishMode == ColorFinishMode.Loop)
                     phase = rawPhase < 0f ? 0f : (rawPhase / window) - Mathf.Floor(rawPhase / window);
                 else
                     phase = Mathf.Clamp01(rawPhase / window);
+
                 baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(phase) : Color.white;
                 break;
             }
+
             case ColorSampleMode.BeatGradient:
             {
-                float beatTime        = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
-                float beatLen         = 60f / Mathf.Max(clip.bpm, 0.001f);
-                float t               = (beatTime + clip.beatPhaseOffset) / beatLen;
+                float beatTime = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
+                float beatLen  = 60f / Mathf.Max(clip.bpm, 0.001f);
+                float t        = (beatTime + clip.beatPhaseOffset) / beatLen;
+
                 t = t - Mathf.Floor(t);
                 if (t < 0f) t += 1f;
+
                 baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(t) : Color.white;
                 break;
             }
+
             case ColorSampleMode.BeatSnap:
             {
                 if (clip.beatSnapColors == null || clip.beatSnapColors.Length == 0)
                     return Color.white * clip.globalColor;
-                float beatTime  = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
-                float beatLen   = 60f / Mathf.Max(clip.bpm, 0.001f);
-                int   beatIdx   = Mathf.FloorToInt((beatTime + clip.beatPhaseOffset) / beatLen);
+
+                float beatTime = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
+                float beatLen  = 60f / Mathf.Max(clip.bpm, 0.001f);
+                int beatIdx    = Mathf.FloorToInt((beatTime + clip.beatPhaseOffset) / beatLen);
+
                 if (beatIdx < 0) beatIdx = 0;
+
                 baseColor = clip.beatSnapColors[beatIdx % clip.beatSnapColors.Length];
                 break;
             }
+
             case ColorSampleMode.AlongAudioSource:
             {
                 float energy = ((curLow + curMid + curHigh) / 3f) * clip.sensitivity;
                 float t      = Mathf.Clamp01(energy);
-                baseColor    = (clip.gradient != null) ? clip.gradient.Evaluate(t) : Color.white;
+
+                baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(t) : Color.white;
                 break;
             }
+
             default:
                 baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(clip.normalizedClipTime) : Color.white;
                 break;
         }
+
         return baseColor * clip.globalColor;
     }
 
+    // ==========================================
+    //  頻譜處理
+    // ==========================================
     private void ProcessSpectrum(float smooth, bool isTimeJump, float dt)
     {
         if (!enableColorUpdate) return;
@@ -571,9 +616,22 @@ public class UnifiedStageController : MonoBehaviour
         float rM = GetAverage(3, 20);
         float rH = GetAverage(21, 100);
 
-        if (Application.isPlaying) { rL *= 15f; rM *= 15f; rH *= 15f; }
+        if (Application.isPlaying)
+        {
+            rL *= 15f;
+            rM *= 15f;
+            rH *= 15f;
+        }
 
-        if (isTimeJump) { curLow = 0; curMid = 0; curHigh = 0; lowMax = 0.01f; midMax = 0.01f; highMax = 0.01f; }
+        if (isTimeJump)
+        {
+            curLow = 0;
+            curMid = 0;
+            curHigh = 0;
+            lowMax = 0.01f;
+            midMax = 0.01f;
+            highMax = 0.01f;
+        }
 
         lowMax  = Mathf.Max(lowMax  * 0.99f, rL, 0.005f);
         midMax  = Mathf.Max(midMax  * 0.99f, rM, 0.005f);
@@ -593,7 +651,7 @@ public class UnifiedStageController : MonoBehaviour
             return new Vector2(panOffset, verticalBaseOffset + tiltOffset);
 
         Vector3 panAxis = GetSafeAxis(panRotationVector, Vector3.up);
-        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+        Vector3 tiltAxis = GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left);
 
         Vector3 targetInPanParent = pR.parent.InverseTransformPoint(target.position) - pR.localPosition;
         if (targetInPanParent.sqrMagnitude < 0.000001f)
@@ -606,9 +664,20 @@ public class UnifiedStageController : MonoBehaviour
         Vector3 targetFromTiltPivot = targetInPanSpace - tR.localPosition;
         float tilt = SignedAngleOnAxis(Vector3.forward, targetFromTiltPivot, tiltAxis);
 
+        // invertVerticalTracking 手動控制方向。
+        // SignedAngleOnAxis 已經自動考慮 tiltAxis 方向（軸反轉則角度符號同步反轉），
+        // 因此不需額外補償，不論 Vector3.left 或 Vector3.right 邏輯均正確。
         tilt = invertVerticalTracking ? -tilt : tilt;
 
         return new Vector2(pan + panOffset, tilt + verticalBaseOffset + tiltOffset);
+    }
+
+    // ==========================================
+    //  Tilt 軸內部處理
+    // ==========================================
+    private Vector3 GetProcessedTiltRotationVector()
+    {
+        return Vector3.Scale(tiltRotationVector, new Vector3(-1f, 1f, 1f));
     }
 
     private static Vector3 GetSafeAxis(Vector3 axis, Vector3 fallback)
@@ -635,9 +704,9 @@ public class UnifiedStageController : MonoBehaviour
     }
 
     // ==========================================
-    //  Debug Gizmo：繪製每顆燈的静態中心方向與居部平面
-    //  不跟著動画移動，顯示 staticOffset 所定義的圓心 / 標準朝向
-    //  模式預設角度（Scan/Cross 的 45°）已納入計算
+    //  Debug Gizmo：繪製每顆燈的靜態中心方向與局部平面
+    //  不跟著動畫移動，顯示 staticOffset 所定義的圓心 / 標準朝向
+    //  模式預設角度（Scan/Cross 的 90°）已納入計算
     // ==========================================
     void OnDrawGizmos()
     {
@@ -645,7 +714,7 @@ public class UnifiedStageController : MonoBehaviour
 
         float s = debugPlaneSize;
         Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
-        Vector3 tiltAxis = GetSafeAxis(tiltRotationVector, Vector3.left);
+        Vector3 tiltAxis = GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left);
 
         for (int i = 0; i < slmUnits.Length; i++)
         {
@@ -657,7 +726,7 @@ public class UnifiedStageController : MonoBehaviour
             // 取 pan-parent Transform
             Transform panParent = unit.panTransform.parent;
 
-            // 送展後  静態中心方向（世界空間）
+            // 展開後的靜態中心方向（世界空間）
             Vector3 centerDir;
             if (_dbgCenterDir != null && i < _dbgCenterDir.Length && _dbgCenterDir[i].sqrMagnitude > 0.0001f)
             {
@@ -675,7 +744,7 @@ public class UnifiedStageController : MonoBehaviour
             // pan 軸（世界空間）
             Vector3 wPanAxis = panParent != null ? panParent.TransformDirection(panAxis) : panAxis;
 
-            // 垃直於 centerDir 的居部軸
+            // 垂直於 centerDir 的局部軸
             Vector3 wRight = Vector3.Cross(wPanAxis, centerDir);
             if (wRight.sqrMagnitude < 0.0001f)
             {
@@ -684,18 +753,23 @@ public class UnifiedStageController : MonoBehaviour
                     ? panParent.TransformDirection(Quaternion.AngleAxis(90f, panAxis) * Vector3.right)
                     : Vector3.right;
             }
-            else wRight = wRight.normalized;
+            else
+            {
+                wRight = wRight.normalized;
+            }
+
             Vector3 wUp = Vector3.Cross(centerDir, wRight).normalized;
 
-            // 黃色線：静態中心方向
+            // 黃色線：靜態中心方向
             Gizmos.color = Color.yellow;
             Gizmos.DrawRay(origin, centerDir * s * 2f);
 
-            // 青色方框：垃直於 centerDir 的平面
+            // 青色方框：垂直於 centerDir 的平面
             Gizmos.color = Color.cyan;
             Vector3 r = wRight * s;
             Vector3 u = wUp * s;
             Vector3 c = origin + centerDir * s;
+
             Gizmos.DrawLine(c - r - u, c + r - u);
             Gizmos.DrawLine(c + r - u, c + r + u);
             Gizmos.DrawLine(c + r + u, c - r + u);
@@ -704,6 +778,7 @@ public class UnifiedStageController : MonoBehaviour
             // 紅：pan 軸；綠：tilt 軸
             Gizmos.color = Color.red;
             Gizmos.DrawRay(origin, wPanAxis * s * 0.5f);
+
             Gizmos.color = Color.green;
             Gizmos.DrawRay(origin, unit.panTransform.TransformDirection(tiltAxis) * s * 0.5f);
         }
