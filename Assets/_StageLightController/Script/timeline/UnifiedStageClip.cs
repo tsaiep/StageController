@@ -22,10 +22,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
     [Tooltip("節拍相位偏移（秒），Timeline Global 模式下用來微調節拍與畫面的同步")] public float beatPhaseOffset = 0f;
     [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
-
-    [Header("靜止模式顏色選項")]
-    [Tooltip("片段進度模式顏色動畫完成後的行為：Clamp — 停在漸層末端 / Loop — 循環回起點")]
-    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
+    [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
     [Header("燈具物理設定")]
     [Tooltip("光束角度")] public float beamAngle = 5.0f;
@@ -38,7 +35,6 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("静止角度偏移 (x=pan基底, y=tilt基底)")] public Vector2 staticAngleOffset;
     [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f;
     [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
-    [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
@@ -63,42 +59,61 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 
     [Header("模板套用")]
     [Tooltip("套用模板")] public UnifiedStageTemplate applyTemplate;
+    [Tooltip("套用模板中的顏色設定")] public bool applyTemplateColorSettings = true;
+    [Tooltip("套用模板中的旋轉動畫設定")] public bool applyTemplateRotationSettings = true;
+    [Tooltip("套用模板中的燈具物理設定")] public bool applyTemplateFixtureSettings = true;
     [HideInInspector] public string clipDisplayName;
 
     void OnValidate()
     {
         if (applyTemplate != null)
         {
-            lightGradient       = applyTemplate.lightGradient;
-            intensityMultiplier = applyTemplate.intensityMultiplier;
-            sensitivity         = applyTemplate.sensitivity;
-            smoothness          = applyTemplate.smoothness;
-
-            colorSampleMode     = applyTemplate.colorSampleMode;
-            bpm                 = applyTemplate.bpm;
-            beatTimeRef         = applyTemplate.beatTimeRef;
-            beatPhaseOffset     = applyTemplate.beatPhaseOffset;
-            beatSnapColors      = applyTemplate.beatSnapColors;
-            globalColor         = applyTemplate.globalColor;
-            staticColorFinishMode = applyTemplate.staticColorFinishMode;
-
-            beamAngle           = applyTemplate.beamAngle;
-            enableScatterMode   = applyTemplate.enableScatterMode;
-            rotationMode        = applyTemplate.rotationMode;
-            rotationSpeed       = applyTemplate.rotationSpeed;
-            rotationRange       = applyTemplate.rotationRange;
-            staticAngleOffset   = applyTemplate.staticAngleOffset;
-            cyclePauseTime      = applyTemplate.cyclePauseTime;
-            animationOffset     = applyTemplate.animationOffset;
-
-            groupDelayCurve     = applyTemplate.groupDelayCurve;
-            groupDelayFactor    = applyTemplate.groupDelayFactor;
-            lightDelayCurve     = applyTemplate.lightDelayCurve;
-            lightDelayFactor    = applyTemplate.lightDelayFactor;
-
-            clipDisplayName     = applyTemplate.name;
-            applyTemplate       = null;
+            ApplyTemplateValues(applyTemplate);
+            applyTemplate = null;
         }
+    }
+
+    public void ApplyTemplateValues(UnifiedStageTemplate template)
+    {
+        if (template == null) return;
+
+        if (applyTemplateColorSettings)
+        {
+            globalColor            = template.globalColor;
+            lightGradient          = template.lightGradient;
+            intensityMultiplier    = template.intensityMultiplier;
+            colorSampleMode        = template.colorSampleMode;
+            sensitivity            = template.sensitivity;
+            smoothness             = template.smoothness;
+            bpm                    = template.bpm;
+            beatTimeRef            = template.beatTimeRef;
+            beatPhaseOffset        = template.beatPhaseOffset;
+            beatSnapColors         = template.beatSnapColors;
+            freezeUseClipGradient  = template.freezeUseClipGradient;
+        }
+
+        if (applyTemplateRotationSettings)
+        {
+            rotationMode           = template.rotationMode;
+            rotationSpeed          = template.rotationSpeed;
+            rotationRange          = template.rotationRange;
+            staticAngleOffset      = template.staticAngleOffset;
+            cyclePauseTime         = template.cyclePauseTime;
+            animationOffset        = template.animationOffset;
+            trackingTarget         = template.trackingTarget;
+            groupDelayCurve        = template.groupDelayCurve;
+            groupDelayFactor       = template.groupDelayFactor;
+            lightDelayCurve        = template.lightDelayCurve;
+            lightDelayFactor       = template.lightDelayFactor;
+        }
+
+        if (applyTemplateFixtureSettings)
+        {
+            beamAngle              = template.beamAngle;
+            enableScatterMode      = template.enableScatterMode;
+        }
+
+        clipDisplayName = template.name;
     }
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
@@ -125,7 +140,6 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.lightDelayFactor      = lightDelayFactor;
         behaviour.animationOffset       = animationOffset;
         behaviour.freezeUseClipGradient = freezeUseClipGradient;
-        behaviour.staticColorFinishMode = staticColorFinishMode;
 
         behaviour.colorSampleMode       = colorSampleMode;
         behaviour.bpm                   = bpm;

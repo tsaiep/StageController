@@ -22,7 +22,12 @@ public class UnifiedStageClipInspector : Editor
         {
             do
             {
-                if (prop.name == "applyTemplate" || prop.name == "m_Script" || prop.name == "clipDisplayName")
+                if (prop.name == "applyTemplate" ||
+                    prop.name == "applyTemplateColorSettings" ||
+                    prop.name == "applyTemplateRotationSettings" ||
+                    prop.name == "applyTemplateFixtureSettings" ||
+                    prop.name == "m_Script" ||
+                    prop.name == "clipDisplayName")
                     continue;
                 EditorGUILayout.PropertyField(prop, true);
             }
@@ -48,6 +53,21 @@ public class UnifiedStageClipInspector : Editor
             false
         );
 
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUI.BeginChangeCheck();
+        bool applyColor = EditorGUILayout.Toggle("套用顏色設定", clip.applyTemplateColorSettings);
+        bool applyRotation = EditorGUILayout.Toggle("套用旋轉動畫設定", clip.applyTemplateRotationSettings);
+        bool applyFixture = EditorGUILayout.Toggle("套用燈具物理設定", clip.applyTemplateFixtureSettings);
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(clip, "Change Template Apply Options");
+            clip.applyTemplateColorSettings = applyColor;
+            clip.applyTemplateRotationSettings = applyRotation;
+            clip.applyTemplateFixtureSettings = applyFixture;
+            EditorUtility.SetDirty(clip);
+        }
+
         GUI.enabled = clip.applyTemplate != null;
 
         if (GUILayout.Button("確認套用", GUILayout.Width(80)))
@@ -59,30 +79,8 @@ public class UnifiedStageClipInspector : Editor
 
                 var t = clip.applyTemplate;
 
-                // 2. 數據同步（完整欄位）
-                clip.lightGradient          = t.lightGradient;
-                clip.intensityMultiplier    = t.intensityMultiplier;
-                clip.sensitivity            = t.sensitivity;
-                clip.smoothness             = t.smoothness;
-                clip.beamAngle              = t.beamAngle;
-                clip.enableScatterMode      = t.enableScatterMode;
-                clip.colorSampleMode        = t.colorSampleMode;
-                clip.bpm                    = t.bpm;
-                clip.beatTimeRef            = t.beatTimeRef;
-                clip.beatPhaseOffset        = t.beatPhaseOffset;
-                clip.beatSnapColors         = t.beatSnapColors;
-                clip.globalColor            = t.globalColor;
-                clip.staticColorFinishMode  = t.staticColorFinishMode;
-                clip.rotationMode           = t.rotationMode;
-                clip.rotationSpeed          = t.rotationSpeed;
-                clip.rotationRange          = t.rotationRange;
-                clip.staticAngleOffset      = t.staticAngleOffset;
-                clip.cyclePauseTime         = t.cyclePauseTime;
-                clip.animationOffset        = t.animationOffset;
-                clip.groupDelayCurve        = t.groupDelayCurve;
-                clip.groupDelayFactor       = t.groupDelayFactor;
-                clip.lightDelayCurve        = t.lightDelayCurve;
-                clip.lightDelayFactor       = t.lightDelayFactor;
+                // 2. 依分類開關同步數據
+                clip.ApplyTemplateValues(t);
 
                 // 3. 設定內部名稱
                 string newName = t.name;
@@ -106,7 +104,6 @@ public class UnifiedStageClipInspector : Editor
             }
         }
         GUI.enabled = true;
-        EditorGUILayout.EndHorizontal();
 
         if (!string.IsNullOrEmpty(feedbackMessage))
         {
@@ -153,13 +150,14 @@ public class UnifiedStageClipInspector : Editor
         newAsset.beatPhaseOffset     = clip.beatPhaseOffset;
         newAsset.beatSnapColors      = clip.beatSnapColors;
         newAsset.globalColor         = clip.globalColor;
-        newAsset.staticColorFinishMode = clip.staticColorFinishMode;
+        newAsset.freezeUseClipGradient = clip.freezeUseClipGradient;
         newAsset.rotationMode        = clip.rotationMode;
         newAsset.rotationSpeed       = clip.rotationSpeed;
         newAsset.rotationRange       = clip.rotationRange;
         newAsset.staticAngleOffset   = clip.staticAngleOffset;
         newAsset.cyclePauseTime      = clip.cyclePauseTime;
         newAsset.animationOffset     = clip.animationOffset;
+        newAsset.trackingTarget      = clip.trackingTarget;
         newAsset.groupDelayCurve     = clip.groupDelayCurve;
         newAsset.groupDelayFactor    = clip.groupDelayFactor;
         newAsset.lightDelayCurve     = clip.lightDelayCurve;

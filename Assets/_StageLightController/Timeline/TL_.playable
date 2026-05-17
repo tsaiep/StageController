@@ -53,7 +53,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -62,7 +62,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 0dfeeaf1d1b1dea4b86b7a4ef217eba7
     defaultValue: {fileID: 0}
@@ -117,6 +116,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-9020921122725236072
 MonoBehaviour:
@@ -171,7 +173,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -180,7 +182,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: f96683e46397cae4a985e633c64ad133
     defaultValue: {fileID: 0}
@@ -235,6 +236,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-9020407799108417147
 MonoBehaviour:
@@ -1639,7 +1643,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 7
@@ -1648,7 +1652,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: b8da9d57df0cc7342930b3b4b19bfe2a
     defaultValue: {fileID: 0}
@@ -1703,6 +1706,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-7627583907573214603
 MonoBehaviour:
@@ -1716,11 +1722,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe8df909a39c96e419c38f4f03b30403, type: 3}
   m_Name: UnifiedStageClip(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
-  globalColor: {r: 1, g: 0.14217946, b: 0, a: 1}
+  globalColor: {r: 1, g: 0, b: 0, a: 1}
   lightGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0, g: 0.102338314, b: 1, a: 1}
+    key1: {r: 1, g: 0, b: 0, a: 1}
     key2: {r: 1, g: 1, b: 1, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1747,27 +1753,26 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 1
-  colorSampleMode: 0
-  sensitivity: 0.1
-  smoothness: 3
-  bpm: 120
-  beatTimeRef: 0
-  beatPhaseOffset: 0
+  intensityMultiplier: 10
+  colorSampleMode: 3
+  sensitivity: 1
+  smoothness: 1
+  bpm: 1
+  beatTimeRef: 1
+  beatPhaseOffset: 1
   beatSnapColors:
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 0, g: 0, b: 0, a: 1}
-  - {r: 0.67295593, g: 0.67295593, b: 0.67295593, a: 1}
-  staticColorFinishMode: 0
-  beamAngle: 1
-  enableScatterMode: 0
-  rotationMode: 5
-  rotationSpeed: 5
-  rotationRange: 10
-  staticAngleOffset: {x: 10, y: 0}
-  cyclePauseTime: 0
-  animationOffset: 0
-  freezeUseClipGradient: 0
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0.61338556, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.0013102761, b: 0.28930807, a: 1}
+  freezeUseClipGradient: 1
+  beamAngle: 10
+  enableScatterMode: 1
+  rotationMode: 2
+  rotationSpeed: 10
+  rotationRange: 20
+  staticAngleOffset: {x: 12, y: 24}
+  cyclePauseTime: 1
+  animationOffset: 1
   trackingTarget:
     exposedName: 6c8d49c18cad4144bbd6169c5db67535
     defaultValue: {fileID: 0}
@@ -1777,8 +1782,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 1
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -1786,7 +1791,7 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 1
+      inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
@@ -1795,33 +1800,36 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  groupDelayFactor: 0
+  groupDelayFactor: 1
   lightDelayCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  lightDelayFactor: 0
+  lightDelayFactor: 1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-7602725451476038366
 MonoBehaviour:
@@ -1888,7 +1896,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -1897,7 +1905,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 7d3cb004451fca64791df0c3c83edda6
     defaultValue: {fileID: 0}
@@ -1952,6 +1959,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-7170045880973540656
 MonoBehaviour:
@@ -2290,7 +2300,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 5
@@ -2299,7 +2309,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: 93060b455628c1b4ba8374b3ec7214e9
     defaultValue: {fileID: 0}
@@ -2354,6 +2363,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-6772846584525270141
 MonoBehaviour:
@@ -2473,7 +2485,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -2482,7 +2494,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 54d5f9d3132fe014a970169235192457
     defaultValue: {fileID: 0}
@@ -2537,6 +2548,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-5957959574345920538
 MonoBehaviour:
@@ -2647,13 +2661,49 @@ MonoBehaviour:
     m_BlendOutDuration: 0.033333333333333215
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -3259,7 +3309,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 2
   enableScatterMode: 0
   rotationMode: 1
@@ -3268,7 +3318,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 20}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 7ca1f35ce41e23946adb97fd466137cf
     defaultValue: {fileID: 0}
@@ -3332,6 +3381,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.25
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-5699450291732446088
 MonoBehaviour:
@@ -3398,7 +3450,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 5
@@ -3407,7 +3459,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: c1478f4088e70204d809ca1bd2974b2f
     defaultValue: {fileID: 0}
@@ -3462,6 +3513,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-5303236943504455932
 MonoBehaviour:
@@ -4289,7 +4343,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 6
@@ -4298,7 +4352,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: e3b2e643d0ac9114eafd6c3c7ac659a6
     defaultValue: {fileID: 0}
@@ -4353,6 +4406,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-4630311060723912555
 MonoBehaviour:
@@ -4443,7 +4499,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 5
   enableScatterMode: 0
   rotationMode: 7
@@ -4452,7 +4508,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 91d0619a3e13d9e42ac769840dadcea1
     defaultValue: {fileID: 0}
@@ -4507,6 +4562,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-3884887377168735335
 MonoBehaviour:
@@ -4561,7 +4619,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 7
@@ -4570,7 +4628,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: b1be2a31709c46e4f803c2f43243a1e2
     defaultValue: {fileID: 0}
@@ -4625,6 +4682,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-3805860809349623096
 MonoBehaviour:
@@ -4950,7 +5010,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 6
@@ -4959,7 +5019,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: 
     defaultValue: {fileID: 0}
@@ -5023,6 +5082,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-3361428519664319930
 MonoBehaviour:
@@ -5077,7 +5139,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 5
   enableScatterMode: 0
   rotationMode: 0
@@ -5086,7 +5148,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: ee0a58cfef7ee0a449378c44e1d955f1
     defaultValue: {fileID: 0}
@@ -5141,6 +5202,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: "\u4E0A\u4E0B\u6416\u64FA_\u5F37_\u5206\u7D44\u5EF6\u90720.1_\u71C8\u7D44\u5EF6\u90720"
 --- !u!114 &-3239650027291429674
 MonoBehaviour:
@@ -5195,7 +5259,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -5204,7 +5268,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 083b3dc7800276e4d900a19aaf1b9979
     defaultValue: {fileID: 0}
@@ -5259,6 +5322,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-3162305623732274193
 MonoBehaviour:
@@ -5654,7 +5720,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 0
@@ -5663,7 +5729,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -61.91}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: 0e1c5b75fa0934e45acd259f6f1c72ea
     defaultValue: {fileID: 0}
@@ -5718,6 +5783,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-2821241101880665735
 MonoBehaviour:
@@ -5784,7 +5852,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 7
@@ -5793,7 +5861,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -61.91}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: fc895120d24d08c49a20150bde106107
     defaultValue: {fileID: 0}
@@ -5848,6 +5915,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-2400115216130192857
 MonoBehaviour:
@@ -5902,7 +5972,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 5
   enableScatterMode: 0
   rotationMode: 7
@@ -5911,7 +5981,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 73aeb394889adb94f856b3a63f40d449
     defaultValue: {fileID: 0}
@@ -5966,6 +6035,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-2346124429014638920
 MonoBehaviour:
@@ -6032,7 +6104,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 2
   enableScatterMode: 0
   rotationMode: 1
@@ -6041,7 +6113,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 20}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: a9f158fc9d6fa164098780f96c1f1c4c
     defaultValue: {fileID: 0}
@@ -6105,6 +6176,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.25
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-2059183833595209625
 MonoBehaviour:
@@ -6159,7 +6233,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 5
@@ -6168,7 +6242,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -80}
   cyclePauseTime: 0
   animationOffset: 3
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: f10034073742c9b44b7af87ba1da66f9
     defaultValue: {fileID: 0}
@@ -6241,6 +6314,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-1938531177147368619
 MonoBehaviour:
@@ -6295,7 +6371,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 2
   enableScatterMode: 0
   rotationMode: 1
@@ -6304,7 +6380,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 20}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 64877030ffc0d1d4fb1617331713d592
     defaultValue: {fileID: 0}
@@ -6368,6 +6443,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: -0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-1796650201470241507
 MonoBehaviour:
@@ -6434,7 +6512,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 7
@@ -6443,7 +6521,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -61.91}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 0f04e409fdf7f894881ad15cdf5e1e70
     defaultValue: {fileID: 0}
@@ -6498,6 +6575,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-1704064615018458244
 MonoBehaviour:
@@ -6812,7 +6892,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -6821,7 +6901,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 2d9939033df5b0747956468d7500e757
     defaultValue: {fileID: 0}
@@ -6876,6 +6955,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-1535524352188550103
 MonoBehaviour:
@@ -6930,7 +7012,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -6939,7 +7021,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 7.6}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 67e2b9d483b2f1a4da1b0b1bedd85d40
     defaultValue: {fileID: 0}
@@ -6994,6 +7075,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-1245672682906862687
 MonoBehaviour:
@@ -7048,7 +7132,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -7057,7 +7141,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 69d3955307016074f8eff3a8633274f3
     defaultValue: {fileID: 0}
@@ -7112,6 +7195,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-1231516034337835360
 MonoBehaviour:
@@ -7166,7 +7252,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -7175,7 +7261,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 6542630879ee0a84ab39119c09cf2884
     defaultValue: {fileID: 0}
@@ -7230,6 +7315,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &-628341516567255845
 MonoBehaviour:
@@ -7296,7 +7384,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 5
@@ -7305,7 +7393,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -25}
   cyclePauseTime: 0
   animationOffset: 3.73
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: c2155bfa133820140a61667dbd166ad4
     defaultValue: {fileID: 0}
@@ -7378,6 +7465,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &-197115464253303875
 MonoBehaviour:
@@ -7432,7 +7522,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 7
@@ -7441,7 +7531,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -70.9}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 417f76177097ebd478a100638618720f
     defaultValue: {fileID: 0}
@@ -7496,6 +7585,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &11400000
 MonoBehaviour:
@@ -8283,7 +8375,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 2
   enableScatterMode: 0
   rotationMode: 1
@@ -8292,7 +8384,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 20}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 5ea1850912f36e14f8bf66e29c4b6d85
     defaultValue: {fileID: 0}
@@ -8356,6 +8447,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &2370241709082875132
 MonoBehaviour:
@@ -8886,7 +8980,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 5
@@ -8895,7 +8989,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: b224bbfe395389a46a40d5845956b570
     defaultValue: {fileID: 0}
@@ -8950,6 +9043,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &2763750582544450722
 MonoBehaviour:
@@ -9004,7 +9100,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -9013,7 +9109,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 91743383d46cf5247b13808f6325cf5e
     defaultValue: {fileID: 0}
@@ -9068,6 +9163,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &3015875859794678008
 MonoBehaviour:
@@ -9254,7 +9352,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 0
@@ -9263,7 +9361,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -70.9}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: 216298bc550f9da4680605b286a42e4f
     defaultValue: {fileID: 0}
@@ -9318,6 +9415,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &4426371616376003005
 MonoBehaviour:
@@ -9420,7 +9520,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 1
@@ -9429,7 +9529,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -126.4}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 4f5b1b21877c20541a3350231efd6304
     defaultValue: {fileID: 0}
@@ -9484,6 +9583,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 2
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &5208799621967243485
 MonoBehaviour:
@@ -9550,7 +9652,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 0
@@ -9559,7 +9661,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -70.9}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: 0a51f67fd78781247b23b8e07ddc6b2f
     defaultValue: {fileID: 0}
@@ -9614,6 +9715,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &5773674595970150634
 MonoBehaviour:
@@ -9668,7 +9772,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 0
   rotationMode: 0
@@ -9677,7 +9781,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -40}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 80d3364e1d62a884da8095c5d0db7602
     defaultValue: {fileID: 0}
@@ -9732,6 +9835,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &5887876298903159098
 MonoBehaviour:
@@ -9786,7 +9892,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1.5
   enableScatterMode: 1
   rotationMode: 5
@@ -9795,7 +9901,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -26.1}
   cyclePauseTime: 0
   animationOffset: 2
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 130ae0d78d0931f48950805b47f37a03
     defaultValue: {fileID: 0}
@@ -9868,6 +9973,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &5911420376506637278
 MonoBehaviour:
@@ -9951,7 +10059,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 5
@@ -9960,7 +10068,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: fabeb95828a5d0444bffab31224291d4
     defaultValue: {fileID: 0}
@@ -10015,6 +10122,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: 
 --- !u!114 &6576338879272801327
 MonoBehaviour:
@@ -11290,7 +11400,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 0
@@ -11299,7 +11409,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -70.9}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: 186c2234460683549aa6dd51c2cdeef2
     defaultValue: {fileID: 0}
@@ -11354,6 +11463,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &6807549409117099771
 MonoBehaviour:
@@ -11444,7 +11556,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 7
@@ -11453,7 +11565,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -70.9}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 69fc33e026a70d541b402fc86c18fc39
     defaultValue: {fileID: 0}
@@ -11508,6 +11619,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &7224818586342535918
 MonoBehaviour:
@@ -11610,7 +11724,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 1
   beamAngle: 5
   enableScatterMode: 0
   rotationMode: 7
@@ -11619,7 +11733,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 1
   trackingTarget:
     exposedName: 93d50e627094c4846b0709ff63207ea5
     defaultValue: {fileID: 0}
@@ -11674,6 +11787,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &8223124845184839964
 MonoBehaviour:
@@ -11788,7 +11904,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  staticColorFinishMode: 0
+  freezeUseClipGradient: 0
   beamAngle: 1
   enableScatterMode: 0
   rotationMode: 0
@@ -11797,7 +11913,6 @@ MonoBehaviour:
   staticAngleOffset: {x: 0, y: -61.91}
   cyclePauseTime: 0
   animationOffset: 0
-  freezeUseClipGradient: 0
   trackingTarget:
     exposedName: 3409f3d174d83bd47add8a5238afb340
     defaultValue: {fileID: 0}
@@ -11852,6 +11967,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 0
   applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
 --- !u!114 &9205818872431155218
 MonoBehaviour:

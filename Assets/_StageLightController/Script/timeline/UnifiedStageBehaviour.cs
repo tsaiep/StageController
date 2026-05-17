@@ -40,10 +40,6 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("啟用後改為以 Clip 自身的 Light Gradient 取色（Clip 頭尾對應 0-1 取樣），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")]
     public bool freezeUseClipGradient = false;
 
-    [Header("靜止模式顏色選項")]
-    [Tooltip("顏色動畫完成後的行為：Clamp 停在漸層末端 / Loop 循環回起點")]
-    public UnifiedStageController.ColorFinishMode staticColorFinishMode = UnifiedStageController.ColorFinishMode.Clamp;
-
     [Header("顏色取樣設定")]
     [Tooltip("顏色取樣模式")]
     public UnifiedStageController.ColorSampleMode colorSampleMode = UnifiedStageController.ColorSampleMode.MotionCycle;

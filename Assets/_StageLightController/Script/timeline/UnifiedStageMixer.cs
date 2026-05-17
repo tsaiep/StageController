@@ -129,7 +129,6 @@ public class UnifiedStageMixer : PlayableBehaviour
                 animationOffset     = b.animationOffset,
                 isFreezeFrame       = isFreezeFrame,
                 freezeUseClipGradient = b.freezeUseClipGradient,
-                staticColorFinishMode = b.staticColorFinishMode,
                 clipDuration        = (float)inputPlayable.GetDuration(),
                 colorSampleMode     = b.colorSampleMode,
                 bpm                 = b.bpm,

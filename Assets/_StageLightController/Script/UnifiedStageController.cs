@@ -16,15 +16,6 @@ public class UnifiedStageController : MonoBehaviour
         [InspectorName("凍結前幀")] FreezeFrame
     }
 
-    /// <summary>
-    /// 靜止模式顏色動畫完成後的行為
-    /// </summary>
-    public enum ColorFinishMode
-    {
-        [InspectorName("夾緊（停在漸層末端）")] Clamp,
-        [InspectorName("循環（回到漸層起點）")] Loop
-    }
-
     public enum ColorSampleMode
     {
         [InspectorName("動作循環")]              MotionCycle,
@@ -70,17 +61,10 @@ public class UnifiedStageController : MonoBehaviour
     public float maxRotationSpeed = 300f;
     public float trackingSmoothTime = 0.15f;
 
-    [Header("Debug")]
-    [Tooltip("在 Scene 視窗繪製每顆燈光的局部平面")] public bool debugDrawLocalPlane = false;
-    [Tooltip("局部平面繪製大小")] public float debugPlaneSize = 0.5f;
-
     // --- 內部狀態 ---
     private float[] spectrum = new float[256];
     private float lowMax = 0.1f, midMax = 0.1f, highMax = 0.1f;
     private float curLow, curMid, curHigh;
-
-    // Per-unit 靜態中心方向快取（pan-parent 局部空間），由 UpdateStage 寫入，由 OnDrawGizmos 讀取
-    private Vector3[] _dbgCenterDir;
 
     public float GetLowEnergy()  { return curLow; }
     public float GetMidEnergy()  { return curMid; }
@@ -150,10 +134,6 @@ public class UnifiedStageController : MonoBehaviour
         // 3. Per-unit 處理
         if (slmUnits == null) return;
         int unitCount = slmUnits.Length;
-
-        // 確保 debug 快取陣列大小
-        if (debugDrawLocalPlane && (_dbgCenterDir == null || _dbgCenterDir.Length != unitCount))
-            _dbgCenterDir = new Vector3[unitCount];
 
         for (int ui = 0; ui < unitCount; ui++)
         {
@@ -303,17 +283,6 @@ public class UnifiedStageController : MonoBehaviour
 
                 totalPan  += clipPan  * clip.weight;
                 totalTilt += clipTilt * clip.weight;
-            }
-
-            // 快取這張 Clip 的靜態中心方向，供 Gizmo 使用
-            if (debugDrawLocalPlane && _dbgCenterDir != null && ui < _dbgCenterDir.Length && clips.Count > 0)
-            {
-                // 找權重最大的 Clip
-                var domClip = clips[0];
-                for (int ci = 1; ci < clips.Count; ci++)
-                    if (clips[ci].weight > domClip.weight) domClip = clips[ci];
-
-                _dbgCenterDir[ui] = ComputeStaticCenterDir(domClip.mode, ui, domClip.staticOffset);
             }
 
             // ===== 物理更新 =====
@@ -474,41 +443,6 @@ public class UnifiedStageController : MonoBehaviour
     }
 
     // ==========================================
-    //  計算各模式的「靜態中心方向」（含模式預設角度）
-    //  用於 Gizmo 圖示展示
-    // ==========================================
-    private Vector3 ComputeStaticCenterDir(RotationMode mode, int unitIdx, Vector2 staticOffset)
-    {
-        Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
-        Vector3 tiltAxis = GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left);
-
-        float pan, tilt;
-        switch (mode)
-        {
-            case RotationMode.Scan:
-                pan  = staticOffset.x;
-                tilt = staticOffset.y;
-                break;
-
-            case RotationMode.Cross:
-                float panSide = (unitIdx % 2 == 0) ? 1f : -1f;
-                pan  = 90f * panSide + staticOffset.x;
-                tilt = staticOffset.y;
-                break;
-
-            default: // Static, Circle, VerticalSwing, Random
-                pan  = staticOffset.x;
-                tilt = staticOffset.y;
-                break;
-        }
-
-        // beam(pan, tilt) 在 pan-parent 局部空間的方向（beam-along-localY）
-        return Quaternion.AngleAxis(pan, panAxis)
-             * Quaternion.AngleAxis(tilt, tiltAxis)
-             * Vector3.up;
-    }
-
-    // ==========================================
     //  顏色計算（依 ColorSampleMode 分支）
     // ==========================================
     private Color ComputeClipColor(ActiveClipInfo clip, SLMUnit unit, float rootTime, float unitEt, float unitDelay)
@@ -549,12 +483,7 @@ public class UnifiedStageController : MonoBehaviour
                 float delayShift = (clip.clipDuration > 0.0001f) ? unitDelay / clip.clipDuration : 0f;
                 float rawPhase   = clip.normalizedClipTime - delayShift;
                 float window     = Mathf.Max(1f - delayShift, 0.0001f);
-                float phase;
-
-                if (clip.staticColorFinishMode == ColorFinishMode.Loop)
-                    phase = rawPhase < 0f ? 0f : (rawPhase / window) - Mathf.Floor(rawPhase / window);
-                else
-                    phase = Mathf.Clamp01(rawPhase / window);
+                float phase      = Mathf.Clamp01(rawPhase / window);
 
                 baseColor = (clip.gradient != null) ? clip.gradient.Evaluate(phase) : Color.white;
                 break;
@@ -703,84 +632,4 @@ public class UnifiedStageController : MonoBehaviour
         return sum / (e - s + 1);
     }
 
-    // ==========================================
-    //  Debug Gizmo：繪製每顆燈的靜態中心方向與局部平面
-    //  不跟著動畫移動，顯示 staticOffset 所定義的圓心 / 標準朝向
-    //  模式預設角度（Scan/Cross 的 90°）已納入計算
-    // ==========================================
-    void OnDrawGizmos()
-    {
-        if (!debugDrawLocalPlane || slmUnits == null) return;
-
-        float s = debugPlaneSize;
-        Vector3 panAxis  = GetSafeAxis(panRotationVector, Vector3.up);
-        Vector3 tiltAxis = GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left);
-
-        for (int i = 0; i < slmUnits.Length; i++)
-        {
-            var unit = slmUnits[i];
-            if (unit == null || unit.tiltTransform == null || unit.panTransform == null) continue;
-
-            Vector3 origin = unit.tiltTransform.position;
-
-            // 取 pan-parent Transform
-            Transform panParent = unit.panTransform.parent;
-
-            // 展開後的靜態中心方向（世界空間）
-            Vector3 centerDir;
-            if (_dbgCenterDir != null && i < _dbgCenterDir.Length && _dbgCenterDir[i].sqrMagnitude > 0.0001f)
-            {
-                // 由 UpdateStage 快取的平面局部空間方向，轉到世界空間
-                centerDir = panParent != null
-                    ? panParent.TransformDirection(_dbgCenterDir[i])
-                    : _dbgCenterDir[i];
-            }
-            else
-            {
-                // 未播放時的 fallback：用現在 tiltTransform.up 看似方向
-                centerDir = unit.tiltTransform.up;
-            }
-
-            // pan 軸（世界空間）
-            Vector3 wPanAxis = panParent != null ? panParent.TransformDirection(panAxis) : panAxis;
-
-            // 垂直於 centerDir 的局部軸
-            Vector3 wRight = Vector3.Cross(wPanAxis, centerDir);
-            if (wRight.sqrMagnitude < 0.0001f)
-            {
-                // 天頂/底部 gimbal：fall back to tilt axis direction
-                wRight = panParent != null
-                    ? panParent.TransformDirection(Quaternion.AngleAxis(90f, panAxis) * Vector3.right)
-                    : Vector3.right;
-            }
-            else
-            {
-                wRight = wRight.normalized;
-            }
-
-            Vector3 wUp = Vector3.Cross(centerDir, wRight).normalized;
-
-            // 黃色線：靜態中心方向
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawRay(origin, centerDir * s * 2f);
-
-            // 青色方框：垂直於 centerDir 的平面
-            Gizmos.color = Color.cyan;
-            Vector3 r = wRight * s;
-            Vector3 u = wUp * s;
-            Vector3 c = origin + centerDir * s;
-
-            Gizmos.DrawLine(c - r - u, c + r - u);
-            Gizmos.DrawLine(c + r - u, c + r + u);
-            Gizmos.DrawLine(c + r + u, c - r + u);
-            Gizmos.DrawLine(c - r + u, c - r - u);
-
-            // 紅：pan 軸；綠：tilt 軸
-            Gizmos.color = Color.red;
-            Gizmos.DrawRay(origin, wPanAxis * s * 0.5f);
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawRay(origin, unit.panTransform.TransformDirection(tiltAxis) * s * 0.5f);
-        }
-    }
 }
