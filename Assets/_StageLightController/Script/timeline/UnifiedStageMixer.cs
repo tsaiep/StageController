@@ -153,6 +153,7 @@ public class UnifiedStageMixer : PlayableBehaviour
                 beatTimeRef         = b.beatTimeRef,
                 beatPhaseOffset     = b.beatPhaseOffset,
                 beatSnapColors      = b.beatSnapColors,
+                beatSnapTransitionTime = b.beatSnapTransitionTime,
                 beatGroupDelayFactor = b.beatGroupDelayFactor,
                 beatLightDelayFactor = b.beatLightDelayFactor,
                 beatGroupDelayCurve = b.beatGroupDelayCurve,

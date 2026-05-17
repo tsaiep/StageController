@@ -152,6 +152,7 @@ public class UnifiedStageClipInspector : Editor
         newAsset.beatTimeRef         = clip.beatTimeRef;
         newAsset.beatPhaseOffset     = clip.beatPhaseOffset;
         newAsset.beatSnapColors      = UnifiedStageClip.CloneColorArray(clip.beatSnapColors);
+        newAsset.beatSnapTransitionTime = clip.beatSnapTransitionTime;
         newAsset.beatGroupDelayFactor = clip.beatGroupDelayFactor;
         newAsset.beatLightDelayFactor = clip.beatLightDelayFactor;
         newAsset.beatGroupDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatGroupDelayCurve);

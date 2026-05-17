@@ -51,6 +51,8 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
     [Tooltip("節拍相位偏移（秒），用於微調全域節拍與畫面的同步")] public float beatPhaseOffset = 0f;
     [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
+    [Tooltip("Beat Snap 顏色切換平滑時間（秒）。0 表示瞬間切換")]
+    public float beatSnapTransitionTime = 0f;
     [Tooltip("Beat Gradient: 分組時間延遲（秒）。Beat Snap: 每幾個分組排序階層讓顏色 index 偏移 1 格")]
     public float beatGroupDelayFactor = 0f;
     [Tooltip("Beat Gradient: 組內時間延遲（秒）。Beat Snap: 每幾個組內排序階層讓顏色 index 偏移 1 格")]

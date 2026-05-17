@@ -53,6 +53,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -227,6 +228,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -1751,6 +1753,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -1887,25 +1890,25 @@ MonoBehaviour:
   globalColor: {r: 1, g: 1, b: 1, a: 1}
   lightGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 0, g: 1, b: 0, a: 1}
+    key1: {r: 1, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 1, a: 1}
+    key3: {r: 1, g: 1, b: 0, a: 0}
+    key4: {r: 0, g: 1, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
+    ctime0: 16
+    ctime1: 16384
+    ctime2: 32768
+    ctime3: 49151
+    ctime4: 65535
     ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 65535
-    atime2: 0
+    atime1: 15731
+    atime2: 65535
     atime3: 0
     atime4: 0
     atime5: 0
@@ -1913,19 +1916,20 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 0
     m_ColorSpace: -1
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 2
+    m_NumColorKeys: 5
+    m_NumAlphaKeys: 3
   intensityMultiplier: 1
-  colorSampleMode: 2
+  colorSampleMode: 3
   sensitivity: 1
   smoothness: 1
-  bpm: 360
+  bpm: 60
   beatTimeRef: 1
   beatPhaseOffset: 1
   beatSnapColors:
-  - {r: 0, g: 1, b: 0.15877438, a: 1}
+  - {r: 1, g: 0.16807917, b: 0, a: 1}
   - {r: 0.61338556, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0.0013102761, b: 0.28930807, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
+  beatSnapTransitionTime: 0.1
   beatGroupDelayFactor: 1
   beatLightDelayFactor: 1
   beatGroupDelayCurve:
@@ -2139,6 +2143,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -2597,6 +2602,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -2836,6 +2842,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -3606,6 +3613,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -3801,6 +3809,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -4886,6 +4895,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -5096,6 +5106,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -5270,6 +5281,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -5444,6 +5456,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -5898,6 +5911,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -6081,6 +6095,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -6255,6 +6270,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -6770,6 +6786,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -6956,6 +6973,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -7130,6 +7148,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -7316,6 +7335,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -7499,6 +7519,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -7691,6 +7712,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -7886,6 +7908,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -8320,6 +8343,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -8494,6 +8518,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -8668,6 +8693,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -8842,6 +8868,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -9028,6 +9055,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -9220,6 +9248,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -9435,6 +9464,7 @@ MonoBehaviour:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0.61338556, g: 1, b: 0, a: 1}
   - {r: 0, g: 0.0013102761, b: 0.28930807, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 1
   beatLightDelayFactor: 1
   beatGroupDelayCurve:
@@ -10311,6 +10341,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -10970,6 +11001,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -11144,6 +11176,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -11450,6 +11483,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -11672,6 +11706,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -11858,6 +11893,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -12032,6 +12068,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -12206,6 +12243,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -12427,6 +12465,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -13822,6 +13861,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -14032,6 +14072,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -14254,6 +14295,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:
@@ -14488,6 +14530,7 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
   beatLightDelayFactor: 0
   beatGroupDelayCurve:

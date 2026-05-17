@@ -570,13 +570,29 @@ public class UnifiedStageController : MonoBehaviour
 
                 float beatTime = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
                 float beatLen  = 60f / Mathf.Max(clip.bpm, 0.001f);
-                int beatIdx    = Mathf.FloorToInt((beatTime + clip.beatPhaseOffset) / beatLen);
+                float beatPosition = (beatTime + clip.beatPhaseOffset) / beatLen;
+                int beatIdx    = Mathf.FloorToInt(beatPosition);
                 int indexOffset = ComputeBeatSnapIndexOffset(clip, unit);
 
                 if (beatIdx < 0) beatIdx = 0;
 
                 int colorIdx = PositiveModulo(beatIdx + indexOffset, clip.beatSnapColors.Length);
                 baseColor = clip.beatSnapColors[colorIdx];
+
+                float transitionTime = Mathf.Max(clip.beatSnapTransitionTime, 0f);
+                if (transitionTime > 0f && clip.beatSnapColors.Length > 1)
+                {
+                    float transitionLen = Mathf.Min(transitionTime, beatLen);
+                    float beatLocalTime = (beatPosition - Mathf.Floor(beatPosition)) * beatLen;
+                    float transitionStart = beatLen - transitionLen;
+
+                    if (beatLocalTime >= transitionStart)
+                    {
+                        int nextColorIdx = PositiveModulo(beatIdx + 1 + indexOffset, clip.beatSnapColors.Length);
+                        float lerpT = Mathf.InverseLerp(transitionStart, beatLen, beatLocalTime);
+                        baseColor = Color.Lerp(baseColor, clip.beatSnapColors[nextColorIdx], lerpT);
+                    }
+                }
                 break;
             }
 

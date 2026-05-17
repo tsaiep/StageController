@@ -47,6 +47,7 @@ public struct ActiveClipInfo
     public UnifiedStageController.BeatTimeReference beatTimeRef; // 節拍時間基準
     public float beatPhaseOffset;              // 全域節拍相位偏移（秒）
     public Color[] beatSnapColors;             // BeatSnap 顏色列表（依拍順序循環）
+    public float beatSnapTransitionTime;       // BeatSnap 顏色切換平滑時間（秒）
     public float beatGroupDelayFactor;         // BeatGradient: 秒；BeatSnap: 每 N 個 group rank 偏移 1 格
     public float beatLightDelayFactor;         // BeatGradient: 秒；BeatSnap: 每 N 個 group 內 rank 偏移 1 格
     public AnimationCurve beatGroupDelayCurve; // 跟隨節拍分組延遲曲線
