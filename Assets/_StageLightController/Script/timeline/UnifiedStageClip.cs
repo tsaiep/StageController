@@ -25,7 +25,11 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
     [Header("燈具物理設定")]
+    [Tooltip("燈光模式")] public UnifiedStageController.StageLightMode lightMode = UnifiedStageController.StageLightMode.VolumetricSpot;
+    [Tooltip("Light component 的 Range")] public float lightRange = 12f;
     [Tooltip("光束角度")] public float beamAngle = 5.0f;
+    [Range(0f, 100f), Tooltip("光束邊緣柔和度。Volumetric 模式對應 Side Softness，Spot 模式對應 Inner Spot Angle")]
+    public float softness = 0f;
     [Tooltip("開啟散射模式")] public bool enableScatterMode = false;
 
     [Header("旋轉動作設定")]
@@ -109,7 +113,10 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 
         if (applyTemplateFixtureSettings)
         {
+            lightMode              = template.lightMode;
+            lightRange             = template.lightRange;
             beamAngle              = template.beamAngle;
+            softness               = template.softness;
             enableScatterMode      = template.enableScatterMode;
         }
 
@@ -126,6 +133,9 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.sensitivity           = sensitivity;
         behaviour.smoothness            = smoothness;
         behaviour.beamAngle             = beamAngle;
+        behaviour.lightMode             = lightMode;
+        behaviour.lightRange            = lightRange;
+        behaviour.softness              = softness;
         behaviour.scatterMode           = enableScatterMode;
         behaviour.clipMode              = rotationMode;
         behaviour.rotationSpeed         = rotationSpeed;

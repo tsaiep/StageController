@@ -21,6 +21,9 @@ public struct ActiveClipInfo
     public float sensitivity;
     public float smoothness;
     public float beamAngle;
+    public float lightRange;
+    public float softness;
+    public UnifiedStageController.StageLightMode lightMode;
     public float motionWeight;
 
     // ── 分組延遲 ──

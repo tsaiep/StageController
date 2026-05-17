@@ -5,8 +5,12 @@ using UnityEngine.Playables;
 public class UnifiedStageTemplate : ScriptableObject
 {
     [Header("燈具物理設定")]
+    [Tooltip("燈光模式")] public UnifiedStageController.StageLightMode lightMode = UnifiedStageController.StageLightMode.VolumetricSpot;
+    [Tooltip("Light component 的 Range")] public float lightRange = 12f;
     [Tooltip("光束角度")]
     [Range(1f, 179f)] public float beamAngle = 5f;
+    [Range(0f, 100f), Tooltip("光束邊緣柔和度。Volumetric 模式對應 Side Softness，Spot 模式對應 Inner Spot Angle")]
+    public float softness = 0f;
     [Tooltip("開啟散射模式")] public bool enableScatterMode = false;
 
     [Header("燈光感應設定")]

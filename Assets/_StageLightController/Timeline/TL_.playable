@@ -54,7 +54,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -174,7 +177,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -1644,7 +1650,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -1722,12 +1731,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe8df909a39c96e419c38f4f03b30403, type: 3}
   m_Name: UnifiedStageClip(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
-  globalColor: {r: 1, g: 0, b: 0, a: 1}
+  globalColor: {r: 0.5345911, g: 0.5345911, b: 0.5345911, a: 1}
   lightGradient:
     serializedVersion: 2
-    key0: {r: 0, g: 0.102338314, b: 1, a: 1}
-    key1: {r: 1, g: 0, b: 0, a: 1}
-    key2: {r: 1, g: 1, b: 1, a: 0}
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -1735,8 +1744,8 @@ MonoBehaviour:
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 62220
-    ctime3: 18298
+    ctime2: 0
+    ctime3: 0
     ctime4: 0
     ctime5: 0
     ctime6: 0
@@ -1753,8 +1762,8 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 10
-  colorSampleMode: 3
+  intensityMultiplier: 1
+  colorSampleMode: 1
   sensitivity: 1
   smoothness: 1
   bpm: 1
@@ -1764,13 +1773,16 @@ MonoBehaviour:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0.61338556, g: 1, b: 0, a: 1}
   - {r: 0, g: 0.0013102761, b: 0.28930807, a: 1}
-  freezeUseClipGradient: 1
-  beamAngle: 10
+  freezeUseClipGradient: 0
+  lightMode: 1
+  lightRange: 2
+  beamAngle: 20.11
+  softness: 100
   enableScatterMode: 1
-  rotationMode: 2
+  rotationMode: 0
   rotationSpeed: 10
   rotationRange: 20
-  staticAngleOffset: {x: 12, y: 24}
+  staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 1
   animationOffset: 1
   trackingTarget:
@@ -1827,10 +1839,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   lightDelayFactor: 1
   applyTemplate: {fileID: 0}
-  applyTemplateColorSettings: 1
-  applyTemplateRotationSettings: 1
+  applyTemplateColorSettings: 0
+  applyTemplateRotationSettings: 0
   applyTemplateFixtureSettings: 1
-  clipDisplayName: 
+  clipDisplayName: Temp
 --- !u!114 &-7602725451476038366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1897,7 +1909,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -2301,7 +2316,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 0.5
@@ -2486,7 +2504,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -2616,25 +2637,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -2661,49 +2664,13 @@ MonoBehaviour:
     m_BlendOutDuration: 0.033333333333333215
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -2730,25 +2697,7 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -3310,7 +3259,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 2
+  softness: 0
   enableScatterMode: 0
   rotationMode: 1
   rotationSpeed: -2
@@ -3451,7 +3403,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 0.5
@@ -4275,7 +4230,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: UnifiedStageClip
+    m_DisplayName: Temp
   m_Markers:
     m_Objects: []
 --- !u!114 &-4849029635197612741
@@ -4344,7 +4299,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 6
   rotationSpeed: 0.5
@@ -4500,7 +4458,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -4620,7 +4581,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 5
@@ -5011,7 +4975,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 6
   rotationSpeed: 20
@@ -5140,7 +5107,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 2
@@ -5260,7 +5230,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -5721,7 +5694,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 2
@@ -5853,7 +5829,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -5973,7 +5952,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -6105,7 +6087,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 2
+  softness: 0
   enableScatterMode: 0
   rotationMode: 1
   rotationSpeed: 2
@@ -6234,7 +6219,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 2
@@ -6372,7 +6360,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 2
+  softness: 0
   enableScatterMode: 0
   rotationMode: 1
   rotationSpeed: -2
@@ -6513,7 +6504,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -6893,7 +6887,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -7013,7 +7010,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -7133,7 +7133,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -7253,7 +7256,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -7385,7 +7391,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 1
@@ -7523,7 +7532,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -8376,7 +8388,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 2
+  softness: 0
   enableScatterMode: 0
   rotationMode: 1
   rotationSpeed: 2
@@ -8981,7 +8996,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 0.5
@@ -9101,7 +9119,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -9353,7 +9374,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 2
@@ -9521,7 +9545,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 1
   rotationSpeed: 0.25
@@ -9653,7 +9680,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 2
@@ -9773,7 +9803,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -9893,7 +9926,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1.5
+  softness: 0
   enableScatterMode: 1
   rotationMode: 5
   rotationSpeed: 1
@@ -10060,7 +10096,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 0.5
@@ -11401,7 +11440,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 2
@@ -11557,7 +11599,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -11725,7 +11770,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 1
+  lightMode: 0
+  lightRange: 12
   beamAngle: 5
+  softness: 0
   enableScatterMode: 0
   rotationMode: 7
   rotationSpeed: 2
@@ -11905,7 +11953,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
   beamAngle: 1
+  softness: 0
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 2

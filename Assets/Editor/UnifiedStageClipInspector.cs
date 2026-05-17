@@ -138,11 +138,14 @@ public class UnifiedStageClipInspector : Editor
     private void ExportToTemplate(UnifiedStageClip clip)
     {
         UnifiedStageTemplate newAsset = ScriptableObject.CreateInstance<UnifiedStageTemplate>();
+        newAsset.lightMode           = clip.lightMode;
+        newAsset.lightRange          = clip.lightRange;
         newAsset.lightGradient       = clip.lightGradient;
         newAsset.intensityMultiplier = clip.intensityMultiplier;
         newAsset.sensitivity         = clip.sensitivity;
         newAsset.smoothness          = clip.smoothness;
         newAsset.beamAngle           = clip.beamAngle;
+        newAsset.softness            = clip.softness;
         newAsset.enableScatterMode   = clip.enableScatterMode;
         newAsset.colorSampleMode     = clip.colorSampleMode;
         newAsset.bpm                 = clip.bpm;

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 [ExecuteAlways]
 public class UnifiedStageController : MonoBehaviour
 {
+    private const float MinVlbSideSoftness = 0.0001f;
+    private const float MaxVlbSideSoftness = 10f;
+
     public enum RotationMode
     {
         [InspectorName("靜止模式")] Static,
@@ -23,6 +26,13 @@ public class UnifiedStageController : MonoBehaviour
         [InspectorName("跟隨節拍（漸層取樣）")] BeatGradient,
         [InspectorName("跟隨節拍（瞬間切換）")] BeatSnap,
         [InspectorName("跟隨音樂")]              AlongAudioSource,
+    }
+
+    public enum StageLightMode
+    {
+        [InspectorName("Volumetric Spot Light")] VolumetricSpot,
+        [InspectorName("Spot Light")] Spot,
+        [InspectorName("Point Light")] Point
     }
 
     public enum BeatTimeReference
@@ -78,7 +88,8 @@ public class UnifiedStageController : MonoBehaviour
     // ==========================================
     public void UpdateStage(
         List<ActiveClipInfo> clips, float[] spec, bool isTimeJump,
-        float mixedInten, float mixedBeamAngle, bool activeScatter,
+        float mixedInten, float mixedBeamAngle, float mixedLightRange, float mixedSoftness,
+        bool activeScatter, StageLightMode activeLightMode,
         float totalMotionWeight, float weightedEffectiveTime,
         bool freezeJustActivated, float rootTime)
     {
@@ -320,26 +331,75 @@ public class UnifiedStageController : MonoBehaviour
             if (unit.targetLight != null)
             {
                 unit.targetLight.intensity = baseIntensity * mixedInten;
+                unit.targetLight.range = Mathf.Max(0.01f, mixedLightRange);
 
                 Color targetColor = unitColor;
                 Color finalColor = isTimeJump ? targetColor : Color.Lerp(unit.targetLight.color, targetColor, dt * 25f);
 
                 unit.targetLight.color = finalColor;
-                unit.targetLight.spotAngle = mixedBeamAngle;
 
                 var vlb = unit.targetLight.GetComponent<VLB.VolumetricLightBeamHD>();
+                ApplyLightMode(unit, vlb, activeLightMode);
+
+                if (unit.targetLight.type == LightType.Spot)
+                {
+                    unit.targetLight.spotAngle = mixedBeamAngle;
+                    unit.targetLight.innerSpotAngle = CalculateInnerSpotAngle(mixedBeamAngle, mixedSoftness);
+                }
+
                 if (vlb != null)
                 {
                     vlb.colorFromLight = false;
                     vlb.colorFlat = finalColor;
                     vlb.spotAngle = mixedBeamAngle;
-                    vlb.UpdateAfterManualPropertyChange();
+                    vlb.sideSoftness = CalculateVlbSideSoftness(mixedSoftness);
+                    if (vlb.enabled)
+                        vlb.UpdateAfterManualPropertyChange();
                 }
 
                 var cookie = unit.targetLight.GetComponent<VLB.VolumetricCookieHD>();
                 if (cookie != null) cookie.enabled = activeScatter;
             }
         }
+    }
+
+    private void ApplyLightMode(SLMUnit unit, VLB.VolumetricLightBeamHD vlb, StageLightMode mode)
+    {
+        if (unit == null || unit.targetLight == null) return;
+        if (unit.hasAppliedLightMode && unit.appliedLightMode == mode) return;
+
+        switch (mode)
+        {
+            case StageLightMode.VolumetricSpot:
+                unit.targetLight.type = LightType.Spot;
+                if (vlb != null) vlb.enabled = true;
+                break;
+
+            case StageLightMode.Spot:
+                unit.targetLight.type = LightType.Spot;
+                if (vlb != null) vlb.enabled = false;
+                break;
+
+            case StageLightMode.Point:
+                unit.targetLight.type = LightType.Point;
+                if (vlb != null) vlb.enabled = false;
+                break;
+        }
+
+        unit.appliedLightMode = mode;
+        unit.hasAppliedLightMode = true;
+    }
+
+    private static float CalculateVlbSideSoftness(float softness)
+    {
+        float t = Mathf.Clamp01(softness / 100f);
+        return Mathf.Lerp(MinVlbSideSoftness, MaxVlbSideSoftness, t);
+    }
+
+    private static float CalculateInnerSpotAngle(float outerSpotAngle, float softness)
+    {
+        float t = Mathf.Clamp01(softness / 100f);
+        return Mathf.Clamp(outerSpotAngle * (1f - t), 0f, outerSpotAngle);
     }
 
     // ==========================================

@@ -21,6 +21,8 @@ public class SLMUnit : MonoBehaviour
     [HideInInspector] public float curPan, curTilt, velPan, velTilt;
     [HideInInspector] public float frozenPan, frozenTilt;
     [HideInInspector] public Color frozenColor;
+    [HideInInspector] public bool hasAppliedLightMode;
+    [HideInInspector] public UnifiedStageController.StageLightMode appliedLightMode;
 
     // tiltRotationVector.x 的符號快取（由 UnifiedStageController 寫入）
     // Vector3.left (x=-1) → -1f；Vector3.right (x=+1) → +1f

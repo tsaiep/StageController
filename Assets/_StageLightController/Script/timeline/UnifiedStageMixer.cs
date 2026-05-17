@@ -9,8 +9,9 @@ public class UnifiedStageMixer : PlayableBehaviour
 
     // ── FreezeFrame 狀態 ──
     private bool _lastFreezeFrameActive = false;
-    private float _frozenInten, _frozenBeamAngle;
+    private float _frozenInten, _frozenBeamAngle, _frozenLightRange, _frozenSoftness;
     private bool  _frozenScatter;
+    private UnifiedStageController.StageLightMode _frozenLightMode;
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
     {
@@ -51,7 +52,10 @@ public class UnifiedStageMixer : PlayableBehaviour
                 {
                     _frozenInten     = bPrev.clipIntensity;
                     _frozenBeamAngle = bPrev.beamAngle;
+                    _frozenLightRange = bPrev.lightRange;
+                    _frozenSoftness  = bPrev.softness;
                     _frozenScatter   = bPrev.scatterMode;
+                    _frozenLightMode = bPrev.lightMode;
                     break;
                 }
             }
@@ -60,9 +64,10 @@ public class UnifiedStageMixer : PlayableBehaviour
         _lastFreezeFrameActive = freezeFrameActiveNow;
 
         // ── 預混合全域值 ──
-        float mInten = 0, mBeamAngle = 0, totalMotionWeight = 0;
+        float mInten = 0, mBeamAngle = 0, mLightRange = 0, mSoftness = 0, totalMotionWeight = 0;
         float weightedEffectiveTime = 0f;
         bool activeScatter = false;
+        var activeLightMode = UnifiedStageController.StageLightMode.VolumetricSpot;
         float maxWeight = -1f;
         float totalWeight = 0f;
 
@@ -91,13 +96,23 @@ public class UnifiedStageMixer : PlayableBehaviour
             // ── 全域值累加（FreezeFrame 使用凍結值替代）──
             float useInten   = isFreezeFrame ? _frozenInten     : b.clipIntensity;
             float useBeam    = isFreezeFrame ? _frozenBeamAngle : b.beamAngle;
+            float useRange   = isFreezeFrame ? _frozenLightRange : b.lightRange;
+            float useSoftness = isFreezeFrame ? _frozenSoftness  : b.softness;
             bool  useScatter = isFreezeFrame ? _frozenScatter   : b.scatterMode;
+            var useLightMode = isFreezeFrame ? _frozenLightMode : b.lightMode;
 
             mInten     += useInten * weight;
             mBeamAngle += useBeam  * weight;
+            mLightRange += useRange * weight;
+            mSoftness   += useSoftness * weight;
             totalMotionWeight += (b.enableMotion ? b.motionStrength : 0f) * weight;
 
-            if (weight > maxWeight) { maxWeight = weight; activeScatter = useScatter; }
+            if (weight > maxWeight)
+            {
+                maxWeight = weight;
+                activeScatter = useScatter;
+                activeLightMode = useLightMode;
+            }
 
             // Clip 在 Timeline 上的絕對起始時間（供 BeatTimeRef.TimelineGlobal 使用）
             float clipStartTime = (float)(rootTime - inputPlayable.GetTime());
@@ -120,6 +135,9 @@ public class UnifiedStageMixer : PlayableBehaviour
                 sensitivity         = b.sensitivity,
                 smoothness          = b.smoothness,
                 beamAngle           = b.beamAngle,
+                lightRange          = b.lightRange,
+                softness            = b.softness,
+                lightMode           = b.lightMode,
                 motionWeight        = b.enableMotion ? b.motionStrength : 0f,
                 groupDelayCurve     = b.groupDelayCurve,
                 groupDelayFactor    = b.groupDelayFactor,
@@ -141,6 +159,8 @@ public class UnifiedStageMixer : PlayableBehaviour
         }
 
         if (totalWeight <= 0) return;
+        float mixedLightRange = mLightRange / totalWeight;
+        float mixedSoftness = mSoftness / totalWeight;
 
         // ── 頻譜採樣（供 AlongAudioSource 模式使用）──
         float[] simSpectrum = new float[256];
@@ -159,7 +179,7 @@ public class UnifiedStageMixer : PlayableBehaviour
         // ── 傳遞資料給 Controller ──
         controller.UpdateStage(
             _clipInfos, simSpectrum, isTimeJump,
-            mInten, mBeamAngle, activeScatter,
+            mInten, mBeamAngle, mixedLightRange, mixedSoftness, activeScatter, activeLightMode,
             totalMotionWeight, weightedEffectiveTime,
             freezeJustActivated, (float)rootTime
         );

@@ -9,6 +9,10 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("靈敏度")] public float sensitivity;
     [Tooltip("平滑度")] public float smoothness;
     [Tooltip("光束角度")] public float beamAngle;
+    [Tooltip("燈光模式")] public UnifiedStageController.StageLightMode lightMode = UnifiedStageController.StageLightMode.VolumetricSpot;
+    [Tooltip("Light component 的 Range")] public float lightRange = 12f;
+    [Range(0f, 100f), Tooltip("光束邊緣柔和度。Volumetric 模式對應 Side Softness，Spot 模式對應 Inner Spot Angle")]
+    public float softness = 0f;
     [Tooltip("散射模式")] public bool scatterMode;
     public UnifiedStageController.RotationMode clipMode;
     [Tooltip("旋轉速度")] public float rotationSpeed;
