@@ -553,7 +553,8 @@ public class UnifiedStageController : MonoBehaviour
             {
                 float beatTime = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
                 float beatLen  = 60f / Mathf.Max(clip.bpm, 0.001f);
-                float t        = (beatTime + clip.beatPhaseOffset) / beatLen;
+                float beatOffset = ComputeBeatTimeOffset(clip, unit);
+                float t        = (beatTime - beatOffset + clip.beatPhaseOffset) / beatLen;
 
                 t = t - Mathf.Floor(t);
                 if (t < 0f) t += 1f;
@@ -570,10 +571,12 @@ public class UnifiedStageController : MonoBehaviour
                 float beatTime = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
                 float beatLen  = 60f / Mathf.Max(clip.bpm, 0.001f);
                 int beatIdx    = Mathf.FloorToInt((beatTime + clip.beatPhaseOffset) / beatLen);
+                int indexOffset = ComputeBeatSnapIndexOffset(clip, unit);
 
                 if (beatIdx < 0) beatIdx = 0;
 
-                baseColor = clip.beatSnapColors[beatIdx % clip.beatSnapColors.Length];
+                int colorIdx = PositiveModulo(beatIdx + indexOffset, clip.beatSnapColors.Length);
+                baseColor = clip.beatSnapColors[colorIdx];
                 break;
             }
 
@@ -592,6 +595,98 @@ public class UnifiedStageController : MonoBehaviour
         }
 
         return baseColor * clip.globalColor;
+    }
+
+    private static float ComputeBeatTimeOffset(ActiveClipInfo clip, SLMUnit unit)
+    {
+        if (unit == null) return 0f;
+
+        float groupOffset = 0f;
+        if (clip.beatGroupDelayFactor > 0f)
+        {
+            float normalizedGroup = (unit.groupCount > 1)
+                ? (float)unit.groupIndex / (unit.groupCount - 1)
+                : 0f;
+            float gv = EvaluateDelayCurve(clip.beatGroupDelayCurve, normalizedGroup);
+            groupOffset = gv * clip.beatGroupDelayFactor;
+        }
+
+        float lightOffset = 0f;
+        if (clip.beatLightDelayFactor > 0f)
+        {
+            float normalizedInGroup = (unit.groupSize > 1)
+                ? (float)unit.indexInGroup / (unit.groupSize - 1)
+                : 0f;
+            float lv = EvaluateDelayCurve(clip.beatLightDelayCurve, normalizedInGroup);
+            lightOffset = lv * clip.beatLightDelayFactor;
+        }
+
+        return groupOffset + lightOffset;
+    }
+
+    private static int ComputeBeatSnapIndexOffset(ActiveClipInfo clip, SLMUnit unit)
+    {
+        if (unit == null) return 0;
+
+        int groupOffset = ComputeRankStepOffset(
+            unit.groupIndex,
+            unit.groupCount,
+            clip.beatGroupDelayCurve,
+            clip.beatGroupDelayFactor);
+
+        int lightOffset = ComputeRankStepOffset(
+            unit.indexInGroup,
+            unit.groupSize,
+            clip.beatLightDelayCurve,
+            clip.beatLightDelayFactor);
+
+        return groupOffset + lightOffset;
+    }
+
+    private static int ComputeRankStepOffset(int index, int count, AnimationCurve curve, float step)
+    {
+        if (step <= 0f || count <= 1) return 0;
+
+        int rank = ComputeCurveRank(index, count, curve);
+        return Mathf.FloorToInt(rank / step);
+    }
+
+    private static int ComputeCurveRank(int index, int count, AnimationCurve curve)
+    {
+        if (count <= 1) return 0;
+
+        int safeIndex = Mathf.Clamp(index, 0, count - 1);
+        float currentValue = EvaluateDelayCurveAtIndex(curve, safeIndex, count);
+        int rank = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (i == safeIndex) continue;
+
+            float value = EvaluateDelayCurveAtIndex(curve, i, count);
+            if (value < currentValue || (Mathf.Approximately(value, currentValue) && i < safeIndex))
+                rank++;
+        }
+
+        return rank;
+    }
+
+    private static float EvaluateDelayCurveAtIndex(AnimationCurve curve, int index, int count)
+    {
+        float normalized = (count > 1) ? (float)index / (count - 1) : 0f;
+        return EvaluateDelayCurve(curve, normalized);
+    }
+
+    private static float EvaluateDelayCurve(AnimationCurve curve, float normalized)
+    {
+        float t = Mathf.Clamp01(normalized);
+        return curve != null ? curve.Evaluate(t) : t;
+    }
+
+    private static int PositiveModulo(int value, int length)
+    {
+        int result = value % length;
+        return result < 0 ? result + length : result;
     }
 
     // ==========================================

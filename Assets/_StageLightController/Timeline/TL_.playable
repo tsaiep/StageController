@@ -18,19 +18,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 0.07316055, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 8192
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -40,7 +40,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -53,6 +53,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -123,6 +173,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-9020921122725236072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -141,19 +192,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 0.07316055, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 8192
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -163,7 +214,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -176,6 +227,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -246,6 +347,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-9020407799108417147
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1613,30 +1715,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 1, g: 0.05691401, b: 0, a: 1}
-    key3: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key4: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 1
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -1649,6 +1751,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -1719,6 +1871,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-7627583907573214603
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1731,7 +1884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe8df909a39c96e419c38f4f03b30403, type: 3}
   m_Name: UnifiedStageClip(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
-  globalColor: {r: 0.5345911, g: 0.5345911, b: 0.5345911, a: 1}
+  globalColor: {r: 1, g: 1, b: 1, a: 1}
   lightGradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
@@ -1759,28 +1912,96 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
-  colorSampleMode: 1
+  colorSampleMode: 2
   sensitivity: 1
   smoothness: 1
-  bpm: 1
+  bpm: 360
   beatTimeRef: 1
   beatPhaseOffset: 1
   beatSnapColors:
-  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0.15877438, a: 1}
   - {r: 0.61338556, g: 1, b: 0, a: 1}
   - {r: 0, g: 0.0013102761, b: 0.28930807, a: 1}
+  beatGroupDelayFactor: 1
+  beatLightDelayFactor: 1
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.14446902
+      value: 0.050225317
+      inSlope: -0.49871567
+      outSlope: -0.49871567
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.98478675
+      value: 0.65690255
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 1
-  lightRange: 2
-  beamAngle: 20.11
-  softness: 100
-  enableScatterMode: 1
+  lightMode: 0
+  lightRange: 12
+  beamAngle: 1
+  softness: 0
+  enableScatterMode: 0
   rotationMode: 0
-  rotationSpeed: 10
+  rotationSpeed: 5
   rotationRange: 20
   staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 1
@@ -1794,55 +2015,65 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
+      inSlope: 13.654866
+      outSlope: 13.654866
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.062475413
+      value: 0.8530934
+      inSlope: 6.9057813
+      outSlope: 6.9057813
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      inSlope: 0.15669629
+      outSlope: 0.15669629
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  groupDelayFactor: 1
+  groupDelayFactor: 0.15
   lightDelayCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  lightDelayFactor: 1
+  lightDelayFactor: 0.1
   applyTemplate: {fileID: 0}
-  applyTemplateColorSettings: 0
-  applyTemplateRotationSettings: 0
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: Temp
+  mutableDataDetached: 1
 --- !u!114 &-7602725451476038366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1873,19 +2104,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 0.07316055, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 8192
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -1895,7 +2126,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -1908,6 +2139,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -1978,6 +2259,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-7170045880973540656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2302,7 +2584,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -2315,6 +2597,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -2385,6 +2717,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-6772846584525270141
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2468,19 +2801,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 0.07316055, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 8192
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -2490,7 +2823,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -2503,6 +2836,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -2573,6 +2956,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-5957959574345920538
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3051,25 +3435,7 @@ MonoBehaviour:
     m_BlendOutDuration: 0
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -3108,25 +3474,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -3222,10 +3570,10 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 1, g: 1, b: 1, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 1, g: 1, b: 1, a: 0}
-    key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 16
@@ -3233,19 +3581,19 @@ MonoBehaviour:
     ctime2: 32768
     ctime3: 49151
     ctime4: 65535
-    ctime5: 65535
+    ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 5
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -3258,6 +3606,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -3337,6 +3735,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-5699450291732446088
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3389,7 +3788,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -3402,6 +3801,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -3472,6 +3921,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-5303236943504455932
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4231,6 +4681,144 @@ MonoBehaviour:
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
     m_DisplayName: Temp
+  - m_Version: 1
+    m_Start: 75.83333333333333
+    m_ClipIn: 0
+    m_Asset: {fileID: 336383090808472614}
+    m_Duration: 5.200000000000003
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -4921180371174526760}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: Temp
+  - m_Version: 1
+    m_Start: 85.73333333333333
+    m_ClipIn: 0
+    m_Asset: {fileID: -3829904750283462652}
+    m_Duration: 5
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -4921180371174526760}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: UnifiedStageClip
   m_Markers:
     m_Objects: []
 --- !u!114 &-4849029635197612741
@@ -4285,7 +4873,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -4298,6 +4886,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -4368,6 +5006,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-4630311060723912555
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4421,30 +5060,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 1, g: 0.05691401, b: 0, a: 1}
-    key3: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key4: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 1
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -4457,6 +5096,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -4527,6 +5216,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-3884887377168735335
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4544,30 +5234,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -4580,6 +5270,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -4650,6 +5390,190 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
+--- !u!114 &-3829904750283462652
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe8df909a39c96e419c38f4f03b30403, type: 3}
+  m_Name: UnifiedStageClip
+  m_EditorClassIdentifier: 
+  globalColor: {r: 1, g: 1, b: 1, a: 1}
+  lightGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
+  colorSampleMode: 0
+  sensitivity: 1.5
+  smoothness: 8
+  bpm: 120
+  beatTimeRef: 0
+  beatPhaseOffset: 0
+  beatSnapColors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.9071809
+      value: 0.41495326
+      inSlope: 1.0000001
+      outSlope: 1.0000001
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
+  beamAngle: 5
+  softness: 0
+  enableScatterMode: 0
+  rotationMode: 0
+  rotationSpeed: 1
+  rotationRange: 45
+  staticAngleOffset: {x: 0, y: 0}
+  cyclePauseTime: 0
+  animationOffset: 0
+  trackingTarget:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  groupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  groupDelayFactor: 0
+  lightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lightDelayFactor: 0
+  applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
+  clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-3805860809349623096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4961,7 +5885,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -4974,6 +5898,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -5053,6 +6027,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-3361428519664319930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5106,6 +6081,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -5176,6 +6201,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: "\u4E0A\u4E0B\u6416\u64FA_\u5F37_\u5206\u7D44\u5EF6\u90720.1_\u71C8\u7D44\u5EF6\u90720"
+  mutableDataDetached: 1
 --- !u!114 &-3239650027291429674
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5194,19 +6220,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 0.07316055, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 8192
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -5216,7 +6242,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -5229,6 +6255,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -5299,6 +6375,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-3162305623732274193
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5658,19 +6735,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 10489
     ctime1: 15848
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -5680,7 +6757,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -5693,6 +6770,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -5763,6 +6890,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-2821241101880665735
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5792,30 +6920,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -5828,6 +6956,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -5898,6 +7076,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-2400115216130192857
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5915,30 +7094,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 1, g: 0.05691401, b: 0, a: 1}
-    key3: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key4: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 1
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -5951,6 +7130,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -6021,6 +7250,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-2346124429014638920
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6050,10 +7280,10 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 1, g: 1, b: 1, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 1, g: 1, b: 1, a: 0}
-    key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 16
@@ -6061,19 +7291,19 @@ MonoBehaviour:
     ctime2: 32768
     ctime3: 49151
     ctime4: 65535
-    ctime5: 65535
+    ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 5
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -6086,6 +7316,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -6165,6 +7445,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-2059183833595209625
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6183,17 +7464,17 @@ MonoBehaviour:
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 1, g: 0, b: 0.117274284, a: 1}
     key2: {r: 1, g: 1, b: 1, a: 1}
-    key3: {r: 1, g: 1, b: 1, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 12632
     ctime2: 63927
-    ctime3: 63927
-    ctime4: 65535
-    ctime5: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
@@ -6205,7 +7486,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -6218,6 +7499,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -6306,6 +7637,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-1938531177147368619
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6325,16 +7657,16 @@ MonoBehaviour:
     key1: {r: 1, g: 0, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
     key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 1, g: 1, b: 1, a: 0}
-    key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 16
     ctime1: 16384
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 63774
-    ctime5: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
@@ -6346,7 +7678,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -6359,6 +7691,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -6438,6 +7820,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-1796650201470241507
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6467,30 +7850,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -6503,6 +7886,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -6573,6 +8006,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-1704064615018458244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6851,19 +8285,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 0.07316055, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 8192
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -6873,7 +8307,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -6886,6 +8320,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -6956,6 +8440,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-1535524352188550103
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6973,30 +8458,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -7009,6 +8494,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -7079,6 +8614,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-1245672682906862687
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7097,19 +8633,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 0.07316055, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 8192
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -7119,7 +8655,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -7132,6 +8668,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -7202,6 +8788,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-1231516034337835360
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7220,19 +8807,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 10489
     ctime1: 15848
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -7242,7 +8829,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 2
@@ -7255,6 +8842,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -7325,6 +8962,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &-628341516567255845
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7354,18 +8992,18 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 1, g: 0, b: 0.117274284, a: 1}
     key1: {r: 1, g: 0, b: 0.117274284, a: 1}
-    key2: {r: 1, g: 1, b: 1, a: 1}
-    key3: {r: 1, g: 1, b: 1, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 1}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65152
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
@@ -7377,7 +9015,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -7390,6 +9028,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -7478,6 +9166,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &-197115464253303875
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7495,7 +9184,7 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -7503,22 +9192,22 @@ MonoBehaviour:
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -7531,6 +9220,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -7601,6 +9340,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7641,6 +9381,190 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fde0d25a170598d46a0b9dc16b4527a5, type: 3}
   m_Name: ActivationPlayableAsset(Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
+--- !u!114 &336383090808472614
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe8df909a39c96e419c38f4f03b30403, type: 3}
+  m_Name: UnifiedStageClip
+  m_EditorClassIdentifier: 
+  globalColor: {r: 1, g: 1, b: 1, a: 1}
+  lightGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
+  colorSampleMode: 2
+  sensitivity: 1
+  smoothness: 1
+  bpm: 360
+  beatTimeRef: 1
+  beatPhaseOffset: 1
+  beatSnapColors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0.61338556, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.0013102761, b: 0.28930807, a: 1}
+  beatGroupDelayFactor: 1
+  beatLightDelayFactor: 1
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  freezeUseClipGradient: 0
+  lightMode: 0
+  lightRange: 12
+  beamAngle: 1
+  softness: 0
+  enableScatterMode: 0
+  rotationMode: 0
+  rotationSpeed: 5
+  rotationRange: 20
+  staticAngleOffset: {x: 0, y: 0}
+  cyclePauseTime: 1
+  animationOffset: 1
+  trackingTarget:
+    exposedName: 6c8d49c18cad4144bbd6169c5db67535
+    defaultValue: {fileID: 0}
+  groupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 13.654866
+      outSlope: 13.654866
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.062475413
+      value: 0.8530934
+      inSlope: 6.9057813
+      outSlope: 6.9057813
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.15669629
+      outSlope: 0.15669629
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  groupDelayFactor: 0.15
+  lightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lightDelayFactor: 0.1
+  applyTemplate: {fileID: 0}
+  applyTemplateColorSettings: 1
+  applyTemplateRotationSettings: 1
+  applyTemplateFixtureSettings: 1
+  clipDisplayName: Temp
+  mutableDataDetached: 1
 --- !u!114 &881711046823753612
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8352,17 +10276,17 @@ MonoBehaviour:
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 1, g: 0, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 1, g: 1, b: 1, a: 0}
-    key4: {r: 1, g: 1, b: 1, a: 0}
-    key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 16
     ctime1: 16384
     ctime2: 33303
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
@@ -8374,7 +10298,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -8387,6 +10311,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -8466,6 +10440,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &2370241709082875132
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8982,7 +10957,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -8995,6 +10970,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -9065,6 +11090,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &2763750582544450722
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9083,19 +11109,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 10489
     ctime1: 15848
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -9105,7 +11131,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 2
@@ -9118,6 +11144,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -9188,6 +11264,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &3015875859794678008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9337,7 +11414,7 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -9345,22 +11422,22 @@ MonoBehaviour:
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -9373,6 +11450,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -9443,6 +11570,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &4426371616376003005
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9509,19 +11637,19 @@ MonoBehaviour:
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -9531,7 +11659,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 3
   intensityMultiplier: 0.5
@@ -9544,6 +11672,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -9614,6 +11792,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &5208799621967243485
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9643,7 +11822,7 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -9651,22 +11830,22 @@ MonoBehaviour:
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -9679,6 +11858,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -9749,6 +11978,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &5773674595970150634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9767,19 +11997,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 4364
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -9789,7 +12019,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 5
@@ -9802,6 +12032,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -9872,6 +12152,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &5887876298903159098
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9890,17 +12171,17 @@ MonoBehaviour:
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 1, g: 0, b: 0.117274284, a: 1}
     key2: {r: 1, g: 1, b: 1, a: 1}
-    key3: {r: 1, g: 1, b: 1, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 0, g: 0.1981132, b: 0.13867925, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 16
     ctime1: 40347
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
@@ -9912,7 +12193,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -9925,6 +12206,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -10013,6 +12344,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &5911420376506637278
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10082,7 +12414,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -10095,6 +12427,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -10165,6 +12547,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: 
+  mutableDataDetached: 1
 --- !u!114 &6576338879272801327
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11406,17 +13789,17 @@ MonoBehaviour:
     key2: {r: 1, g: 1, b: 1, a: 1}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 3445
     ctime1: 11254
     ctime2: 15848
     ctime3: 65535
-    ctime4: 27485
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -11426,7 +13809,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -11439,6 +13822,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -11509,6 +13942,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &6807549409117099771
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11562,7 +13996,7 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -11570,22 +14004,22 @@ MonoBehaviour:
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 5
@@ -11598,6 +14032,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -11668,6 +14152,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &7224818586342535918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11733,30 +14218,30 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 0, g: 0, b: 0, a: 1}
-    key2: {r: 1, g: 0.05691401, b: 0, a: 1}
-    key3: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key4: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 65535
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 65535
-    atime2: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 1
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   intensityMultiplier: 1
@@ -11769,6 +14254,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 1
   lightMode: 0
   lightRange: 12
@@ -11839,6 +14374,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &8223124845184839964
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11917,19 +14453,19 @@ MonoBehaviour:
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 1}
-    key3: {r: 0, g: 1, b: 0, a: 0}
-    key4: {r: 0, g: 1, b: 0, a: 0}
-    key5: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key6: {r: 1, g: 0.05691401, b: 0, a: 0}
-    key7: {r: 1, g: 0.05691401, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 10489
     ctime1: 15848
     ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 65535
-    ctime6: 65535
-    ctime7: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
     atime0: 0
     atime1: 15731
     atime2: 65535
@@ -11939,7 +14475,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_ColorSpace: 0
+    m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
   intensityMultiplier: 1
@@ -11952,6 +14488,56 @@ MonoBehaviour:
   beatSnapColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
+  beatGroupDelayFactor: 0
+  beatLightDelayFactor: 0
+  beatGroupDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  beatLightDelayCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   freezeUseClipGradient: 0
   lightMode: 0
   lightRange: 12
@@ -12022,6 +14608,7 @@ MonoBehaviour:
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
   clipDisplayName: aaa
+  mutableDataDetached: 1
 --- !u!114 &9205818872431155218
 MonoBehaviour:
   m_ObjectHideFlags: 1

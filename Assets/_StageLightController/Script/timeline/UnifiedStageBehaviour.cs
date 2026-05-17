@@ -10,7 +10,7 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("平滑度")] public float smoothness;
     [Tooltip("光束角度")] public float beamAngle;
     [Tooltip("燈光模式")] public UnifiedStageController.StageLightMode lightMode = UnifiedStageController.StageLightMode.VolumetricSpot;
-    [Tooltip("Light component 的 Range")] public float lightRange = 12f;
+    [Tooltip("光線長度")] public float lightRange = 12f;
     [Range(0f, 100f), Tooltip("光束邊緣柔和度。Volumetric 模式對應 Side Softness，Spot 模式對應 Inner Spot Angle")]
     public float softness = 0f;
     [Tooltip("散射模式")] public bool scatterMode;
@@ -51,6 +51,14 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
     [Tooltip("節拍相位偏移（秒），用於微調全域節拍與畫面的同步")] public float beatPhaseOffset = 0f;
     [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
+    [Tooltip("Beat Gradient: 分組時間延遲（秒）。Beat Snap: 每幾個分組排序階層讓顏色 index 偏移 1 格")]
+    public float beatGroupDelayFactor = 0f;
+    [Tooltip("Beat Gradient: 組內時間延遲（秒）。Beat Snap: 每幾個組內排序階層讓顏色 index 偏移 1 格")]
+    public float beatLightDelayFactor = 0f;
+    [Tooltip("跟隨節拍分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）")]
+    public AnimationCurve beatGroupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Tooltip("跟隨節拍組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
+    public AnimationCurve beatLightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
 
     /// <summary>

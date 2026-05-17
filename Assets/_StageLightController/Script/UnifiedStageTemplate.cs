@@ -25,6 +25,14 @@ public class UnifiedStageTemplate : ScriptableObject
     [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
     [Tooltip("節拍相位偏移（秒）")] public float beatPhaseOffset = 0f;
     [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
+    [Tooltip("Beat Gradient: 分組時間延遲（秒）。Beat Snap: 每幾個分組排序階層讓顏色 index 偏移 1 格")]
+    public float beatGroupDelayFactor = 0f;
+    [Tooltip("Beat Gradient: 組內時間延遲（秒）。Beat Snap: 每幾個組內排序階層讓顏色 index 偏移 1 格")]
+    public float beatLightDelayFactor = 0f;
+    [Tooltip("跟隨節拍分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）")]
+    public AnimationCurve beatGroupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Tooltip("跟隨節拍組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
+    public AnimationCurve beatLightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [ColorUsage(true, true), Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 

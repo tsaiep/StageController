@@ -22,6 +22,14 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("節拍時間基準")] public UnifiedStageController.BeatTimeReference beatTimeRef = UnifiedStageController.BeatTimeReference.ClipLocal;
     [Tooltip("節拍相位偏移（秒），Timeline Global 模式下用來微調節拍與畫面的同步")] public float beatPhaseOffset = 0f;
     [Tooltip("Beat Snap 顏色列表（依拍順序循環）")] public Color[] beatSnapColors = new Color[] { Color.white, Color.red };
+    [Tooltip("Beat Gradient: 分組時間延遲（秒）。Beat Snap: 每幾個分組排序階層讓顏色 index 偏移 1 格")]
+    public float beatGroupDelayFactor = 0f;
+    [Tooltip("Beat Gradient: 組內時間延遲（秒）。Beat Snap: 每幾個組內排序階層讓顏色 index 偏移 1 格")]
+    public float beatLightDelayFactor = 0f;
+    [Tooltip("跟隨節拍分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）")]
+    public AnimationCurve beatGroupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Tooltip("跟隨節拍組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
+    public AnimationCurve beatLightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
     [Header("燈具物理設定")]
@@ -67,6 +75,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("套用模板中的旋轉動畫設定")] public bool applyTemplateRotationSettings = true;
     [Tooltip("套用模板中的燈具物理設定")] public bool applyTemplateFixtureSettings = true;
     [HideInInspector] public string clipDisplayName;
+    [SerializeField, HideInInspector] private bool mutableDataDetached;
 
     void OnValidate()
     {
@@ -74,6 +83,12 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         {
             ApplyTemplateValues(applyTemplate);
             applyTemplate = null;
+        }
+
+        if (!mutableDataDetached)
+        {
+            DetachMutableData();
+            mutableDataDetached = true;
         }
     }
 
@@ -84,7 +99,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         if (applyTemplateColorSettings)
         {
             globalColor            = template.globalColor;
-            lightGradient          = template.lightGradient;
+            lightGradient          = CloneGradient(template.lightGradient);
             intensityMultiplier    = template.intensityMultiplier;
             colorSampleMode        = template.colorSampleMode;
             sensitivity            = template.sensitivity;
@@ -92,7 +107,11 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             bpm                    = template.bpm;
             beatTimeRef            = template.beatTimeRef;
             beatPhaseOffset        = template.beatPhaseOffset;
-            beatSnapColors         = template.beatSnapColors;
+            beatSnapColors         = CloneColorArray(template.beatSnapColors);
+            beatGroupDelayFactor   = template.beatGroupDelayFactor;
+            beatLightDelayFactor   = template.beatLightDelayFactor;
+            beatGroupDelayCurve    = CloneAnimationCurve(template.beatGroupDelayCurve);
+            beatLightDelayCurve    = CloneAnimationCurve(template.beatLightDelayCurve);
             freezeUseClipGradient  = template.freezeUseClipGradient;
         }
 
@@ -105,9 +124,9 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             cyclePauseTime         = template.cyclePauseTime;
             animationOffset        = template.animationOffset;
             trackingTarget         = template.trackingTarget;
-            groupDelayCurve        = template.groupDelayCurve;
+            groupDelayCurve        = CloneAnimationCurve(template.groupDelayCurve);
             groupDelayFactor       = template.groupDelayFactor;
-            lightDelayCurve        = template.lightDelayCurve;
+            lightDelayCurve        = CloneAnimationCurve(template.lightDelayCurve);
             lightDelayFactor       = template.lightDelayFactor;
         }
 
@@ -121,6 +140,44 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         }
 
         clipDisplayName = template.name;
+        mutableDataDetached = true;
+    }
+
+    private void DetachMutableData()
+    {
+        lightGradient = CloneGradient(lightGradient);
+        beatSnapColors = CloneColorArray(beatSnapColors);
+        beatGroupDelayCurve = CloneAnimationCurve(beatGroupDelayCurve);
+        beatLightDelayCurve = CloneAnimationCurve(beatLightDelayCurve);
+        groupDelayCurve = CloneAnimationCurve(groupDelayCurve);
+        lightDelayCurve = CloneAnimationCurve(lightDelayCurve);
+    }
+
+    public static Gradient CloneGradient(Gradient source)
+    {
+        if (source == null) return null;
+
+        var clone = new Gradient();
+        clone.SetKeys(source.colorKeys, source.alphaKeys);
+        clone.mode = source.mode;
+        return clone;
+    }
+
+    public static AnimationCurve CloneAnimationCurve(AnimationCurve source)
+    {
+        if (source == null) return null;
+
+        var clone = new AnimationCurve(source.keys)
+        {
+            preWrapMode = source.preWrapMode,
+            postWrapMode = source.postWrapMode
+        };
+        return clone;
+    }
+
+    public static Color[] CloneColorArray(Color[] source)
+    {
+        return source != null ? (Color[])source.Clone() : null;
     }
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
@@ -156,6 +213,10 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.beatTimeRef           = beatTimeRef;
         behaviour.beatPhaseOffset       = beatPhaseOffset;
         behaviour.beatSnapColors        = beatSnapColors;
+        behaviour.beatGroupDelayFactor  = beatGroupDelayFactor;
+        behaviour.beatLightDelayFactor  = beatLightDelayFactor;
+        behaviour.beatGroupDelayCurve   = beatGroupDelayCurve;
+        behaviour.beatLightDelayCurve   = beatLightDelayCurve;
         behaviour.globalColor           = globalColor;
 
         return playable;
