@@ -140,7 +140,7 @@ public class UnifiedStageClipInspector : Editor
         UnifiedStageTemplate newAsset = ScriptableObject.CreateInstance<UnifiedStageTemplate>();
         newAsset.lightMode           = clip.lightMode;
         newAsset.lightRange          = clip.lightRange;
-        newAsset.lightGradient       = clip.lightGradient;
+        newAsset.lightGradient       = UnifiedStageClip.CloneGradient(clip.lightGradient);
         newAsset.intensityMultiplier = clip.intensityMultiplier;
         newAsset.sensitivity         = clip.sensitivity;
         newAsset.smoothness          = clip.smoothness;
@@ -151,7 +151,11 @@ public class UnifiedStageClipInspector : Editor
         newAsset.bpm                 = clip.bpm;
         newAsset.beatTimeRef         = clip.beatTimeRef;
         newAsset.beatPhaseOffset     = clip.beatPhaseOffset;
-        newAsset.beatSnapColors      = clip.beatSnapColors;
+        newAsset.beatSnapColors      = UnifiedStageClip.CloneColorArray(clip.beatSnapColors);
+        newAsset.beatGroupDelayFactor = clip.beatGroupDelayFactor;
+        newAsset.beatLightDelayFactor = clip.beatLightDelayFactor;
+        newAsset.beatGroupDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatGroupDelayCurve);
+        newAsset.beatLightDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatLightDelayCurve);
         newAsset.globalColor         = clip.globalColor;
         newAsset.freezeUseClipGradient = clip.freezeUseClipGradient;
         newAsset.rotationMode        = clip.rotationMode;
@@ -161,9 +165,9 @@ public class UnifiedStageClipInspector : Editor
         newAsset.cyclePauseTime      = clip.cyclePauseTime;
         newAsset.animationOffset     = clip.animationOffset;
         newAsset.trackingTarget      = clip.trackingTarget;
-        newAsset.groupDelayCurve     = clip.groupDelayCurve;
+        newAsset.groupDelayCurve     = UnifiedStageClip.CloneAnimationCurve(clip.groupDelayCurve);
         newAsset.groupDelayFactor    = clip.groupDelayFactor;
-        newAsset.lightDelayCurve     = clip.lightDelayCurve;
+        newAsset.lightDelayCurve     = UnifiedStageClip.CloneAnimationCurve(clip.lightDelayCurve);
         newAsset.lightDelayFactor    = clip.lightDelayFactor;
 
         string path = EditorUtility.SaveFilePanelInProject("儲存新模板", "NewStageTemplate", "asset", "請輸入模板名稱");
