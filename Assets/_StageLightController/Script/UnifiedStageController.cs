@@ -330,7 +330,8 @@ public class UnifiedStageController : MonoBehaviour
             // ===== 燈光 =====
             if (unit.targetLight != null)
             {
-                unit.targetLight.intensity = baseIntensity * mixedInten;
+                float modeIntensityScale = activeLightMode == StageLightMode.Point ? 0.15f : 1f;
+                unit.targetLight.intensity = baseIntensity * mixedInten * modeIntensityScale;
                 unit.targetLight.range = Mathf.Max(0.01f, mixedLightRange);
 
                 Color targetColor = unitColor;
