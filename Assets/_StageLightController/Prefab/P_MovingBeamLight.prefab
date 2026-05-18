@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2590475607017282872}
   - component: {fileID: 3790796415494808258}
   - component: {fileID: 6598799021601415016}
+  - component: {fileID: 2961532486070993322}
   m_Layer: 0
   m_Name: MovingBeamLight_Glass
   m_TagString: Untagged
@@ -88,6 +89,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2961532486070993322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16042002826152771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ebe4c5b0c9b1c4fac5e95b8c28c979, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceLight: {fileID: 2941174439148856403}
+  targetRenderer: {fileID: 6598799021601415016}
+  emissionMultiplier: 1
+  includeLightIntensity: 0
+  emissionColorProperty: _EmissionColor
 --- !u!1 &2625804012508123144
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,7 +476,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3504131613227123819}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0.26477212, z: 0.00000021}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1015,8 +1033,19 @@ MonoBehaviour:
   targetLight: {fileID: 2941174439148856403}
   invertPan: 0
   invertTilt: 0
-  "\u52D5\u4F5C\u4F4D\u79FB": 0
+  motionOffset: 0
+  rotationBase: {x: 0, y: 0}
   curPan: 0
   curTilt: 0
   velPan: 0
   velTilt: 0
+  frozenPan: 0
+  frozenTilt: 0
+  frozenColor: {r: 0, g: 0, b: 0, a: 0}
+  hasAppliedLightMode: 0
+  appliedLightMode: 0
+  tiltAxisSignCache: -1
+  groupIndex: 0
+  groupCount: 1
+  indexInGroup: 0
+  groupSize: 1
