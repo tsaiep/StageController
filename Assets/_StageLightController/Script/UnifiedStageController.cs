@@ -778,7 +778,7 @@ public class UnifiedStageController : MonoBehaviour
     // ==========================================
     private Vector3 GetProcessedTiltRotationVector()
     {
-        return Vector3.Scale(tiltRotationVector, new Vector3(-1f, 1f, 1f));
+        return Vector3.Scale(tiltRotationVector, new Vector3(1f, 1f, 1f));
     }
 
     private static Vector3 GetSafeAxis(Vector3 axis, Vector3 fallback)
