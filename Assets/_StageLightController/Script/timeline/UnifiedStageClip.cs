@@ -59,7 +59,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
 
-    [Header("分組延遲")]
+    [Header("分組偏移")]
     [Tooltip("分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）\n" +
              "group 延遲 = groupDelayCurve(t) × groupDelayFactor × groupCount")]
     public AnimationCurve groupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
@@ -67,13 +67,21 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("分組延遲係數（秒）")]
     public float groupDelayFactor = 0f;
 
-    [Header("組內逐顆延遲")]
+    [Tooltip("分組旋轉幅度曲線（以 groupIndex/(groupCount-1) 取樣）\n" +
+             "數値 × rotationRange = 該組的實際旋轉幅度，1 表示不改變")]
+    public AnimationCurve groupRotationRangeCurve = AnimationCurve.Constant(0, 1, 1);
+
+    [Header("組內偏移")]
     [Tooltip("組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）\n" +
              "light 延遲 = lightDelayCurve(t) × lightDelayFactor × groupSize")]
     public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
     [Tooltip("組內延遲係數（秒）")]
     public float lightDelayFactor = 0f;
+
+    [Tooltip("組內旋轉幅度曲線（以 indexInGroup/(groupSize-1) 取樣）\n" +
+             "數値 × rotationRange = 該顆燈的實際旋轉幅度，1 表示不改變")]
+    public AnimationCurve lightRotationRangeCurve = AnimationCurve.Constant(0, 1, 1);
 
     public ClipCaps clipCaps => ClipCaps.Blending;
 
@@ -135,8 +143,10 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             trackingTarget         = template.trackingTarget;
             groupDelayCurve        = CloneAnimationCurve(template.groupDelayCurve);
             groupDelayFactor       = template.groupDelayFactor;
+            groupRotationRangeCurve = CloneAnimationCurve(template.groupRotationRangeCurve);
             lightDelayCurve        = CloneAnimationCurve(template.lightDelayCurve);
             lightDelayFactor       = template.lightDelayFactor;
+            lightRotationRangeCurve = CloneAnimationCurve(template.lightRotationRangeCurve);
             spreadAngle            = template.spreadAngle;
             spreadArcRange         = template.spreadArcRange;
             spreadAngleCurve       = CloneAnimationCurve(template.spreadAngleCurve);
@@ -163,7 +173,9 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         beatGroupDelayCurve = CloneAnimationCurve(beatGroupDelayCurve);
         beatLightDelayCurve = CloneAnimationCurve(beatLightDelayCurve);
         groupDelayCurve = CloneAnimationCurve(groupDelayCurve);
+        groupRotationRangeCurve = CloneAnimationCurve(groupRotationRangeCurve);
         lightDelayCurve = CloneAnimationCurve(lightDelayCurve);
+        lightRotationRangeCurve = CloneAnimationCurve(lightRotationRangeCurve);
         spreadAngleCurve = CloneAnimationCurve(spreadAngleCurve);
         spreadPanCurve   = CloneAnimationCurve(spreadPanCurve);
     }
@@ -216,10 +228,12 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.pauseTime             = cyclePauseTime;
         behaviour.clipTarget            = trackingTarget.Resolve(graph.GetResolver());
 
-        behaviour.groupDelayCurve       = groupDelayCurve;
-        behaviour.groupDelayFactor      = groupDelayFactor;
-        behaviour.lightDelayCurve       = lightDelayCurve;
-        behaviour.lightDelayFactor      = lightDelayFactor;
+        behaviour.groupDelayCurve          = groupDelayCurve;
+        behaviour.groupDelayFactor          = groupDelayFactor;
+        behaviour.groupRotationRangeCurve   = groupRotationRangeCurve;
+        behaviour.lightDelayCurve           = lightDelayCurve;
+        behaviour.lightDelayFactor          = lightDelayFactor;
+        behaviour.lightRotationRangeCurve   = lightRotationRangeCurve;
         behaviour.animationOffset       = animationOffset;
         behaviour.freezeUseClipGradient = freezeUseClipGradient;
         behaviour.spreadAngle           = spreadAngle;

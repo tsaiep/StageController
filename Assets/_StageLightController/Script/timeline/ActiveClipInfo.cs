@@ -26,13 +26,15 @@ public struct ActiveClipInfo
     public UnifiedStageController.StageLightMode lightMode;
     public float motionWeight;
 
-    // ── 分組延遲 ──
-    public AnimationCurve groupDelayCurve; // 分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）
-    public float groupDelayFactor;         // 分組延遲係數（秒）
+    // ── 分組偏移 ──
+    public AnimationCurve groupDelayCurve;        // 分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）
+    public float groupDelayFactor;                // 分組延遲係數（秒）
+    public AnimationCurve groupRotationRangeCurve; // 分組旋轉幅度曲線（以 groupIndex/(groupCount-1) 取樣，乘以 rotationRange）
 
-    // ── 組內逐顆延遲 ──
-    public AnimationCurve lightDelayCurve; // 組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）
-    public float lightDelayFactor;         // 組內延遲係數（秒）
+    // ── 組內偏移 ──
+    public AnimationCurve lightDelayCurve;        // 組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）
+    public float lightDelayFactor;                // 組內延遲係數（秒）
+    public AnimationCurve lightRotationRangeCurve; // 組內旋轉幅度曲線（以 indexInGroup/(groupSize-1) 取樣，乘以 rotationRange）
 
     public float randomStrength;      // 0~1，Random 模式兩段式混合強度
     public float animationOffset;     // 動畫起點時間偏移（秒）

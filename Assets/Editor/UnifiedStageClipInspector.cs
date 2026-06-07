@@ -168,8 +168,10 @@ public class UnifiedStageClipInspector : Editor
         newAsset.trackingTarget      = clip.trackingTarget;
         newAsset.groupDelayCurve     = UnifiedStageClip.CloneAnimationCurve(clip.groupDelayCurve);
         newAsset.groupDelayFactor    = clip.groupDelayFactor;
+        newAsset.groupRotationRangeCurve = UnifiedStageClip.CloneAnimationCurve(clip.groupRotationRangeCurve);
         newAsset.lightDelayCurve     = UnifiedStageClip.CloneAnimationCurve(clip.lightDelayCurve);
         newAsset.lightDelayFactor    = clip.lightDelayFactor;
+        newAsset.lightRotationRangeCurve = UnifiedStageClip.CloneAnimationCurve(clip.lightRotationRangeCurve);
         newAsset.spreadAngle         = clip.spreadAngle;
         newAsset.spreadArcRange      = clip.spreadArcRange;
         newAsset.spreadAngleCurve    = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurve);

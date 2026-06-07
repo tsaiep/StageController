@@ -25,17 +25,21 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("啟用動作")] public bool enableMotion = true;
     [Tooltip("動作強度")] public float motionStrength = 1.0f;
 
-    [Header("分組延遲")]
+    [Header("分組偏移")]
     [Tooltip("分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）")]
     public AnimationCurve groupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("分組延遲係數（秒）")]
     public float groupDelayFactor = 0f;
+    [Tooltip("分組旋轉幅度曲線（以 groupIndex/(groupCount-1) 取樣）\n數値 × rotationRange = 該組的實際旋轉幅度，1 表示不改變")]
+    public AnimationCurve groupRotationRangeCurve = AnimationCurve.Constant(0, 1, 1);
 
-    [Header("組內逐顆延遲")]
+    [Header("組內偏移")]
     [Tooltip("組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
     public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("組內延遲係數（秒）")]
     public float lightDelayFactor = 0f;
+    [Tooltip("組內旋轉幅度曲線（以 indexInGroup/(groupSize-1) 取樣）\n數値 × rotationRange = 該顆燈的實際旋轉幅度，1 表示不改變")]
+    public AnimationCurve lightRotationRangeCurve = AnimationCurve.Constant(0, 1, 1);
 
     [Header("動畫起點偏移")]
     [Tooltip("動畫循環起點的時間偏移（秒）")] public float animationOffset = 0f;

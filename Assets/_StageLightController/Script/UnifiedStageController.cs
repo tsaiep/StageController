@@ -259,16 +259,33 @@ public class UnifiedStageController : MonoBehaviour
                     float unitTimeOffset = unit.motionOffset * waveIntensity;
                     float adjustedEt = unitEt + unitTimeOffset;
 
+                    // ── 計算有效旋轉幅度（分組 × 組內 × 基礎 range）──
+                    float groupRangeMult = 1f;
+                    if (clip.groupRotationRangeCurve != null)
+                    {
+                        float normalizedGroup = (unit.groupCount > 1)
+                            ? (float)unit.groupIndex / (unit.groupCount - 1) : 0f;
+                        groupRangeMult = clip.groupRotationRangeCurve.Evaluate(normalizedGroup);
+                    }
+                    float lightRangeMult = 1f;
+                    if (clip.lightRotationRangeCurve != null)
+                    {
+                        float normalizedInGroup = (unit.groupSize > 1)
+                            ? (float)unit.indexInGroup / (unit.groupSize - 1) : 0f;
+                        lightRangeMult = clip.lightRotationRangeCurve.Evaluate(normalizedInGroup);
+                    }
+                    float effectiveRange = clip.range * groupRangeMult * lightRangeMult;
+
                     Vector2 angles;
                     if (clip.mode == RotationMode.Circle)
                     {
                         // Circle：幾何圓錐方向式 solver（正確等速圓）
-                        angles = CalculateCircleAngles(adjustedEt, clip.speed, clip.range, clip.staticOffset);
+                        angles = CalculateCircleAngles(adjustedEt, clip.speed, effectiveRange, clip.staticOffset);
                     }
                     else
                     {
                         angles = CalculateAnglesForUnit(
-                            clip.mode, clip.speed, clip.range,
+                            clip.mode, clip.speed, effectiveRange,
                             adjustedEt, ui, clip.staticOffset, clip.randomStrength
                         );
                     }
