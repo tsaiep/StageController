@@ -50,6 +50,12 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("週期停頓時間")] public float cyclePauseTime = 0f;
     [Tooltip("動畫起點偏移(秒)，對循環動畫的相位起點產生時間偏移")] public float animationOffset = 0f;
 
+    [Header("分散效果設定")]
+    [Tooltip("分散角度（SpreadTilt.x 最大值，度）")] public float spreadAngle = 0f;
+    [Range(0f, 360f), Tooltip("組內展開弧度（0~360，預設 360=均勻一圈頭尾不重疊）")] public float spreadArcRange = 360f;
+    [Tooltip("分散角度曲線（Sample 旋轉動作循環，0~1 乘以分散角度 → SpreadTilt.x）")] public AnimationCurve spreadAngleCurve = AnimationCurve.Constant(0, 1, 1);
+    [Tooltip("展開旋轉曲線（Sample 旋轉動作循環，0~1 → 0~360° 附加到 SpreadPan.y）")] public AnimationCurve spreadPanCurve = AnimationCurve.Constant(0, 1, 0);
+
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
 
@@ -131,6 +137,10 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             groupDelayFactor       = template.groupDelayFactor;
             lightDelayCurve        = CloneAnimationCurve(template.lightDelayCurve);
             lightDelayFactor       = template.lightDelayFactor;
+            spreadAngle            = template.spreadAngle;
+            spreadArcRange         = template.spreadArcRange;
+            spreadAngleCurve       = CloneAnimationCurve(template.spreadAngleCurve);
+            spreadPanCurve         = CloneAnimationCurve(template.spreadPanCurve);
         }
 
         if (applyTemplateFixtureSettings)
@@ -154,6 +164,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         beatLightDelayCurve = CloneAnimationCurve(beatLightDelayCurve);
         groupDelayCurve = CloneAnimationCurve(groupDelayCurve);
         lightDelayCurve = CloneAnimationCurve(lightDelayCurve);
+        spreadAngleCurve = CloneAnimationCurve(spreadAngleCurve);
+        spreadPanCurve   = CloneAnimationCurve(spreadPanCurve);
     }
 
     public static Gradient CloneGradient(Gradient source)
@@ -210,6 +222,10 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.lightDelayFactor      = lightDelayFactor;
         behaviour.animationOffset       = animationOffset;
         behaviour.freezeUseClipGradient = freezeUseClipGradient;
+        behaviour.spreadAngle           = spreadAngle;
+        behaviour.spreadArcRange        = spreadArcRange;
+        behaviour.spreadAngleCurve      = spreadAngleCurve;
+        behaviour.spreadPanCurve        = spreadPanCurve;
 
         behaviour.colorSampleMode       = colorSampleMode;
         behaviour.bpm                   = bpm;

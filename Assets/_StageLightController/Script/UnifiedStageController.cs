@@ -134,6 +134,8 @@ public class UnifiedStageController : MonoBehaviour
                     {
                         u.velPan = 0;
                         u.velTilt = 0;
+                        u.velSpreadPan  = 0;
+                        u.velSpreadTilt = 0;
                     }
                 }
         }
@@ -159,6 +161,7 @@ public class UnifiedStageController : MonoBehaviour
             // --- 累加變數 ---
             Color unitColor = Color.black;
             float totalPan = 0f, totalTilt = 0f;
+            float totalSpreadPan = 0f, totalSpreadTilt = 0f;
             float targetModeWeight = 0f;
 
             // --- FreezeFrame Rising Edge: 快取此 unit 的現在狀態 ---
@@ -294,6 +297,38 @@ public class UnifiedStageController : MonoBehaviour
 
                 totalPan  += clipPan  * clip.weight;
                 totalTilt += clipTilt * clip.weight;
+
+                // ── Spread 分散效果（僅在有任一 Spread Transform 時執行）──
+                if (unit.spreadPanTransform != null || unit.spreadTiltTransform != null)
+                {
+                    // 取樣循環進度（與 MotionCycle 顏色模式相同邏輯）
+                    float cyclePeriod = UnifiedStageBehaviour.GetMotionCyclePeriod(clip.mode, clip.speed);
+                    float cycleT;
+                    if (cyclePeriod > 0.0001f)
+                    {
+                        float raw = unitEt / cyclePeriod;
+                        cycleT = raw - Mathf.Floor(raw);
+                    }
+                    else
+                    {
+                        cycleT = clip.normalizedClipTime;
+                    }
+
+                    // SpreadTilt：spreadAngle × 曲線值
+                    float curveAngle = (clip.spreadAngleCurve != null) ? clip.spreadAngleCurve.Evaluate(cycleT) : 1f;
+                    float clipSpreadTilt = clip.spreadAngle * curveAngle;
+
+                    // SpreadPan：組內基礎偏移 + 曲線動態偏移
+                    // 除以 groupSize（非 groupSize-1），使 360° 時頭尾不重疊
+                    float normInGroup = (unit.groupSize > 1) ? (float)unit.indexInGroup / unit.groupSize : 0f;
+                    float baseSpreadPan = normInGroup * clip.spreadArcRange;
+                    float curvePan = (clip.spreadPanCurve != null) ? clip.spreadPanCurve.Evaluate(cycleT) : 0f;
+                    // DeltaAngle 正規化，防止視覺跳轉，確保數值不無限累加
+                    float clipSpreadPan = unit.curSpreadPan + Mathf.DeltaAngle(unit.curSpreadPan, baseSpreadPan + curvePan * 360f);
+
+                    totalSpreadTilt += clipSpreadTilt * clip.weight;
+                    totalSpreadPan  += clipSpreadPan  * clip.weight;
+                }
             }
 
             // ===== 物理更新 =====
@@ -325,6 +360,32 @@ public class UnifiedStageController : MonoBehaviour
 
                 unit.tiltTransform.localRotation =
                     Quaternion.AngleAxis(unit.curTilt, GetSafeAxis(GetProcessedTiltRotationVector(), Vector3.left));
+            }
+
+            // ===== Spread Transform 更新 =====
+            if (unit.spreadPanTransform != null || unit.spreadTiltTransform != null)
+            {
+                float sTime  = Mathf.Lerp(baseSmoothTime, trackingSmoothTime, targetModeWeight);
+                float mSpeed = Mathf.Lerp(maxRotationSpeed, Mathf.Max(maxRotationSpeed, 600f), targetModeWeight);
+
+                if (physicalDt <= 0.0001f)
+                {
+                    unit.curSpreadPan  = totalSpreadPan;
+                    unit.curSpreadTilt = totalSpreadTilt;
+                    unit.velSpreadPan  = 0f;
+                    unit.velSpreadTilt = 0f;
+                }
+                else
+                {
+                    float sSTime = Mathf.Max(sTime, 0.02f);
+                    unit.curSpreadPan  = Mathf.SmoothDampAngle(unit.curSpreadPan,  totalSpreadPan,  ref unit.velSpreadPan,  sSTime, mSpeed, physicalDt);
+                    unit.curSpreadTilt = Mathf.SmoothDamp(     unit.curSpreadTilt, totalSpreadTilt, ref unit.velSpreadTilt, sSTime, mSpeed, physicalDt);
+                }
+
+                if (unit.spreadPanTransform  != null)
+                    unit.spreadPanTransform.localRotation  = Quaternion.AngleAxis(unit.curSpreadPan,  Vector3.up);
+                if (unit.spreadTiltTransform != null)
+                    unit.spreadTiltTransform.localRotation = Quaternion.AngleAxis(unit.curSpreadTilt, Vector3.right);
             }
 
             // ===== 燈光 =====

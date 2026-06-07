@@ -55,4 +55,10 @@ public struct ActiveClipInfo
     public Color globalColor;                  // 全域顏色乘算（HDR，乘在所有模式輸出上）
     public float clipStartTime;                // Clip 在 Timeline 上的絕對起始時間（秒）
                                                // = rootTime - effectiveTime，供 BeatTimeRef.TimelineGlobal 使用
+
+    // ── Spread 分散效果 ──
+    public float spreadAngle;       // 分散角度（SpreadTilt.x 最大值，度）
+    public float spreadArcRange;    // 組內展開弧度（0~360，360=均勻一圈頭尾不重疊）
+    public AnimationCurve spreadAngleCurve; // 0~1 乘以 spreadAngle → SpreadTilt.x
+    public AnimationCurve spreadPanCurve;   // 0~1 → 0~360°，附加到 SpreadPan.y
 }

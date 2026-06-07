@@ -160,6 +160,10 @@ public class UnifiedStageMixer : PlayableBehaviour
                 beatLightDelayCurve = b.beatLightDelayCurve,
                 globalColor         = b.globalColor,
                 clipStartTime       = clipStartTime,
+                spreadAngle         = b.spreadAngle,
+                spreadArcRange      = b.spreadArcRange,
+                spreadAngleCurve    = b.spreadAngleCurve,
+                spreadPanCurve      = b.spreadPanCurve,
             });
         }
 

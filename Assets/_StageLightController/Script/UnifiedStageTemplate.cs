@@ -58,4 +58,10 @@ public class UnifiedStageTemplate : ScriptableObject
     public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("組內延遲係數（秒），light 延遲 = curve(t) × factor × groupSize")]
     public float lightDelayFactor = 0f;
+
+    [Header("分散效果設定")]
+    [Tooltip("分散角度（SpreadTilt.x 最大值，度）")] public float spreadAngle = 0f;
+    [Range(0f, 360f), Tooltip("組內展開弧度（0~360，預設 360=均勻一圈頭尾不重疊）")] public float spreadArcRange = 360f;
+    [Tooltip("分散角度曲線（Sample 旋轉動作循環，0~1 乘以分散角度 → SpreadTilt.x）")] public AnimationCurve spreadAngleCurve = AnimationCurve.Constant(0, 1, 1);
+    [Tooltip("展開旋轉曲線（Sample 旋轉動作循環，0~1 → 0~360° 附加到 SpreadPan.y）")] public AnimationCurve spreadPanCurve = AnimationCurve.Constant(0, 1, 0);
 }

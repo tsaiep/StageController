@@ -55,6 +55,12 @@ public class StageLightArranger : MonoBehaviour
     [Tooltip("每顆燈使用的 Prefab")]
     public GameObject lightPrefab;
 
+    [Tooltip("啟用後，每組 index 0 以外的燈具改用此 Prefab")]
+    public bool useSecondaryPrefab = false;
+
+    [Tooltip("組內第二顆以後的燈具使用的 Prefab（不勾選 useSecondaryPrefab 時無效）")]
+    public GameObject secondaryLightPrefab;
+
     [Tooltip("單圈/單列的燈光數量")]
     [Range(1, 60)] public int count = 8;
 
@@ -146,6 +152,12 @@ public class StageLightArranger : MonoBehaviour
             return;
         }
 
+        if (useSecondaryPrefab && secondaryLightPrefab == null)
+        {
+            Debug.LogWarning("[StageLightArranger] useSecondaryPrefab 已啟用，但 secondaryLightPrefab 未指定。");
+            return;
+        }
+
         ClearLights();
 
         int groupCount = (compoundMode == CompoundMode.None) ? 1 : compoundGroupCount;
@@ -179,22 +191,25 @@ public class StageLightArranger : MonoBehaviour
                 // ── 面向旋轉 ──
                 Quaternion rot = ComputeFacingRotation(localPos, arrangeCenterLocal, g);
 
-                // 生成燈光
+                // 生成燈光：依照 indexInGroup 選擇使用哪一個 Prefab
+                // index 0 始終使用原始 lightPrefab；其餘 index 在 useSecondaryPrefab 引用有效時改用 secondaryLightPrefab
+                GameObject prefabToUse = (useSecondaryPrefab && i > 0) ? secondaryLightPrefab : lightPrefab;
+
                 GameObject lightGO;
 #if UNITY_EDITOR
                 if (!Application.isPlaying)
                 {
-                    lightGO = (GameObject)PrefabUtility.InstantiatePrefab(lightPrefab, groupGO.transform);
+                    lightGO = (GameObject)PrefabUtility.InstantiatePrefab(prefabToUse, groupGO.transform);
                     lightGO.transform.SetLocalPositionAndRotation(localPos, rot);
                     Undo.RegisterCreatedObjectUndo(lightGO, "StageLightArranger Light");
                 }
                 else
                 {
-                    lightGO = Instantiate(lightPrefab, groupGO.transform);
+                    lightGO = Instantiate(prefabToUse, groupGO.transform);
                     lightGO.transform.SetLocalPositionAndRotation(localPos, rot);
                 }
 #else
-                lightGO = Instantiate(lightPrefab, groupGO.transform);
+                lightGO = Instantiate(prefabToUse, groupGO.transform);
                 lightGO.transform.SetLocalPositionAndRotation(localPos, rot);
 #endif
                 lightGO.name = $"Light_{buildMode}_{g:D1}_{i:D2}";
@@ -521,6 +536,7 @@ public class StageLightArranger : MonoBehaviour
 public class StageLightArrangerEditor : Editor
 {
     SerializedProperty buildModeProp, lightPrefabProp, countProp;
+    SerializedProperty useSecondaryPrefabProp, secondaryLightPrefabProp;
     SerializedProperty spacingProp;
     SerializedProperty radiusProp, arcAngleProp, scaleCountWithRadiusProp;
     SerializedProperty sSpacingProp, sIntensityProp, invertSProp;
@@ -536,6 +552,8 @@ public class StageLightArrangerEditor : Editor
         buildModeProp             = serializedObject.FindProperty("buildMode");
         lightPrefabProp           = serializedObject.FindProperty("lightPrefab");
         countProp                 = serializedObject.FindProperty("count");
+        useSecondaryPrefabProp    = serializedObject.FindProperty("useSecondaryPrefab");
+        secondaryLightPrefabProp  = serializedObject.FindProperty("secondaryLightPrefab");
         spacingProp               = serializedObject.FindProperty("spacing");
         radiusProp                = serializedObject.FindProperty("radius");
         arcAngleProp              = serializedObject.FindProperty("arcAngle");
@@ -578,6 +596,19 @@ public class StageLightArrangerEditor : Editor
                 EditorGUILayout.PropertyField(lightPrefabProp, new GUIContent("Light Prefab"));
                 if (!lightPrefabProp.objectReferenceValue)
                     EditorGUILayout.HelpBox("請指定 Light Prefab。", MessageType.Warning);
+
+                // 次要 Prefab 選項
+                EditorGUILayout.PropertyField(useSecondaryPrefabProp, new GUIContent("Use Secondary Prefab",
+                    "啟用後，每組 index 0 以外的燈具改用指定的 Secondary Prefab"));
+                if (useSecondaryPrefabProp.boolValue)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(secondaryLightPrefabProp, new GUIContent("Secondary Prefab"));
+                    if (!secondaryLightPrefabProp.objectReferenceValue)
+                        EditorGUILayout.HelpBox("請指定 Secondary Light Prefab。", MessageType.Warning);
+                    EditorGUI.indentLevel--;
+                }
+
                 EditorGUILayout.PropertyField(countProp, new GUIContent("Count（每圈 / 每列燈數）"));
             }
         }

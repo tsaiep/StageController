@@ -7,6 +7,12 @@ public class SLMUnit : MonoBehaviour
     public Transform tiltTransform;
     public Light targetLight; // 腳本會自動同步此 Light 與 VLB
 
+    [Header("分散效果（Spread）")]
+    [Tooltip("MovingBeamLight_SpreadPan 的 Transform（控制 localRotation.y）")]
+    public Transform spreadPanTransform;
+    [Tooltip("MovingBeamLight_SpreadTilt 的 Transform（控制 localRotation.x）")]
+    public Transform spreadTiltTransform;
+
     [Header("單元演出設定")]
     public bool invertPan = false;
     public bool invertTilt = false;
@@ -19,6 +25,8 @@ public class SLMUnit : MonoBehaviour
     public Vector2 rotationBase = Vector2.zero;
 
     [HideInInspector] public float curPan, curTilt, velPan, velTilt;
+    [HideInInspector] public float curSpreadPan, velSpreadPan;
+    [HideInInspector] public float curSpreadTilt, velSpreadTilt;
     [HideInInspector] public float frozenPan, frozenTilt;
     [HideInInspector] public Color frozenColor;
     [HideInInspector] public bool hasAppliedLightMode;

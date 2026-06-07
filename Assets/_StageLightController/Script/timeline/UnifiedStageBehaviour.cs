@@ -63,6 +63,13 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     public AnimationCurve beatLightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
 
+    [Header("分散效果設定")]
+    [Tooltip("分散角度（SpreadTilt.x 最大值，度）")] public float spreadAngle = 0f;
+    [Range(0f, 360f), Tooltip("組內展開弧度（0~360，預設 360=均勻一圈頭尾不重疊）")] public float spreadArcRange = 360f;
+    [Tooltip("分散角度曲線（Sample 旋轉動作循環，0~1 乘以分散角度 → SpreadTilt.x）")] public AnimationCurve spreadAngleCurve;
+    [Tooltip("展開旋轉曲線（Sample 旋轉動作循環，0~1 → 0~360° 附加到 SpreadPan.y）")] public AnimationCurve spreadPanCurve;
+
+
     /// <summary>
     /// 取得 Clip 內的正規化時間 (0~1)
     /// </summary>

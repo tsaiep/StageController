@@ -170,6 +170,10 @@ public class UnifiedStageClipInspector : Editor
         newAsset.groupDelayFactor    = clip.groupDelayFactor;
         newAsset.lightDelayCurve     = UnifiedStageClip.CloneAnimationCurve(clip.lightDelayCurve);
         newAsset.lightDelayFactor    = clip.lightDelayFactor;
+        newAsset.spreadAngle         = clip.spreadAngle;
+        newAsset.spreadArcRange      = clip.spreadArcRange;
+        newAsset.spreadAngleCurve    = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurve);
+        newAsset.spreadPanCurve      = UnifiedStageClip.CloneAnimationCurve(clip.spreadPanCurve);
 
         string path = EditorUtility.SaveFilePanelInProject("儲存新模板", "NewStageTemplate", "asset", "請輸入模板名稱");
         if (!string.IsNullOrEmpty(path))
