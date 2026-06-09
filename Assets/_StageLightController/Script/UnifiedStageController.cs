@@ -400,9 +400,12 @@ public class UnifiedStageController : MonoBehaviour
                 }
                 else
                 {
-                    float sSTime = Mathf.Max(sTime, 0.02f);
-                    unit.curSpreadPan  = Mathf.SmoothDampAngle(unit.curSpreadPan,  totalSpreadPan,  ref unit.velSpreadPan,  sSTime, mSpeed, physicalDt);
-                    unit.curSpreadTilt = Mathf.SmoothDamp(     unit.curSpreadTilt, totalSpreadTilt, ref unit.velSpreadTilt, sSTime, mSpeed, physicalDt);
+                    // Spread curves are authored against the motion cycle, so apply them directly.
+                    // Smoothing here makes curve endpoints and tangents feel delayed.
+                    unit.curSpreadPan  = totalSpreadPan;
+                    unit.curSpreadTilt = totalSpreadTilt;
+                    unit.velSpreadPan  = 0f;
+                    unit.velSpreadTilt = 0f;
                 }
 
                 if (unit.spreadPanTransform  != null)
