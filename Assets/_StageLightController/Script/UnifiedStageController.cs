@@ -333,7 +333,13 @@ public class UnifiedStageController : MonoBehaviour
 
                     // SpreadTilt：spreadAngle × 曲線值
                     float curveAngle = (clip.spreadAngleCurve != null) ? clip.spreadAngleCurve.Evaluate(cycleT) : 1f;
-                    float clipSpreadTilt = clip.spreadAngle * curveAngle;
+                    float normalizedIndexInGroup = (unit.groupSize > 1)
+                        ? (float)unit.indexInGroup / (unit.groupSize - 1)
+                        : 0f;
+                    float curveAngleByIndex = (clip.spreadAngleCurveByIndex != null)
+                        ? clip.spreadAngleCurveByIndex.Evaluate(normalizedIndexInGroup)
+                        : 1f;
+                    float clipSpreadTilt = clip.spreadAngle * curveAngle * curveAngleByIndex;
 
                     // SpreadPan：組內基礎偏移 + 曲線動態偏移
                     // 除以 groupSize（非 groupSize-1），使 360° 時頭尾不重疊

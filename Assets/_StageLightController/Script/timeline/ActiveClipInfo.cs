@@ -62,5 +62,6 @@ public struct ActiveClipInfo
     public float spreadAngle;       // 分散角度（SpreadTilt.x 最大值，度）
     public float spreadArcRange;    // 組內展開弧度（0~360，360=均勻一圈頭尾不重疊）
     public AnimationCurve spreadAngleCurve; // 0~1 乘以 spreadAngle → SpreadTilt.x
+    public AnimationCurve spreadAngleCurveByIndex; // indexInGroup/(groupSize-1) 乘到 SpreadTilt.x
     public AnimationCurve spreadPanCurve;   // 0~1 → 0~360°，附加到 SpreadPan.y
 }

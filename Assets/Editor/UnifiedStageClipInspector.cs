@@ -175,6 +175,7 @@ public class UnifiedStageClipInspector : Editor
         newAsset.spreadAngle         = clip.spreadAngle;
         newAsset.spreadArcRange      = clip.spreadArcRange;
         newAsset.spreadAngleCurve    = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurve);
+        newAsset.spreadAngleCurveByIndex = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurveByIndex);
         newAsset.spreadPanCurve      = UnifiedStageClip.CloneAnimationCurve(clip.spreadPanCurve);
 
         string path = EditorUtility.SaveFilePanelInProject("儲存新模板", "NewStageTemplate", "asset", "請輸入模板名稱");
