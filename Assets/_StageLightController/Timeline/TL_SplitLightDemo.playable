@@ -1867,11 +1867,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  applyTemplate: {fileID: 11400000, guid: cf7e0a2683e57914aa2612f95535ab1a, type: 2}
+  applyTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
-  clipDisplayName: 
+  clipDisplayName: RadialSpread_Static
   mutableDataDetached: 1
 --- !u!114 &11400000
 MonoBehaviour:
