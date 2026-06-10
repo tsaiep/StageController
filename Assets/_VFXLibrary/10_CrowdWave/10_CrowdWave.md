@@ -2,6 +2,8 @@
 
 這是一個模擬手持螢光棒觀眾的效果，包含多種揮動模式以及各種動作的參數調整，並且可以生成於各種自定義的座位模型。可以分別控制左右手顏色或者搭配Render Texture取樣影片的顏色
 
+Notion版本
+https://www.notion.so/10_CrowdWave-3788a373d31780138b16f23824169292?source=copy_link
 ## 使用方式
 
 1. Seat Mesh 指定座位模型，觀眾將會生成在模型頂點（Vertex）之上，因此 Seat Mesh Vertex Count - 觀眾的生成數量需要填入使用模型的頂點數量。
