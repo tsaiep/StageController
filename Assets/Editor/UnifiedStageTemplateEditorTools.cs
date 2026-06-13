@@ -392,6 +392,23 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
         Repaint();
     }
 
+    private void SyncContextWithTimelineSelection()
+    {
+        UnifiedStageClip selectedClip = GetSelectedTimelineStageClip();
+        if (selectedClip == null || selectedClip == _clip)
+            return;
+
+        SetContext(selectedClip, null);
+    }
+
+    private static UnifiedStageClip GetSelectedTimelineStageClip()
+    {
+        TimelineClip selectedTimelineClip = TimelineEditor.selectedClips
+            .FirstOrDefault(clip => clip != null && clip.asset is UnifiedStageClip);
+
+        return selectedTimelineClip != null ? selectedTimelineClip.asset as UnifiedStageClip : null;
+    }
+
     private void RefreshDatabase()
     {
         _allTemplates = UnifiedStageTemplateEditorTools.FindTemplates();
@@ -403,6 +420,8 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
     {
         if (_previewRenderer == null)
             _previewRenderer = new UnifiedStageTemplatePreviewRenderer();
+
+        SyncContextWithTimelineSelection();
 
         if (_clip != null && _controller == null)
             _controller = UnifiedStageTemplateEditorTools.FindBoundController(_clip);
@@ -436,7 +455,7 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
 
         if (_clip == null)
         {
-            EditorGUILayout.HelpBox("No UnifiedStageClip is attached to this selector window. Close and reopen it from a clip inspector.", MessageType.Error);
+            EditorGUILayout.HelpBox("No UnifiedStageClip is selected. Select a UnifiedStageClip in the Timeline, or open this window from a clip inspector.", MessageType.Error);
         }
         else if (_controller == null)
         {
