@@ -138,7 +138,7 @@ internal static class UnifiedStageTemplateEditorTools
         if (controller != null)
             return controller;
 
-        foreach (PlayableDirector director in UnityEngine.Object.FindObjectsOfType<PlayableDirector>(true))
+        foreach (PlayableDirector director in UnityEngine.Object.FindObjectsByType<PlayableDirector>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             controller = FindBoundControllerFromDirector(director, clip);
             if (controller != null)
@@ -157,7 +157,7 @@ internal static class UnifiedStageTemplateEditorTools
         if (timelineController == controller)
             return false;
 
-        foreach (PlayableDirector director in UnityEngine.Object.FindObjectsOfType<PlayableDirector>(true))
+        foreach (PlayableDirector director in UnityEngine.Object.FindObjectsByType<PlayableDirector>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             timelineController = FindBoundControllerFromDirector(director, clip);
             if (timelineController == controller)
@@ -218,7 +218,7 @@ internal static class UnifiedStageTemplateEditorTools
 
     private static UnifiedStageController FindSinglePreviewControllerFallback()
     {
-        UnifiedStageController[] controllers = UnityEngine.Object.FindObjectsOfType<UnifiedStageController>(true);
+        UnifiedStageController[] controllers = UnityEngine.Object.FindObjectsByType<UnifiedStageController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         List<UnifiedStageController> candidates = controllers
             .Where(controller => controller != null && controller.templatePreviewPrefab != null)
             .ToList();
@@ -351,7 +351,7 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
     public static void Open(UnifiedStageClip clip, UnifiedStageController controller)
     {
         UnifiedStageTemplateSelectorWindow window = GetWindow<UnifiedStageTemplateSelectorWindow>("Stage Template Selector");
-        window.minSize = new Vector2(860f, 620f);
+        window.minSize = new Vector2(750f, 600f);
         window.SetContext(clip, controller);
         window.Show();
         window.Focus();
@@ -472,7 +472,9 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
                 GUI.FocusControl(null);
             }
         }
-
+        
+        EditorGUILayout.Space(2);
+        
         if (_allTags.Count == 0)
         {
             EditorGUILayout.HelpBox("No UnifiedStageTemplateTagSO assets were found. Create tags from Assets/Create/Stage Control/Template Tag.", MessageType.Info);
