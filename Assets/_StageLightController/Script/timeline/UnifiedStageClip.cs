@@ -89,6 +89,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 
     [Header("模板套用")]
     [Tooltip("套用模板")] public UnifiedStageTemplate applyTemplate;
+
+    [HideInInspector] public UnifiedStageTemplate selectedTemplate;
     [Tooltip("套用模板中的顏色設定")] public bool applyTemplateColorSettings = true;
     [Tooltip("套用模板中的旋轉動畫設定")] public bool applyTemplateRotationSettings = true;
     [Tooltip("套用模板中的燈具物理設定")] public bool applyTemplateFixtureSettings = true;
@@ -113,6 +115,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     public void ApplyTemplateValues(UnifiedStageTemplate template)
     {
         if (template == null) return;
+
+        selectedTemplate = template;
 
         if (applyTemplateColorSettings)
         {

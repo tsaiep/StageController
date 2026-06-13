@@ -1,190 +1,225 @@
-using UnityEngine;
+﻿using System.Linq;
 using UnityEditor;
-using UnityEngine.Timeline;
 using UnityEditor.Timeline;
-using System.Linq;
+using UnityEngine;
+using UnityEngine.Timeline;
 
 [CustomEditor(typeof(UnifiedStageClip))]
 public class UnifiedStageClipInspector : Editor
 {
-    private string feedbackMessage = "";
-    private double feedbackTime = 0;
+    private string _feedbackMessage = "";
+    private double _feedbackTime;
 
     public override void OnInspectorGUI()
     {
         UnifiedStageClip clip = (UnifiedStageClip)target;
 
-        // --- 1. 繪製手動調整區 ---
-        SerializedObject so = serializedObject;
-        so.Update();
-        SerializedProperty prop = so.GetIterator();
-        if (prop.NextVisible(true))
-        {
-            do
-            {
-                if (prop.name == "applyTemplate" ||
-                    prop.name == "applyTemplateColorSettings" ||
-                    prop.name == "applyTemplateRotationSettings" ||
-                    prop.name == "applyTemplateFixtureSettings" ||
-                    prop.name == "m_Script" ||
-                    prop.name == "clipDisplayName")
-                    continue;
-                EditorGUILayout.PropertyField(prop, true);
-            }
-            while (prop.NextVisible(false));
-        }
-        so.ApplyModifiedProperties();
+        serializedObject.Update();
+        DrawTemplateSection(clip);
+        EditorGUILayout.Space(10);
+        DrawSeparator();
+        EditorGUILayout.Space(8);
+        DrawClipProperties();
+        serializedObject.ApplyModifiedProperties();
 
-        GUILayout.Space(25);
-        rectLine(new Color(0.5f, 0.5f, 0.5f, 0.4f));
-        GUILayout.Space(10);
-
-        // --- 2. 底部功能區 (資產管理) ---
-        EditorGUILayout.LabelField("資產管理與模板操作", EditorStyles.boldLabel);
-
-        EditorGUILayout.BeginVertical("HelpBox");
-        GUILayout.Space(5);
-
-        EditorGUILayout.BeginHorizontal();
-        clip.applyTemplate = (UnifiedStageTemplate)EditorGUILayout.ObjectField(
-            "選擇模板",
-            clip.applyTemplate,
-            typeof(UnifiedStageTemplate),
-            false
-        );
-
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUI.BeginChangeCheck();
-        bool applyColor = EditorGUILayout.Toggle("套用顏色設定", clip.applyTemplateColorSettings);
-        bool applyRotation = EditorGUILayout.Toggle("套用旋轉動畫設定", clip.applyTemplateRotationSettings);
-        bool applyFixture = EditorGUILayout.Toggle("套用燈具物理設定", clip.applyTemplateFixtureSettings);
-        if (EditorGUI.EndChangeCheck())
-        {
-            Undo.RecordObject(clip, "Change Template Apply Options");
-            clip.applyTemplateColorSettings = applyColor;
-            clip.applyTemplateRotationSettings = applyRotation;
-            clip.applyTemplateFixtureSettings = applyFixture;
-            EditorUtility.SetDirty(clip);
-        }
-
-        GUI.enabled = clip.applyTemplate != null;
-
-        if (GUILayout.Button("確認套用", GUILayout.Width(80)))
-        {
-            if (clip.applyTemplate != null)
-            {
-                // 1. 註冊 Undo
-                Undo.RecordObject(clip, "Apply Stage Template");
-
-                var t = clip.applyTemplate;
-
-                // 2. 依分類開關同步數據
-                clip.ApplyTemplateValues(t);
-
-                // 3. 設定內部名稱
-                string newName = t.name;
-                clip.clipDisplayName = newName;
-
-                // 核心修正：強制同步修改 Timeline 軌道上的名稱
-                var timelineClip = TimelineEditor.selectedClips.FirstOrDefault(c => c.asset == clip);
-                if (timelineClip != null)
-                {
-                    timelineClip.displayName = newName;
-                }
-
-                clip.applyTemplate = null;
-
-                // 4. 強制保存與刷新
-                EditorUtility.SetDirty(clip);
-                TimelineEditor.Refresh(RefreshReason.ContentsModified);
-
-                feedbackMessage = "✔ 模板已成功套用且名稱已更新！";
-                feedbackTime = EditorApplication.timeSinceStartup;
-            }
-        }
-        GUI.enabled = true;
-
-        if (!string.IsNullOrEmpty(feedbackMessage))
-        {
-            if (EditorApplication.timeSinceStartup - feedbackTime < 3.0)
-            {
-                GUI.contentColor = new Color(0.4f, 1f, 0.4f);
-                EditorGUILayout.LabelField(feedbackMessage, EditorStyles.miniLabel);
-                GUI.contentColor = Color.white;
-            }
-            else { feedbackMessage = ""; }
-        }
-
-        GUILayout.Space(5);
-        EditorGUILayout.EndVertical();
-
-        GUILayout.Space(10);
-        GUI.backgroundColor = new Color(0.2f, 0.5f, 0.7f);
-        if (GUILayout.Button("將當前參數導出為新模板 (UnifiedStageTemplate)", GUILayout.Height(35)))
-        {
-            ExportToTemplate(clip);
-        }
-        GUI.backgroundColor = Color.white;
-        GUILayout.Space(10);
+        EditorGUILayout.Space(10);
+        DrawExportSection(clip);
     }
 
-    private void rectLine(Color color)
+    private void DrawTemplateSection(UnifiedStageClip clip)
     {
-        Rect rect = EditorGUILayout.GetControlRect(false, 1);
-        EditorGUI.DrawRect(rect, color);
+        SerializedProperty applyTemplateProp = serializedObject.FindProperty("applyTemplate");
+        SerializedProperty selectedTemplateProp = serializedObject.FindProperty("selectedTemplate");
+        UnifiedStageTemplate legacyPendingTemplate = applyTemplateProp.objectReferenceValue as UnifiedStageTemplate;
+        UnifiedStageTemplate selectedTemplate = selectedTemplateProp.objectReferenceValue as UnifiedStageTemplate;
+        UnifiedStageTemplate shownTemplate = selectedTemplate != null ? selectedTemplate : legacyPendingTemplate;
+        UnifiedStageController boundController = UnifiedStageTemplateEditorTools.FindBoundController(clip);
+        bool usingFallbackController = UnifiedStageTemplateEditorTools.IsFallbackController(clip, boundController);
+        GameObject previewPrefab = boundController != null ? boundController.templatePreviewPrefab : null;
+
+        EditorGUILayout.LabelField("Stage Template", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUILayout.ObjectField("Selected Template", shownTemplate, typeof(UnifiedStageTemplate), false);
+            }
+
+            GUI.enabled = shownTemplate != null;
+            if (GUILayout.Button("Ping", GUILayout.Width(54f)))
+                EditorGUIUtility.PingObject(shownTemplate);
+            GUI.enabled = true;
+        }
+
+        if (shownTemplate != null)
+        {
+            string tags = UnifiedStageTemplateEditorTools.GetTagText(shownTemplate);
+            EditorGUILayout.LabelField("Tags", string.IsNullOrEmpty(tags) ? "No tags" : tags, EditorStyles.miniLabel);
+        }
+        else
+        {
+            EditorGUILayout.HelpBox("No template selected. Use Select Template to choose and apply one.", MessageType.Info);
+        }
+
+        if (legacyPendingTemplate != null && selectedTemplate == null)
+        {
+            EditorGUILayout.HelpBox("Legacy applyTemplate is set. It will be applied by OnValidate and is shown here as a fallback.", MessageType.Info);
+        }
+
+        EditorGUILayout.Space(4);
+        using (new EditorGUI.DisabledScope(true))
+        {
+            EditorGUILayout.ObjectField("Bound Controller", boundController, typeof(UnifiedStageController), true);
+            EditorGUILayout.ObjectField("Template Preview Prefab", previewPrefab, typeof(GameObject), false);
+        }
+
+        if (boundController == null)
+        {
+            EditorGUILayout.HelpBox("No UnifiedStageController binding was found for this Timeline track, and no single scene controller with Template Preview Prefab was available as fallback.", MessageType.Warning);
+        }
+        else if (usingFallbackController)
+        {
+            EditorGUILayout.HelpBox("Using the only scene UnifiedStageController that has Template Preview Prefab assigned. This is a fallback because the Timeline track binding was not found.", MessageType.Info);
+        }
+        else if (previewPrefab == null)
+        {
+            EditorGUILayout.HelpBox("The bound UnifiedStageController has no Template Preview Prefab assigned. This reads from the scene component instance bound to the Timeline track, not from the UnifiedStageController script asset in the Project window.", MessageType.Warning);
+        }
+
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            if (GUILayout.Button("Select Template", GUILayout.Height(30f)))
+            {
+                UnifiedStageTemplateSelectorWindow.Open(clip, boundController);
+            }
+
+            GUI.enabled = shownTemplate != null;
+            if (GUILayout.Button("Clear", GUILayout.Width(80f), GUILayout.Height(30f)))
+            {
+                Undo.RecordObject(clip, "Clear Stage Template");
+                applyTemplateProp.objectReferenceValue = null;
+                selectedTemplateProp.objectReferenceValue = null;
+                clip.applyTemplate = null;
+                clip.selectedTemplate = null;
+                EditorUtility.SetDirty(clip);
+                TimelineEditor.Refresh(RefreshReason.ContentsModified);
+            }
+            GUI.enabled = true;
+        }
+
+        DrawFeedback();
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawClipProperties()
+    {
+        DrawPropertiesExcluding(
+            serializedObject,
+            "m_Script",
+            "applyTemplate",
+            "selectedTemplate",
+            "applyTemplateColorSettings",
+            "applyTemplateRotationSettings",
+            "applyTemplateFixtureSettings",
+            "clipDisplayName"
+        );
+    }
+
+    private void DrawExportSection(UnifiedStageClip clip)
+    {
+        Color old = GUI.backgroundColor;
+        GUI.backgroundColor = new Color(0.2f, 0.5f, 0.7f);
+        if (GUILayout.Button("Export Current Clip As UnifiedStageTemplate", GUILayout.Height(32f)))
+            ExportToTemplate(clip);
+        GUI.backgroundColor = old;
     }
 
     private void ExportToTemplate(UnifiedStageClip clip)
     {
         UnifiedStageTemplate newAsset = ScriptableObject.CreateInstance<UnifiedStageTemplate>();
-        newAsset.lightMode           = clip.lightMode;
-        newAsset.lightRange          = clip.lightRange;
-        newAsset.lightGradient       = UnifiedStageClip.CloneGradient(clip.lightGradient);
-        newAsset.intensityMultiplier = clip.intensityMultiplier;
-        newAsset.sensitivity         = clip.sensitivity;
-        newAsset.smoothness          = clip.smoothness;
-        newAsset.beamAngle           = clip.beamAngle;
-        newAsset.softness            = clip.softness;
-        newAsset.enableScatterMode   = clip.enableScatterMode;
-        newAsset.colorSampleMode     = clip.colorSampleMode;
-        newAsset.bpm                 = clip.bpm;
-        newAsset.beatTimeRef         = clip.beatTimeRef;
-        newAsset.beatPhaseOffset     = clip.beatPhaseOffset;
-        newAsset.beatSnapColors      = UnifiedStageClip.CloneColorArray(clip.beatSnapColors);
-        newAsset.beatSnapTransitionTime = clip.beatSnapTransitionTime;
-        newAsset.beatGroupDelayFactor = clip.beatGroupDelayFactor;
-        newAsset.beatLightDelayFactor = clip.beatLightDelayFactor;
-        newAsset.beatGroupDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatGroupDelayCurve);
-        newAsset.beatLightDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatLightDelayCurve);
-        newAsset.globalColor         = clip.globalColor;
-        newAsset.freezeUseClipGradient = clip.freezeUseClipGradient;
-        newAsset.rotationMode        = clip.rotationMode;
-        newAsset.rotationSpeed       = clip.rotationSpeed;
-        newAsset.rotationRange       = clip.rotationRange;
-        newAsset.staticAngleOffset   = clip.staticAngleOffset;
-        newAsset.cyclePauseTime      = clip.cyclePauseTime;
-        newAsset.animationOffset     = clip.animationOffset;
-        newAsset.trackingTarget      = clip.trackingTarget;
-        newAsset.groupDelayCurve     = UnifiedStageClip.CloneAnimationCurve(clip.groupDelayCurve);
-        newAsset.groupDelayFactor    = clip.groupDelayFactor;
-        newAsset.groupRotationRangeCurve = UnifiedStageClip.CloneAnimationCurve(clip.groupRotationRangeCurve);
-        newAsset.lightDelayCurve     = UnifiedStageClip.CloneAnimationCurve(clip.lightDelayCurve);
-        newAsset.lightDelayFactor    = clip.lightDelayFactor;
-        newAsset.lightRotationRangeCurve = UnifiedStageClip.CloneAnimationCurve(clip.lightRotationRangeCurve);
-        newAsset.spreadAngle         = clip.spreadAngle;
-        newAsset.spreadArcRange      = clip.spreadArcRange;
-        newAsset.spreadAngleCurve    = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurve);
-        newAsset.spreadAngleCurveByIndex = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurveByIndex);
-        newAsset.spreadPanCurve      = UnifiedStageClip.CloneAnimationCurve(clip.spreadPanCurve);
+        CopyClipToTemplate(clip, newAsset);
 
-        string path = EditorUtility.SaveFilePanelInProject("儲存新模板", "NewStageTemplate", "asset", "請輸入模板名稱");
-        if (!string.IsNullOrEmpty(path))
+        string path = EditorUtility.SaveFilePanelInProject(
+            "Save Stage Template",
+            "NewStageTemplate",
+            "asset",
+            "Choose where to save the UnifiedStageTemplate asset."
+        );
+
+        if (string.IsNullOrEmpty(path))
+            return;
+
+        AssetDatabase.CreateAsset(newAsset, path);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        EditorGUIUtility.PingObject(newAsset);
+    }
+
+    private static void CopyClipToTemplate(UnifiedStageClip clip, UnifiedStageTemplate template)
+    {
+        template.lightMode = clip.lightMode;
+        template.lightRange = clip.lightRange;
+        template.lightGradient = UnifiedStageClip.CloneGradient(clip.lightGradient);
+        template.intensityMultiplier = clip.intensityMultiplier;
+        template.sensitivity = clip.sensitivity;
+        template.smoothness = clip.smoothness;
+        template.beamAngle = clip.beamAngle;
+        template.softness = clip.softness;
+        template.enableScatterMode = clip.enableScatterMode;
+        template.colorSampleMode = clip.colorSampleMode;
+        template.bpm = clip.bpm;
+        template.beatTimeRef = clip.beatTimeRef;
+        template.beatPhaseOffset = clip.beatPhaseOffset;
+        template.beatSnapColors = UnifiedStageClip.CloneColorArray(clip.beatSnapColors);
+        template.beatSnapTransitionTime = clip.beatSnapTransitionTime;
+        template.beatGroupDelayFactor = clip.beatGroupDelayFactor;
+        template.beatLightDelayFactor = clip.beatLightDelayFactor;
+        template.beatGroupDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatGroupDelayCurve);
+        template.beatLightDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatLightDelayCurve);
+        template.globalColor = clip.globalColor;
+        template.freezeUseClipGradient = clip.freezeUseClipGradient;
+        template.rotationMode = clip.rotationMode;
+        template.rotationSpeed = clip.rotationSpeed;
+        template.rotationRange = clip.rotationRange;
+        template.staticAngleOffset = clip.staticAngleOffset;
+        template.cyclePauseTime = clip.cyclePauseTime;
+        template.animationOffset = clip.animationOffset;
+        template.trackingTarget = clip.trackingTarget;
+        template.groupDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.groupDelayCurve);
+        template.groupDelayFactor = clip.groupDelayFactor;
+        template.groupRotationRangeCurve = UnifiedStageClip.CloneAnimationCurve(clip.groupRotationRangeCurve);
+        template.lightDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.lightDelayCurve);
+        template.lightDelayFactor = clip.lightDelayFactor;
+        template.lightRotationRangeCurve = UnifiedStageClip.CloneAnimationCurve(clip.lightRotationRangeCurve);
+        template.spreadAngle = clip.spreadAngle;
+        template.spreadArcRange = clip.spreadArcRange;
+        template.spreadAngleCurve = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurve);
+        template.spreadAngleCurveByIndex = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurveByIndex);
+        template.spreadPanCurve = UnifiedStageClip.CloneAnimationCurve(clip.spreadPanCurve);
+    }
+
+    private void DrawFeedback()
+    {
+        if (string.IsNullOrEmpty(_feedbackMessage))
+            return;
+
+        if (EditorApplication.timeSinceStartup - _feedbackTime > 3.0)
         {
-            AssetDatabase.CreateAsset(newAsset, path);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            EditorUtility.DisplayDialog("成功", "新模板已生成", "確定");
+            _feedbackMessage = "";
+            return;
         }
+
+        Color old = GUI.contentColor;
+        GUI.contentColor = new Color(0.35f, 0.95f, 0.45f);
+        EditorGUILayout.LabelField(_feedbackMessage, EditorStyles.miniLabel);
+        GUI.contentColor = old;
+    }
+
+    private static void DrawSeparator()
+    {
+        Rect rect = EditorGUILayout.GetControlRect(false, 1f);
+        EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.35f));
     }
 }

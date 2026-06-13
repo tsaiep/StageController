@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f3a97a15880784f9aa2582680eb5d9, type: 3}
   m_Name: HorizontalSpread_Open_01
   m_EditorClassIdentifier: 
+  tags:
+  - {fileID: 11400000, guid: 36826d6a7eb9dad4c81d381cb6d3468d, type: 2}
+  - {fileID: 11400000, guid: f9a4954af7aea774c998a9e1aa5fc6ef, type: 2}
+  - {fileID: 11400000, guid: b8f08c37fd32fdf45b7db1734c92640b, type: 2}
   lightMode: 0
   lightRange: 45
   beamAngle: 1

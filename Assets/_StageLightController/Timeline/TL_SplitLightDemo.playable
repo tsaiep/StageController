@@ -111,9 +111,9 @@ MonoBehaviour:
   softness: 100
   enableScatterMode: 0
   rotationMode: 0
-  rotationSpeed: 2
+  rotationSpeed: 5
   rotationRange: 0
-  staticAngleOffset: {x: 0, y: -8.66}
+  staticAngleOffset: {x: 0, y: 0}
   cyclePauseTime: 0
   animationOffset: 0
   spreadAngle: 6.88
@@ -172,20 +172,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 1
-      outSlope: 1
+      inSlope: 2
+      outSlope: 2
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
+      value: 2
+      inSlope: 2
+      outSlope: 2
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -1144,7 +1144,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.25
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 34
@@ -1153,7 +1153,7 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.25
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 34
@@ -1571,9 +1571,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
-  applyTemplateColorSettings: 1
+  applyTemplateColorSettings: 0
   applyTemplateRotationSettings: 1
-  applyTemplateFixtureSettings: 1
+  applyTemplateFixtureSettings: 0
   clipDisplayName: 
   mutableDataDetached: 1
 --- !u!114 &-612872058091464988
@@ -2625,15 +2625,16 @@ MonoBehaviour:
   colorSampleMode: 3
   sensitivity: 1.5
   smoothness: 8
-  bpm: 0
+  bpm: 610
   beatTimeRef: 0
   beatPhaseOffset: 0
   beatSnapColors:
   - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0, g: 0.6073797, b: 1, a: 1}
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0, b: 0, a: 1}
   beatSnapTransitionTime: 0
   beatGroupDelayFactor: 0
-  beatLightDelayFactor: 1
+  beatLightDelayFactor: 0
   beatGroupDelayCurve:
     serializedVersion: 2
     m_Curve:
@@ -2704,19 +2705,28 @@ MonoBehaviour:
       value: 1
       inSlope: 0
       outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0
+      inSlope: 0
+      outSlope: 0
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
       inSlope: 0
       outSlope: 0
-      tangentMode: 34
+      tangentMode: 136
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -2750,20 +2760,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 1
-      outSlope: 1
+      inSlope: 2
+      outSlope: 2
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
+      value: 2
+      inSlope: 2
+      outSlope: 2
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -3706,7 +3716,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  groupDelayFactor: 0.25
+  groupDelayFactor: 0.5
   groupRotationRangeCurve:
     serializedVersion: 2
     m_Curve:

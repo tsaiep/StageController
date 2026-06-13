@@ -1,9 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 
-[CreateAssetMenu(fileName = "新燈光片段模板", menuName = "燈光控制/燈光片段模板")]
+[CreateAssetMenu(fileName = "NewStageTemplate", menuName = "Stage Control/Unified Stage Template")]
 public class UnifiedStageTemplate : ScriptableObject
 {
+    [Header("Template Tags")]
+    public List<UnifiedStageTemplateTagSO> tags = new List<UnifiedStageTemplateTagSO>();
+
     [Header("燈具物理設定")]
     [Tooltip("燈光模式")] public UnifiedStageController.StageLightMode lightMode = UnifiedStageController.StageLightMode.VolumetricSpot;
     [Tooltip("Light component 的 Range")] public float lightRange = 12f;

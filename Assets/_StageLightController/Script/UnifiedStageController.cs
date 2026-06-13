@@ -46,6 +46,10 @@ public class UnifiedStageController : MonoBehaviour
     public Transform defaultTarget;
     public AudioSource audioSource;
 
+    [Header("Template Preview")]
+    [Tooltip("Prefab used by the editor preview. The preview instantiates three hidden copies and only updates mesh colors/rotations.")]
+    public GameObject templatePreviewPrefab;
+
     [Header("播放控制 (可由 Animation Track K 幀)")]
     [Tooltip("動作啟動")] public bool enableMotion = true;
     [Tooltip("顏色更新啟動")] public bool enableColorUpdate = true;
