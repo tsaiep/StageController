@@ -4,7 +4,7 @@ using UnityEngine.Timeline;
 using System.ComponentModel;
 
 [System.Serializable]
-[DisplayName("整合舞台方案片段")]
+[DisplayName("UnifiedStageClip")]
 public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 {
     [Header("燈光感應設定")]
