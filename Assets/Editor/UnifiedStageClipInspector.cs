@@ -96,7 +96,7 @@ public class UnifiedStageClipInspector : Editor
             }
 
             GUI.enabled = shownTemplate != null;
-            if (GUILayout.Button("Clear", GUILayout.Width(80f), GUILayout.Height(30f)))
+            /*if (GUILayout.Button("Clear", GUILayout.Width(80f), GUILayout.Height(30f)))
             {
                 Undo.RecordObject(clip, "Clear Stage Template");
                 applyTemplateProp.objectReferenceValue = null;
@@ -106,7 +106,7 @@ public class UnifiedStageClipInspector : Editor
                 EditorUtility.SetDirty(clip);
                 TimelineEditor.Refresh(RefreshReason.ContentsModified);
             }
-            GUI.enabled = true;
+            GUI.enabled = true;*/
         }
 
         DrawFeedback();
