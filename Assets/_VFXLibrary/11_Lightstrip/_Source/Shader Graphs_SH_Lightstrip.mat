@@ -51,9 +51,26 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Light_Unit_Count: 3
+    - _Color_Multiplyer: 1
+    - _Light_Unit_Count: 12
+    - _Manual_Mode: 0
+    - _Manual_Mode_Control: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    m_Colors: []
+    - _Scrolling_Frequency: 1
+    - _Scrolling_From_Center: 0
+    - _Scrolling_Head_Lean: 0.2
+    - _Scrolling_Hold_Duration: 0
+    - _Scrolling_Interval_Duration: 0.113
+    - _Scrolling_Mode_Weight: 1
+    - _Scrolling_PingPong_Mode: 0
+    - _Scrolling_Smooth_Factor: 0
+    - _Scrolling_Speed: 0.5
+    - _Sparkling_Mode_Random_Weight: 0
+    - _Sparkling_Mode_Weight: 0
+    - _Sparkling_Smooth_Factor: 1
+    - _Sparkling_Speed: 5
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
