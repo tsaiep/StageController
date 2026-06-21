@@ -86,11 +86,77 @@ public class LightstripMBPControl : MonoBehaviour
     private int gradientTexturePropertyId;
     private int bakedGradientHash;
     private int bakedGradientResolution;
+    private int appliedGradientContentHash;
     private bool propertiesDirty = true;
     private bool gradientDirty = true;
 
     public List<Renderer> LightstripRenderers => lightstripRenderers;
     public LightstripFloatParameters Properties => properties;
+
+    public void ApplyTimelineValues(
+        Color timelineColor,
+        Gradient timelineGradient,
+        int timelineGradientHash,
+        float timelineLightUnitCount,
+        float timelineColorMultiplier,
+        float timelineManualMode,
+        float timelineManualModeControl,
+        float timelineScrollingModeWeight,
+        float timelineScrollingPingPongMode,
+        float timelineScrollingFromCenter,
+        float timelineSparklingModeWeight,
+        float timelineSparklingModeRandomWeight,
+        float timelineScrollingSpeed,
+        float timelineScrollingFrequency,
+        float timelineScrollingIntervalDuration,
+        float timelineScrollingHoldDuration,
+        float timelineScrollingHeadLean,
+        float timelineScrollingSmoothFactor,
+        float timelineSparklingSpeed,
+        float timelineSparklingSmoothFactor)
+    {
+        bool changed = false;
+
+        if (!Approximately(color, timelineColor))
+        {
+            color = timelineColor;
+            changed = true;
+        }
+
+        changed |= TrySetFloat(ref lightUnitCount, timelineLightUnitCount);
+        changed |= TrySetFloat(ref colorMultiplier, timelineColorMultiplier);
+        changed |= TrySetFloat(ref properties.manualMode, timelineManualMode);
+        changed |= TrySetFloat(ref properties.manualModeControl, timelineManualModeControl);
+        changed |= TrySetFloat(ref properties.scrollingModeWeight, timelineScrollingModeWeight);
+        changed |= TrySetFloat(ref properties.scrollingPingPongMode, timelineScrollingPingPongMode);
+        changed |= TrySetFloat(ref properties.scrollingFromCenter, timelineScrollingFromCenter);
+        changed |= TrySetFloat(ref properties.sparklingModeWeight, timelineSparklingModeWeight);
+        changed |= TrySetFloat(ref properties.sparklingModeRandomWeight, timelineSparklingModeRandomWeight);
+        changed |= TrySetFloat(ref properties.scrollingSpeed, timelineScrollingSpeed);
+        changed |= TrySetFloat(ref properties.scrollingFrequency, timelineScrollingFrequency);
+        changed |= TrySetFloat(ref properties.scrollingIntervalDuration, timelineScrollingIntervalDuration);
+        changed |= TrySetFloat(ref properties.scrollingHoldDuration, timelineScrollingHoldDuration);
+        changed |= TrySetFloat(ref properties.scrollingHeadLean, timelineScrollingHeadLean);
+        changed |= TrySetFloat(ref properties.scrollingSmoothFactor, timelineScrollingSmoothFactor);
+        changed |= TrySetFloat(ref properties.sparklingSpeed, timelineSparklingSpeed);
+        changed |= TrySetFloat(ref properties.sparklingSmoothFactor, timelineSparklingSmoothFactor);
+
+        Gradient nextGradient = timelineGradient ?? CreateDefaultGradient();
+        int nextGradientHash = timelineGradientHash != 0 ? timelineGradientHash : GetGradientContentHash(nextGradient);
+        if (!ReferenceEquals(gradient, nextGradient) || appliedGradientContentHash != nextGradientHash)
+        {
+            gradient = nextGradient;
+            appliedGradientContentHash = nextGradientHash;
+            gradientDirty = true;
+            changed = true;
+        }
+
+        if (!changed && !gradientDirty)
+            return;
+
+        MarkDirty();
+        ApplyProperties();
+    }
 
     private void OnEnable()
     {
@@ -237,16 +303,31 @@ public class LightstripMBPControl : MonoBehaviour
 
     private int GetGradientHash()
     {
+        return GetGradientHash(gradient, gradientTextureResolution);
+    }
+
+    private static int GetGradientHash(Gradient source, int resolution)
+    {
         unchecked
         {
             int hash = 17;
-            hash = hash * 31 + gradientTextureResolution;
+            hash = hash * 31 + resolution;
+            hash = hash * 31 + GetGradientContentHash(source);
+            return hash;
+        }
+    }
 
-            if (gradient == null)
+    public static int GetGradientContentHash(Gradient source)
+    {
+        unchecked
+        {
+            int hash = 17;
+
+            if (source == null)
                 return hash;
 
-            GradientColorKey[] colorKeys = gradient.colorKeys;
-            GradientAlphaKey[] alphaKeys = gradient.alphaKeys;
+            GradientColorKey[] colorKeys = source.colorKeys;
+            GradientAlphaKey[] alphaKeys = source.alphaKeys;
 
             for (int i = 0; i < colorKeys.Length; i++)
             {
@@ -260,9 +341,26 @@ public class LightstripMBPControl : MonoBehaviour
                 hash = hash * 31 + alphaKeys[i].time.GetHashCode();
             }
 
-            hash = hash * 31 + gradient.mode.GetHashCode();
+            hash = hash * 31 + source.mode.GetHashCode();
             return hash;
         }
+    }
+
+    private static bool TrySetFloat(ref float currentValue, float nextValue)
+    {
+        if (Mathf.Approximately(currentValue, nextValue))
+            return false;
+
+        currentValue = nextValue;
+        return true;
+    }
+
+    private static bool Approximately(Color a, Color b)
+    {
+        return Mathf.Approximately(a.r, b.r) &&
+               Mathf.Approximately(a.g, b.g) &&
+               Mathf.Approximately(a.b, b.b) &&
+               Mathf.Approximately(a.a, b.a);
     }
 
     private void DestroyGradientTexture()
@@ -278,9 +376,10 @@ public class LightstripMBPControl : MonoBehaviour
         gradientTexture = null;
         bakedGradientHash = 0;
         bakedGradientResolution = 0;
+        appliedGradientContentHash = 0;
     }
 
-    private static Gradient CreateDefaultGradient()
+    public static Gradient CreateDefaultGradient()
     {
         Gradient defaultGradient = new Gradient();
         defaultGradient.SetKeys(

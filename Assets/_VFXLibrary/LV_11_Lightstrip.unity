@@ -256,6 +256,57 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1 &734662910
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 734662912}
+  - component: {fileID: 734662911}
+  m_Layer: 0
+  m_Name: P_LightstripControlGroupTimeline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!320 &734662911
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734662910}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 667916b01b301e84cb34a6a4dad88d1f, type: 2}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: -8294653334798351182, guid: 667916b01b301e84cb34a6a4dad88d1f, type: 2}
+    value: {fileID: 883722609}
+  m_ExposedReferences:
+    m_References: []
+--- !u!4 &734662912
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734662910}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &855680549
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -370,6 +421,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &883722609 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+  m_PrefabInstance: {fileID: 6604635579321090186}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe4231a59b2ba0b42b9e99eacf59fa62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1730685694
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,6 +614,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+      propertyPath: properties.sparklingModeWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
       propertyPath: properties.scrollingHoldDuration
       value: 0.08
       objectReference: {fileID: 0}
@@ -577,3 +643,4 @@ SceneRoots:
   - {fileID: 877129900}
   - {fileID: 855680549}
   - {fileID: 6604635579321090186}
+  - {fileID: 734662912}
