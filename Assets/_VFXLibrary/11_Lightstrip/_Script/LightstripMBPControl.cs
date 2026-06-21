@@ -21,15 +21,15 @@ public class LightstripMBPControl : MonoBehaviour
         [Range(0f, 1f)] public float scrollingModeWeight = 1f;
         [Range(0f, 1f)] public float scrollingPingPongMode = 0f;
         [Range(0f, 1f)] public float scrollingFromCenter = 0f;
-        [Range(-1f, 1f)] public float scrollingHeadLean = 0f;
         [Range(0f, 1f)] public float sparklingModeWeight = 0f;
         [Range(0f, 1f)] public float sparklingModeRandomWeight = 0f;
         
         [Header("Scrolling")]
         [Min(0f)] public float scrollingSpeed = 1f;
         [Min(0f)] public float scrollingFrequency = 1f;
-        [Min(0f)] public float scrollingIntervalDuration = 0f;
-        [Min(0f)] public float scrollingHoldDuration = 0f;
+        [Range(0f, 1f)] public float scrollingIntervalDuration = 0f;
+        [Range(0f, 1f)] public float scrollingHoldDuration = 0f;
+        [Range(-1f, 1f)] public float scrollingHeadLean = 0f;
         [Range(0f, 1f)] public float scrollingSmoothFactor = 0f;
 
         [Header("Sparkling")]
