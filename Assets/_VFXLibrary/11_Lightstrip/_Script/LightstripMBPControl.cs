@@ -72,8 +72,8 @@ public class LightstripMBPControl : MonoBehaviour
     [GradientUsage(true)]
     [SerializeField] private Gradient gradient = CreateDefaultGradient();
 
-    [Tooltip("Texture property reference used by the shader to sample the baked gradient. SH_Lightstrip's built-in Gradient property is named _Gradient, but Shader Graph gradients cannot be set directly through MPB.")]
-    [SerializeField] private string gradientTexturePropertyReference = "_Gradient";
+    [Tooltip("Texture property reference used by the shader to sample the baked gradient. SH_Lightstrip's built-in Gradient property is named _GradientMap, but Shader Graph gradients cannot be set directly through MPB.")]
+    [SerializeField] private string gradientTexturePropertyReference = "_GradientMap";
 
     [Tooltip("Width of the generated 1D gradient texture.")]
     [Min(2)]
@@ -167,7 +167,7 @@ public class LightstripMBPControl : MonoBehaviour
             propertyBlock = new MaterialPropertyBlock();
 
         gradientTexturePropertyId = Shader.PropertyToID(string.IsNullOrWhiteSpace(gradientTexturePropertyReference)
-            ? "_Gradient"
+            ? "_GradientMap"
             : gradientTexturePropertyReference);
     }
 
@@ -286,7 +286,7 @@ public class LightstripMBPControl : MonoBehaviour
         defaultGradient.SetKeys(
             new[]
             {
-                new GradientColorKey(Color.white, 0f),
+                new GradientColorKey(Color.black, 0f),
                 new GradientColorKey(Color.white, 1f)
             },
             new[]

@@ -467,12 +467,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lightstripRenderers:
   - {fileID: 771577051}
+  - {fileID: 0}
   lightUnitCount: 12
   color: {r: 1, g: 1, b: 1, a: 1}
   colorMultiplier: 1
   gradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
@@ -500,7 +501,7 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  gradientTexturePropertyReference: _Gradient
+  gradientTexturePropertyReference: _GradientMap
   gradientTextureResolution: 256
   properties:
     manualMode: 0
@@ -533,6 +534,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1681133681
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.101
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3e551078354784a5cbf9f8126c4bbf20, type: 2}
+    - target: {fileID: 919132149155446097, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
+      propertyPath: m_Name
+      value: SM_LightstripDemo_02 (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
 --- !u!1 &1730685694
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,4 +725,5 @@ SceneRoots:
   - {fileID: 877129900}
   - {fileID: 855680549}
   - {fileID: 771577050}
+  - {fileID: 1681133681}
   - {fileID: 883722610}
