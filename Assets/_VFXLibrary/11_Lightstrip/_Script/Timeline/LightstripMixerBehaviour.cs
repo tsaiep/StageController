@@ -69,7 +69,6 @@ public class LightstripMixerBehaviour : PlayableBehaviour
             selectedBehaviour.color,
             selectedBehaviour.gradient,
             selectedBehaviour.gradientHash,
-            selectedBehaviour.lightUnitCount,
             mixedColorMultiplier,
             selectedBehaviour.manualMode ? 1f : 0f,
             selectedBehaviour.EvaluateManualModeControl(selectedPlayable),

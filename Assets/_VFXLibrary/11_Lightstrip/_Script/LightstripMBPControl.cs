@@ -11,6 +11,13 @@ using UnityEditor;
 public class LightstripMBPControl : MonoBehaviour
 {
     [Serializable]
+    public sealed class LightstripRendererSettings
+    {
+        public Renderer renderer;
+        [Min(0f)] public float lightUnitCount = 12f;
+    }
+
+    [Serializable]
     public sealed class LightstripFloatParameters
     {
         [Header("Manual Mode")]
@@ -57,11 +64,8 @@ public class LightstripMBPControl : MonoBehaviour
     private static readonly int SparklingSpeedId = Shader.PropertyToID("_Sparkling_Speed");
 
     [Header("Targets")]
-    [Tooltip("Renderers that share this controller's Lightstrip material parameters. Null entries are skipped.")]
-    [SerializeField] private List<Renderer> lightstripRenderers = new List<Renderer>();
-    
-    [Header("Light Units")]
-    [Min(0f)] public float lightUnitCount = 12f;
+    [Tooltip("Renderers that share this controller's Lightstrip material parameters. Each entry can override _Light_Unit_Count. Null entries are skipped.")]
+    [SerializeField] private List<LightstripRendererSettings> lightstripRenderers = new List<LightstripRendererSettings>();
     
     [Header("Color")]
     [ColorUsage(true, true)]
@@ -90,14 +94,13 @@ public class LightstripMBPControl : MonoBehaviour
     private bool propertiesDirty = true;
     private bool gradientDirty = true;
 
-    public List<Renderer> LightstripRenderers => lightstripRenderers;
+    public List<LightstripRendererSettings> LightstripRenderers => lightstripRenderers;
     public LightstripFloatParameters Properties => properties;
 
     public void ApplyTimelineValues(
         Color timelineColor,
         Gradient timelineGradient,
         int timelineGradientHash,
-        float timelineLightUnitCount,
         float timelineColorMultiplier,
         float timelineManualMode,
         float timelineManualModeControl,
@@ -123,7 +126,6 @@ public class LightstripMBPControl : MonoBehaviour
             changed = true;
         }
 
-        changed |= TrySetFloat(ref lightUnitCount, timelineLightUnitCount);
         changed |= TrySetFloat(ref colorMultiplier, timelineColorMultiplier);
         changed |= TrySetFloat(ref properties.manualMode, timelineManualMode);
         changed |= TrySetFloat(ref properties.manualModeControl, timelineManualModeControl);
@@ -198,12 +200,16 @@ public class LightstripMBPControl : MonoBehaviour
 
         for (int i = 0; i < lightstripRenderers.Count; i++)
         {
-            Renderer targetRenderer = lightstripRenderers[i];
+            LightstripRendererSettings rendererSettings = lightstripRenderers[i];
+            if (rendererSettings == null)
+                continue;
+
+            Renderer targetRenderer = rendererSettings.renderer;
             if (targetRenderer == null)
                 continue;
 
             targetRenderer.GetPropertyBlock(propertyBlock);
-            FillPropertyBlock();
+            FillPropertyBlock(rendererSettings.lightUnitCount);
             targetRenderer.SetPropertyBlock(propertyBlock);
         }
 
@@ -237,13 +243,13 @@ public class LightstripMBPControl : MonoBehaviour
             : gradientTexturePropertyReference);
     }
 
-    private void FillPropertyBlock()
+    private void FillPropertyBlock(float rendererLightUnitCount)
     {
         propertyBlock.SetColor(ColorId, color);
         propertyBlock.SetFloat(ManualModeControlId, properties.manualModeControl);
         propertyBlock.SetFloat(ManualModeId, properties.manualMode);
         propertyBlock.SetFloat(ColorMultiplierId, colorMultiplier);
-        propertyBlock.SetFloat(LightUnitCountId, lightUnitCount);
+        propertyBlock.SetFloat(LightUnitCountId, rendererLightUnitCount);
         propertyBlock.SetFloat(ScrollingModeWeightId, properties.scrollingModeWeight);
         propertyBlock.SetFloat(ScrollingPingPongModeId, properties.scrollingPingPongMode);
         propertyBlock.SetFloat(ScrollingFromCenterId, properties.scrollingFromCenter);

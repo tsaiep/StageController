@@ -14,9 +14,6 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
     [Tooltip("X axis is normalized clip time: 0 = clip start, 1 = clip end.")]
     public AnimationCurve manualModeControl = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
-    [Header("Light Units")]
-    [Min(0f)] public float lightUnitCount = 12f;
-
     [Header("Color")]
     [ColorUsage(true, true)] public Color color = Color.white;
     [Min(0f)] public float colorMultiplier = 1f;
@@ -50,7 +47,6 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
 
         behaviour.manualMode = manualMode;
         behaviour.manualModeControl = manualModeControl;
-        behaviour.lightUnitCount = lightUnitCount;
         behaviour.color = color;
         behaviour.colorMultiplier = colorMultiplier;
         behaviour.gradient = gradient;

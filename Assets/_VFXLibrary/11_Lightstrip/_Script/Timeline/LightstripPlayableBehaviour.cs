@@ -8,9 +8,6 @@ public class LightstripPlayableBehaviour : PlayableBehaviour
     public bool manualMode;
     public AnimationCurve manualModeControl = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
-    [Header("Light Units")]
-    public float lightUnitCount = 12f;
-
     [Header("Color")]
     public Color color = Color.white;
     public float colorMultiplier = 1f;

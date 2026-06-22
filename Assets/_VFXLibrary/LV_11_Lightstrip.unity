@@ -606,12 +606,24 @@ PrefabInstance:
       value: P_LightstripControlGroup
       objectReference: {fileID: 0}
     - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
-      propertyPath: properties.manualMode
+      propertyPath: color.b
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
-      propertyPath: properties.manualModeControl
+      propertyPath: color.g
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+      propertyPath: properties.manualMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+      propertyPath: properties.manualModeControl
+      value: 0.34418136
+      objectReference: {fileID: 0}
+    - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+      propertyPath: properties.scrollingHeadLean
+      value: 0.388
       objectReference: {fileID: 0}
     - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
       propertyPath: properties.sparklingModeWeight
@@ -619,7 +631,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
       propertyPath: properties.scrollingHoldDuration
-      value: 0.08
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
       propertyPath: properties.scrollingPingPongMode
@@ -627,13 +639,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
       propertyPath: properties.scrollingIntervalDuration
-      value: 0.264
+      value: 0.563
       objectReference: {fileID: 0}
+    - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+      propertyPath: lightstripRenderers.Array.data[0].renderer
+      value: 
+      objectReference: {fileID: 6604635579321090188}
+    - target: {fileID: 8844130238567597469, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+      propertyPath: lightstripRenderers.Array.data[1].renderer
+      value: 
+      objectReference: {fileID: 6604635579321090187}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+--- !u!23 &6604635579321090187 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1289851393111745888, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+  m_PrefabInstance: {fileID: 6604635579321090186}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &6604635579321090188 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7786535393483072599, guid: ac3e92f7664509d409611a0aace7c437, type: 3}
+  m_PrefabInstance: {fileID: 6604635579321090186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
