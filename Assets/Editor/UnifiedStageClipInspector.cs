@@ -1,8 +1,5 @@
-﻿using System.Linq;
 using UnityEditor;
-using UnityEditor.Timeline;
 using UnityEngine;
-using UnityEngine.Timeline;
 
 [CustomEditor(typeof(UnifiedStageClip))]
 public class UnifiedStageClipInspector : Editor
@@ -94,19 +91,6 @@ public class UnifiedStageClipInspector : Editor
             {
                 UnifiedStageTemplateSelectorWindow.Open(clip, boundController);
             }
-
-            GUI.enabled = shownTemplate != null;
-            /*if (GUILayout.Button("Clear", GUILayout.Width(80f), GUILayout.Height(30f)))
-            {
-                Undo.RecordObject(clip, "Clear Stage Template");
-                applyTemplateProp.objectReferenceValue = null;
-                selectedTemplateProp.objectReferenceValue = null;
-                clip.applyTemplate = null;
-                clip.selectedTemplate = null;
-                EditorUtility.SetDirty(clip);
-                TimelineEditor.Refresh(RefreshReason.ContentsModified);
-            }
-            GUI.enabled = true;*/
         }
 
         DrawFeedback();
