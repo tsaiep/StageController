@@ -7,10 +7,16 @@ using UnityEngine.Timeline;
 [DisplayName("Lightstrip Clip")]
 public class LightstripClip : PlayableAsset, ITimelineClipAsset
 {
+    [Header("Template")]
+    [Tooltip("Template selected in the inspector. Use Apply Template to copy selected categories into this clip.")]
+    public LightstripTemplate selectedTemplate;
+    public bool applyTemplateManualModeSettings = true;
+    public bool applyTemplateColorSettings = true;
+    public bool applyTemplateAnimationSettings = true;
+
     [Header("Manual Mode")]
     [Tooltip("When enabled, outputs manualMode = 1. When disabled, outputs manualMode = 0.")]
     public bool manualMode;
-
     [Tooltip("X axis is normalized clip time: 0 = clip start, 1 = clip end.")]
     public AnimationCurve manualModeControl = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
@@ -39,6 +45,92 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
     [Range(0f, 1f)] public float sparklingSmoothFactor = 1f;
 
     public ClipCaps clipCaps => ClipCaps.Blending;
+
+    public void ApplyTemplateValues(LightstripTemplate template)
+    {
+        if (template == null)
+            return;
+
+        selectedTemplate = template;
+
+        if (applyTemplateManualModeSettings)
+        {
+            manualMode = template.manualMode;
+            manualModeControl = CloneAnimationCurve(template.manualModeControl);
+        }
+
+        if (applyTemplateColorSettings)
+        {
+            color = template.color;
+            colorMultiplier = template.colorMultiplier;
+            gradient = CloneGradient(template.gradient);
+        }
+
+        if (applyTemplateAnimationSettings)
+        {
+            scrollingModeWeight = template.scrollingModeWeight;
+            scrollingPingPongMode = template.scrollingPingPongMode;
+            scrollingFromCenter = template.scrollingFromCenter;
+            sparklingModeWeight = template.sparklingModeWeight;
+            sparklingModeRandomWeight = template.sparklingModeRandomWeight;
+            scrollingSpeed = template.scrollingSpeed;
+            scrollingFrequency = template.scrollingFrequency;
+            scrollingIntervalDuration = template.scrollingIntervalDuration;
+            scrollingHoldDuration = template.scrollingHoldDuration;
+            scrollingHeadLean = template.scrollingHeadLean;
+            scrollingSmoothFactor = template.scrollingSmoothFactor;
+            sparklingSpeed = template.sparklingSpeed;
+            sparklingSmoothFactor = template.sparklingSmoothFactor;
+        }
+    }
+
+    public void CopyValuesToTemplate(LightstripTemplate template)
+    {
+        if (template == null)
+            return;
+
+        template.manualMode = manualMode;
+        template.manualModeControl = CloneAnimationCurve(manualModeControl);
+        template.color = color;
+        template.colorMultiplier = colorMultiplier;
+        template.gradient = CloneGradient(gradient);
+        template.scrollingModeWeight = scrollingModeWeight;
+        template.scrollingPingPongMode = scrollingPingPongMode;
+        template.scrollingFromCenter = scrollingFromCenter;
+        template.sparklingModeWeight = sparklingModeWeight;
+        template.sparklingModeRandomWeight = sparklingModeRandomWeight;
+        template.scrollingSpeed = scrollingSpeed;
+        template.scrollingFrequency = scrollingFrequency;
+        template.scrollingIntervalDuration = scrollingIntervalDuration;
+        template.scrollingHoldDuration = scrollingHoldDuration;
+        template.scrollingHeadLean = scrollingHeadLean;
+        template.scrollingSmoothFactor = scrollingSmoothFactor;
+        template.sparklingSpeed = sparklingSpeed;
+        template.sparklingSmoothFactor = sparklingSmoothFactor;
+    }
+
+    public static Gradient CloneGradient(Gradient source)
+    {
+        if (source == null)
+            return null;
+
+        Gradient clone = new Gradient();
+        clone.SetKeys(source.colorKeys, source.alphaKeys);
+        clone.mode = source.mode;
+        return clone;
+    }
+
+    public static AnimationCurve CloneAnimationCurve(AnimationCurve source)
+    {
+        if (source == null)
+            return null;
+
+        return new AnimationCurve(source.keys)
+        {
+            preWrapMode = source.preWrapMode,
+            postWrapMode = source.postWrapMode
+        };
+    }
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
     {
