@@ -47,6 +47,7 @@ public class LightstripPlayableBehaviour : PlayableBehaviour
         if (manualModeControl == null)
             return 0f;
 
-        return manualModeControl.Evaluate(GetNormalizedClipTime(playable));
+        float value = manualModeControl.Evaluate(GetNormalizedClipTime(playable));
+        return value - Mathf.Floor(value);
     }
 }
