@@ -75,7 +75,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: -967
     y: -534
-    width: 2347
+    width: 2810
     height: 3969
 --- !u!114 &114350483966674976
 MonoBehaviour:
@@ -9312,7 +9312,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615247}
   - {fileID: 8926484042661615253}
   - {fileID: 8926484042661615256}
-  m_UIPosition: {x: 955, y: 2001}
+  m_UIPosition: {x: 941, y: 2133}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -9382,8 +9382,8 @@ MonoBehaviour:
   emissiveMode: 0
   useEmissiveChannelScale: 0
   useColorAbsorption: 1
-  doubleSided: 0
-  receiveShadows: 1
+  doubleSided: 1
+  receiveShadows: 0
   MeshCount: 1
   lod: 0
 --- !u!114 &8926484042661615234
