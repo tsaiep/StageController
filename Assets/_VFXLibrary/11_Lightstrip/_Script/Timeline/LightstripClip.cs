@@ -13,6 +13,8 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
     public bool applyTemplateManualModeSettings = true;
     public bool applyTemplateColorSettings = true;
     public bool applyTemplateAnimationSettings = true;
+    [Tooltip("Prefab used by the template selector preview. The prefab root or a child should contain LightstripMBPControl.")]
+    public GameObject templatePreviewPrefab;
 
     [Header("Manual Mode")]
     [Tooltip("When enabled, outputs manualMode = 1. When disabled, outputs manualMode = 0.")]

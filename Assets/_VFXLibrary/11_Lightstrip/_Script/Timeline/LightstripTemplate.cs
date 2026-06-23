@@ -1,8 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewLightstripTemplate", menuName = "Stage Controller/Lightstrip Template")]
+[CreateAssetMenu(fileName = "NewLightstripTemplate", menuName = "Stage Control/Lightstrip Template")]
 public class LightstripTemplate : ScriptableObject
 {
+    [Header("Template Tags")]
+    public List<LightstripTemplateTagSO> tags = new List<LightstripTemplateTagSO>();
+
     [Header("Manual Mode")]
     [Tooltip("When enabled, outputs manualMode = 1. When disabled, outputs manualMode = 0.")]
     public bool manualMode;

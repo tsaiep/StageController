@@ -84,6 +84,10 @@ public class LightstripMBPControl : MonoBehaviour
     [SerializeField] private int gradientTextureResolution = 256;
 
     [SerializeField] private LightstripFloatParameters properties = new LightstripFloatParameters();
+
+    [Header("Template Preview")]
+    [Tooltip("Default prefab used by the Lightstrip template selector preview. The prefab root or a child should contain LightstripMBPControl.")]
+    public GameObject templatePreviewPrefab;
     
     private MaterialPropertyBlock propertyBlock;
     private Texture2D gradientTexture;

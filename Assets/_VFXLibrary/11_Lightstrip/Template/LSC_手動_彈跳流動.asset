@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9999bdbc16986454b8f9e6a22b700beb, type: 3}
   m_Name: "LSC_\u624B\u52D5_\u5F48\u8DF3\u6D41\u52D5"
   m_EditorClassIdentifier: 
+  tags:
+  - {fileID: 11400000, guid: e7307a1cf35058a4aa1a6de8aa276a1b, type: 2}
   manualMode: 1
   manualModeControl:
     serializedVersion: 2

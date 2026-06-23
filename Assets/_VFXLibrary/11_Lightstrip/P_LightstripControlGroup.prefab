@@ -47,9 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightstripRenderers:
-  - {fileID: 7786535393483072599}
-  - {fileID: 1289851393111745888}
-  lightUnitCount: 12
+  - renderer: {fileID: 0}
+    lightUnitCount: 12
+  - renderer: {fileID: 0}
+    lightUnitCount: 12
   color: {r: 1, g: 1, b: 1, a: 1}
   colorMultiplier: 1
   gradient:
@@ -90,16 +91,17 @@ MonoBehaviour:
     scrollingModeWeight: 1
     scrollingPingPongMode: 0
     scrollingFromCenter: 0
-    scrollingHeadLean: 0
     sparklingModeWeight: 0
     sparklingModeRandomWeight: 0
     scrollingSpeed: 1
     scrollingFrequency: 1
     scrollingIntervalDuration: 0
     scrollingHoldDuration: 0
+    scrollingHeadLean: 0
     scrollingSmoothFactor: 0
     sparklingSpeed: 3
     sparklingSmoothFactor: 1
+  templatePreviewPrefab: {fileID: 3732282686674892922}
 --- !u!1001 &443583276395100644
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -166,11 +168,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
   m_PrefabInstance: {fileID: 443583276395100644}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &1289851393111745888 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
-  m_PrefabInstance: {fileID: 443583276395100644}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8921280180646983891
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -232,11 +229,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
---- !u!23 &7786535393483072599 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
-  m_PrefabInstance: {fileID: 8921280180646983891}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8954414397985349432 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ffb4b0e63d59f1a479c60c90e2db1e4b, type: 3}
