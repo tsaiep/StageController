@@ -28,6 +28,7 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
     [GradientUsage(true)] public Gradient gradient = LightstripMBPControl.CreateDefaultGradient();
 
     [Header("Animation Control")]
+    [Range(0f, 1f)] public float linearMode = 0f;
     [Range(0f, 1f)] public float scrollingModeWeight = 1f;
     [Range(0f, 1f)] public float scrollingPingPongMode = 0f;
     [Range(0f, 1f)] public float scrollingFromCenter = 0f;
@@ -73,6 +74,7 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
             scrollingModeWeight = template.scrollingModeWeight;
             scrollingPingPongMode = template.scrollingPingPongMode;
             scrollingFromCenter = template.scrollingFromCenter;
+            linearMode = template.linearMode;
             sparklingModeWeight = template.sparklingModeWeight;
             sparklingModeRandomWeight = template.sparklingModeRandomWeight;
             scrollingSpeed = template.scrollingSpeed;
@@ -99,6 +101,7 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
         template.scrollingModeWeight = scrollingModeWeight;
         template.scrollingPingPongMode = scrollingPingPongMode;
         template.scrollingFromCenter = scrollingFromCenter;
+        template.linearMode = linearMode;
         template.sparklingModeWeight = sparklingModeWeight;
         template.sparklingModeRandomWeight = sparklingModeRandomWeight;
         template.scrollingSpeed = scrollingSpeed;
@@ -148,6 +151,7 @@ public class LightstripClip : PlayableAsset, ITimelineClipAsset
         behaviour.scrollingModeWeight = scrollingModeWeight;
         behaviour.scrollingPingPongMode = scrollingPingPongMode;
         behaviour.scrollingFromCenter = scrollingFromCenter;
+        behaviour.linearMode = linearMode;
         behaviour.sparklingModeWeight = sparklingModeWeight;
         behaviour.sparklingModeRandomWeight = sparklingModeRandomWeight;
         behaviour.scrollingSpeed = scrollingSpeed;

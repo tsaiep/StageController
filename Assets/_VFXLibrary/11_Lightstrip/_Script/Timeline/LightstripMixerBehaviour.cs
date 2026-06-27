@@ -75,6 +75,7 @@ public class LightstripMixerBehaviour : PlayableBehaviour
             selectedBehaviour.scrollingModeWeight,
             selectedBehaviour.scrollingPingPongMode,
             selectedBehaviour.scrollingFromCenter,
+            selectedBehaviour.linearMode,
             selectedBehaviour.sparklingModeWeight,
             selectedBehaviour.sparklingModeRandomWeight,
             selectedBehaviour.scrollingSpeed,

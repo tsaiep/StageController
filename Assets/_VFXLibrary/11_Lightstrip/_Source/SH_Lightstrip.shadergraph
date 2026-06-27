@@ -71,6 +71,9 @@
         },
         {
             "m_Id": "1d44a8dd966146d7bbdef0cd5becf560"
+        },
+        {
+            "m_Id": "670143f145b347da9340c7f2e587d199"
         }
     ],
     "m_Keywords": [],
@@ -458,6 +461,9 @@
         },
         {
             "m_Id": "fb5f8e9bffc94a8f9f4d0ea39143d70d"
+        },
+        {
+            "m_Id": "11ca4a766a3b4f93905e54cb35f81db2"
         }
     ],
     "m_GroupDatas": [
@@ -574,6 +580,20 @@
                     "m_Id": "cd40b1c0305b4dc09259191e488c4bee"
                 },
                 "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "11ca4a766a3b4f93905e54cb35f81db2"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "1e12288bb3434e61ad24b48f512a33b7"
+                },
+                "m_SlotId": 3
             }
         },
         {
@@ -2663,8 +2683,8 @@
     "m_ObjectId": "0a729ca1541d4ad6914506bb7ba1c84b",
     "m_Title": "Sparkling Time Remap",
     "m_Position": {
-        "x": 518.0000610351563,
-        "y": 906.6666870117188
+        "x": 518.000244140625,
+        "y": 906.6666259765625
     }
 }
 
@@ -3057,8 +3077,44 @@
     "m_ObjectId": "11c07ea8105249d7b61a00232dcba462",
     "m_Title": "Scrolling Result Blending",
     "m_Position": {
-        "x": -337.3333740234375,
-        "y": -66.66668701171875
+        "x": -337.333251953125,
+        "y": -66.66665649414063
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "11ca4a766a3b4f93905e54cb35f81db2",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -2308.005615234375,
+            "y": 876.1190185546875,
+            "width": 0.0,
+            "height": 0.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "956a27bce4f64b95a06c909a20eb8c5a"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "670143f145b347da9340c7f2e587d199"
     }
 }
 
@@ -3726,7 +3782,7 @@
     "m_Group": {
         "m_Id": "954ded51f8404249a0633a2e745a26aa"
     },
-    "m_Name": "HundredStepGrids (Custom Function)",
+    "m_Name": "CoreGradient (Custom Function)",
     "m_DrawState": {
         "m_Expanded": true,
         "m_Position": {
@@ -3742,7 +3798,10 @@
             "m_Id": "53922af20add442eab94f9c786eb1368"
         },
         {
-            "m_Id": "71846d9a888342ed88c34dccaab31064"
+            "m_Id": "345cb85c4323425787944ef12121c835"
+        },
+        {
+            "m_Id": "c7f20094c9bb4209a396b9a31c273450"
         }
     ],
     "synonyms": [
@@ -3757,10 +3816,10 @@
         "m_SerializableColors": []
     },
     "m_SourceType": 1,
-    "m_FunctionName": "HundredStepGrids",
+    "m_FunctionName": "CoreGradient",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "float2 StepUV = floor(UV*10)/10;\nOut = StepUV.y + StepUV.x/10;"
+    "m_FunctionBody": "float2 StepUV = floor(UV*10)/10;\nfloat xCoord = lerp(StepUV.x,UV.x,Mode)/10;\nOut = StepUV.y + xCoord;"
 }
 
 {
@@ -4128,8 +4187,8 @@
     "m_ObjectId": "23d9c4af51b94c858511b105564a0e01",
     "m_Title": "Head Lean",
     "m_Position": {
-        "x": 541.9998779296875,
-        "y": 428.0000915527344
+        "x": 542.000244140625,
+        "y": 428.0
     }
 }
 
@@ -5139,6 +5198,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "345cb85c4323425787944ef12121c835",
+    "m_Id": 3,
+    "m_DisplayName": "Mode",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Mode",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "3473cd81196b4f6b9d07aebff6788708",
     "m_Id": 0,
@@ -6030,8 +6104,8 @@
     "m_ObjectId": "444d0b5f199e4e2183aa22bb8563feb7",
     "m_Title": "Sparkling Time  & Manual Control",
     "m_Position": {
-        "x": -1280.000244140625,
-        "y": 904.6666870117188
+        "x": -1279.9998779296875,
+        "y": 904.6666259765625
     }
 }
 
@@ -7695,8 +7769,8 @@
     "m_ObjectId": "6595ecff9c424f0da130d22a319d036b",
     "m_Title": "Scrolling Time",
     "m_Position": {
-        "x": -1269.3336181640625,
-        "y": -64.66668701171875
+        "x": -1269.333251953125,
+        "y": -64.66665649414063
     }
 }
 
@@ -7755,7 +7829,35 @@
     "m_Title": "General",
     "m_Position": {
         "x": 3316.666748046875,
-        "y": -766.0
+        "y": -765.9999389648438
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "670143f145b347da9340c7f2e587d199",
+    "m_Guid": {
+        "m_GuidSerialized": "81f8b817-4912-4072-ad40-f23dbdd13310"
+    },
+    "m_Name": "Linear Mode",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Linear Mode",
+    "m_DefaultReferenceName": "_Linear_Mode",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 1,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
     }
 }
 
@@ -8575,21 +8677,6 @@
 {
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
-    "m_ObjectId": "71846d9a888342ed88c34dccaab31064",
-    "m_Id": 1,
-    "m_DisplayName": "Out",
-    "m_SlotType": 1,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "Out",
-    "m_StageCapability": 3,
-    "m_Value": 0.0,
-    "m_DefaultValue": 0.0,
-    "m_Labels": []
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "729acb170bd54a0d919b690888fb54b0",
     "m_Id": 2,
     "m_DisplayName": "Y",
@@ -9240,8 +9327,8 @@
     "m_ObjectId": "81967fe4498a48b2bf896a548a3d281f",
     "m_Title": "Gradient Shape",
     "m_Position": {
-        "x": 538.6665649414063,
-        "y": -75.99993896484375
+        "x": 538.666748046875,
+        "y": -76.0
     }
 }
 
@@ -9382,8 +9469,8 @@
     "m_ObjectId": "8437edc69b2544c0bbf52f3403033404",
     "m_Title": "Sparkling Random",
     "m_Position": {
-        "x": -1568.6666259765625,
-        "y": 1476.666748046875
+        "x": -1568.6663818359375,
+        "y": 1476.6663818359375
     }
 }
 
@@ -9466,7 +9553,7 @@
     "m_Title": "Coloring",
     "m_Position": {
         "x": 3086.666748046875,
-        "y": -70.66666412353516
+        "y": -70.66667175292969
     }
 }
 
@@ -10330,8 +10417,23 @@
     "m_Title": "Make Step Grids",
     "m_Position": {
         "x": -2643.33349609375,
-        "y": 620.6666870117188
+        "y": 620.666748046875
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "956a27bce4f64b95a06c909a20eb8c5a",
+    "m_Id": 0,
+    "m_DisplayName": "Linear Mode",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
 }
 
 {
@@ -10394,6 +10496,9 @@
         },
         {
             "m_Id": "9112adca772f4ed48405ece93a420003"
+        },
+        {
+            "m_Id": "670143f145b347da9340c7f2e587d199"
         },
         {
             "m_Id": "a8b3779de1234d57af0d27b5e2c26793"
@@ -10564,8 +10669,8 @@
     "m_ObjectId": "99475f37cf5d45dfbb3490c86cced4ad",
     "m_Title": "Ping-Pong Mode",
     "m_Position": {
-        "x": -1270.666748046875,
-        "y": -570.666748046875
+        "x": -1270.66650390625,
+        "y": -570.6666870117188
     }
 }
 
@@ -11729,8 +11834,8 @@
     "m_ObjectId": "b1e085a810f64a79bfe3d8455d937ae7",
     "m_Title": "Final Blending",
     "m_Position": {
-        "x": 2303.33349609375,
-        "y": -72.0
+        "x": 2303.3330078125,
+        "y": -71.99998474121094
     }
 }
 
@@ -13152,6 +13257,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "c7f20094c9bb4209a396b9a31c273450",
+    "m_Id": 1,
+    "m_DisplayName": "Out",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.FractionNode",
     "m_ObjectId": "c8879c557c2f4567a5a7154d74f4363a",
     "m_Group": {
@@ -14163,8 +14283,8 @@
     "m_ObjectId": "d8e1856d4d3f48a0a34fc2cabd84217b",
     "m_Title": "Remap to Needed Grid Count",
     "m_Position": {
-        "x": -2652.000244140625,
-        "y": -60.0000114440918
+        "x": -2651.999755859375,
+        "y": -60.0
     }
 }
 
@@ -15140,8 +15260,8 @@
     "m_ObjectId": "ed763103fec14b28832052dfcfe508e3",
     "m_Title": "Manual Scrolling ",
     "m_Position": {
-        "x": -1265.3336181640625,
-        "y": 363.3333435058594
+        "x": -1265.333251953125,
+        "y": 363.33331298828127
     }
 }
 

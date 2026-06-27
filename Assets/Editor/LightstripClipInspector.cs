@@ -97,15 +97,82 @@ public class LightstripClipInspector : Editor
 
     private void DrawClipProperties()
     {
-        DrawPropertiesExcluding(
-            serializedObject,
-            "m_Script",
-            "selectedTemplate",
-            "applyTemplateManualModeSettings",
-            "applyTemplateColorSettings",
-            "applyTemplateAnimationSettings",
-            "templatePreviewPrefab"
-        );
+        SerializedProperty property = serializedObject.GetIterator();
+        bool enterChildren = true;
+
+        while (property.NextVisible(enterChildren))
+        {
+            enterChildren = false;
+
+            if (ShouldHideClipProperty(property.name))
+                continue;
+
+            DrawClipProperty(property);
+        }
+    }
+
+    private static bool ShouldHideClipProperty(string propertyName)
+    {
+        return propertyName == "m_Script" ||
+               propertyName == "selectedTemplate" ||
+               propertyName == "applyTemplateManualModeSettings" ||
+               propertyName == "applyTemplateColorSettings" ||
+               propertyName == "applyTemplateAnimationSettings" ||
+               propertyName == "templatePreviewPrefab";
+    }
+
+    private static void DrawClipProperty(SerializedProperty property)
+    {
+        if (property.name == "manualMode")
+        {
+            EditorGUILayout.LabelField("Manual Mode", EditorStyles.boldLabel);
+            DrawBoolProperty(property);
+            return;
+        }
+
+        if (property.name == "linearMode")
+        {
+            EditorGUILayout.LabelField("Animation Control", EditorStyles.boldLabel);
+            DrawFloatToggleProperty(property);
+            return;
+        }
+
+        if (property.name == "scrollingPingPongMode" ||
+            property.name == "scrollingFromCenter")
+        {
+            DrawFloatToggleProperty(property);
+            return;
+        }
+
+        EditorGUILayout.PropertyField(property, true);
+    }
+
+    private static void DrawBoolProperty(SerializedProperty property)
+    {
+        if (property.propertyType != SerializedPropertyType.Boolean)
+        {
+            EditorGUILayout.PropertyField(property, true);
+            return;
+        }
+
+        EditorGUI.BeginChangeCheck();
+        bool nextValue = EditorGUILayout.Toggle(new GUIContent(property.displayName, property.tooltip), property.boolValue);
+        if (EditorGUI.EndChangeCheck())
+            property.boolValue = nextValue;
+    }
+
+    private static void DrawFloatToggleProperty(SerializedProperty property)
+    {
+        if (property.propertyType != SerializedPropertyType.Float)
+        {
+            EditorGUILayout.PropertyField(property, true);
+            return;
+        }
+
+        EditorGUI.BeginChangeCheck();
+        bool nextValue = EditorGUILayout.Toggle(new GUIContent(property.displayName, property.tooltip), property.floatValue >= 0.5f);
+        if (EditorGUI.EndChangeCheck())
+            property.floatValue = nextValue ? 1f : 0f;
     }
 
     private void DrawExportSection(LightstripClip clip)

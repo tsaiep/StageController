@@ -837,6 +837,7 @@ internal sealed class LightstripTemplatePreviewRenderer : IDisposable
             template.scrollingModeWeight,
             template.scrollingPingPongMode,
             template.scrollingFromCenter,
+            template.linearMode,
             template.sparklingModeWeight,
             template.sparklingModeRandomWeight,
             template.scrollingSpeed,

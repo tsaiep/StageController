@@ -22,6 +22,7 @@ public class LightstripTemplate : ScriptableObject
     [Range(0f, 1f)] public float scrollingModeWeight = 1f;
     [Range(0f, 1f)] public float scrollingPingPongMode = 0f;
     [Range(0f, 1f)] public float scrollingFromCenter = 0f;
+    [Range(0f, 1f)] public float linearMode = 0f;
     [Range(0f, 1f)] public float sparklingModeWeight = 0f;
     [Range(0f, 1f)] public float sparklingModeRandomWeight = 0f;
 

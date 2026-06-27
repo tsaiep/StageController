@@ -25,6 +25,7 @@ public class LightstripMBPControl : MonoBehaviour
         [Range(0f, 1f)] public float manualModeControl = 0f;
         
         [Header("Animation Control")]
+        [Range(0f, 1f)] public float linearMode = 0f;
         [Range(0f, 1f)] public float scrollingModeWeight = 1f;
         [Range(0f, 1f)] public float scrollingPingPongMode = 0f;
         [Range(0f, 1f)] public float scrollingFromCenter = 0f;
@@ -52,6 +53,7 @@ public class LightstripMBPControl : MonoBehaviour
     private static readonly int ScrollingModeWeightId = Shader.PropertyToID("_Scrolling_Mode_Weight");
     private static readonly int ScrollingPingPongModeId = Shader.PropertyToID("_Scrolling_PingPong_Mode");
     private static readonly int ScrollingFromCenterId = Shader.PropertyToID("_Scrolling_From_Center");
+    private static readonly int LinearModeId = Shader.PropertyToID("_Linear_Mode");
     private static readonly int ScrollingHeadLeanId = Shader.PropertyToID("_Scrolling_Head_Lean");
     private static readonly int ScrollingSmoothFactorId = Shader.PropertyToID("_Scrolling_Smooth_Factor");
     private static readonly int ScrollingSpeedId = Shader.PropertyToID("_Scrolling_Speed");
@@ -111,6 +113,7 @@ public class LightstripMBPControl : MonoBehaviour
         float timelineScrollingModeWeight,
         float timelineScrollingPingPongMode,
         float timelineScrollingFromCenter,
+        float timelineLinearMode,
         float timelineSparklingModeWeight,
         float timelineSparklingModeRandomWeight,
         float timelineScrollingSpeed,
@@ -136,6 +139,7 @@ public class LightstripMBPControl : MonoBehaviour
         changed |= TrySetFloat(ref properties.scrollingModeWeight, timelineScrollingModeWeight);
         changed |= TrySetFloat(ref properties.scrollingPingPongMode, timelineScrollingPingPongMode);
         changed |= TrySetFloat(ref properties.scrollingFromCenter, timelineScrollingFromCenter);
+        changed |= TrySetFloat(ref properties.linearMode, timelineLinearMode);
         changed |= TrySetFloat(ref properties.sparklingModeWeight, timelineSparklingModeWeight);
         changed |= TrySetFloat(ref properties.sparklingModeRandomWeight, timelineSparklingModeRandomWeight);
         changed |= TrySetFloat(ref properties.scrollingSpeed, timelineScrollingSpeed);
@@ -257,6 +261,7 @@ public class LightstripMBPControl : MonoBehaviour
         propertyBlock.SetFloat(ScrollingModeWeightId, properties.scrollingModeWeight);
         propertyBlock.SetFloat(ScrollingPingPongModeId, properties.scrollingPingPongMode);
         propertyBlock.SetFloat(ScrollingFromCenterId, properties.scrollingFromCenter);
+        propertyBlock.SetFloat(LinearModeId, properties.linearMode);
         propertyBlock.SetFloat(ScrollingHeadLeanId, properties.scrollingHeadLean);
         propertyBlock.SetFloat(ScrollingSmoothFactorId, properties.scrollingSmoothFactor);
         propertyBlock.SetFloat(ScrollingSpeedId, properties.scrollingSpeed);

@@ -18,6 +18,7 @@ public class LightstripPlayableBehaviour : PlayableBehaviour
     public float scrollingModeWeight = 1f;
     public float scrollingPingPongMode = 0f;
     public float scrollingFromCenter = 0f;
+    public float linearMode = 0f;
     public float sparklingModeWeight = 0f;
     public float sparklingModeRandomWeight = 0f;
 
