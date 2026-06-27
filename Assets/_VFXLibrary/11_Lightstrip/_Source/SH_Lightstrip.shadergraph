@@ -655,6 +655,20 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
+                    "m_Id": "1e12288bb3434e61ad24b48f512a33b7"
+                },
+                "m_SlotId": 4
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "f53f4252e5ce4f17b042102867aa49df"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
                     "m_Id": "204372929e8e426cae880b52ba15d3f7"
                 },
                 "m_SlotId": 0
@@ -1985,20 +1999,6 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "d476350fb1d74b58af1e43b0db0d2b51"
-                },
-                "m_SlotId": 1
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "f53f4252e5ce4f17b042102867aa49df"
-                },
-                "m_SlotId": 0
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
                     "m_Id": "d57f50715c3441279fa0f8631abba548"
                 },
                 "m_SlotId": 3
@@ -2683,7 +2683,7 @@
     "m_ObjectId": "0a729ca1541d4ad6914506bb7ba1c84b",
     "m_Title": "Sparkling Time Remap",
     "m_Position": {
-        "x": 518.000244140625,
+        "x": 517.9999389648438,
         "y": 906.6666259765625
     }
 }
@@ -3077,8 +3077,8 @@
     "m_ObjectId": "11c07ea8105249d7b61a00232dcba462",
     "m_Title": "Scrolling Result Blending",
     "m_Position": {
-        "x": -337.333251953125,
-        "y": -66.66665649414063
+        "x": -337.3333435058594,
+        "y": -66.66668701171875
     }
 }
 
@@ -3787,10 +3787,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2150.666748046875,
+            "x": -2151.3330078125,
             "y": 680.0,
-            "width": 260.6668701171875,
-            "height": 96.0
+            "width": 231.3331298828125,
+            "height": 120.0
         }
     },
     "m_Slots": [
@@ -3802,6 +3802,9 @@
         },
         {
             "m_Id": "c7f20094c9bb4209a396b9a31c273450"
+        },
+        {
+            "m_Id": "1fdf4226d3934720bf08b5322a4d935e"
         }
     ],
     "synonyms": [
@@ -3819,7 +3822,7 @@
     "m_FunctionName": "CoreGradient",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "float2 StepUV = floor(UV*10)/10;\nfloat xCoord = lerp(StepUV.x,UV.x,Mode)/10;\nOut = StepUV.y + xCoord;"
+    "m_FunctionBody": "float2 StepUV = floor(UV*10)/10;\nfloat xCoord = lerp(StepUV.x,UV.x,Mode)/10;\nOut = StepUV.y + xCoord;\nGridsSeed = StepUV.y + StepUV.x/10;"
 }
 
 {
@@ -3931,6 +3934,21 @@
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "1fdf4226d3934720bf08b5322a4d935e",
+    "m_Id": 4,
+    "m_DisplayName": "GridsSeed",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "GridsSeed",
     "m_StageCapability": 3,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
@@ -4187,8 +4205,8 @@
     "m_ObjectId": "23d9c4af51b94c858511b105564a0e01",
     "m_Title": "Head Lean",
     "m_Position": {
-        "x": 542.000244140625,
-        "y": 428.0
+        "x": 541.9999389648438,
+        "y": 427.9999694824219
     }
 }
 
@@ -6104,7 +6122,7 @@
     "m_ObjectId": "444d0b5f199e4e2183aa22bb8563feb7",
     "m_Title": "Sparkling Time  & Manual Control",
     "m_Position": {
-        "x": -1279.9998779296875,
+        "x": -1280.0,
         "y": 904.6666259765625
     }
 }
@@ -7769,8 +7787,8 @@
     "m_ObjectId": "6595ecff9c424f0da130d22a319d036b",
     "m_Title": "Scrolling Time",
     "m_Position": {
-        "x": -1269.333251953125,
-        "y": -64.66665649414063
+        "x": -1269.3333740234375,
+        "y": -64.66668701171875
     }
 }
 
@@ -9327,7 +9345,7 @@
     "m_ObjectId": "81967fe4498a48b2bf896a548a3d281f",
     "m_Title": "Gradient Shape",
     "m_Position": {
-        "x": 538.666748046875,
+        "x": 538.6666870117188,
         "y": -76.0
     }
 }
@@ -9469,8 +9487,8 @@
     "m_ObjectId": "8437edc69b2544c0bbf52f3403033404",
     "m_Title": "Sparkling Random",
     "m_Position": {
-        "x": -1568.6663818359375,
-        "y": 1476.6663818359375
+        "x": -1568.6666259765625,
+        "y": 1476.6666259765625
     }
 }
 
@@ -9553,7 +9571,7 @@
     "m_Title": "Coloring",
     "m_Position": {
         "x": 3086.666748046875,
-        "y": -70.66667175292969
+        "y": -70.66668701171875
     }
 }
 
@@ -10416,8 +10434,8 @@
     "m_ObjectId": "954ded51f8404249a0633a2e745a26aa",
     "m_Title": "Make Step Grids",
     "m_Position": {
-        "x": -2643.33349609375,
-        "y": 620.666748046875
+        "x": -2643.333251953125,
+        "y": 620.6666259765625
     }
 }
 
@@ -10669,7 +10687,7 @@
     "m_ObjectId": "99475f37cf5d45dfbb3490c86cced4ad",
     "m_Title": "Ping-Pong Mode",
     "m_Position": {
-        "x": -1270.66650390625,
+        "x": -1270.6666259765625,
         "y": -570.6666870117188
     }
 }
@@ -11834,8 +11852,8 @@
     "m_ObjectId": "b1e085a810f64a79bfe3d8455d937ae7",
     "m_Title": "Final Blending",
     "m_Position": {
-        "x": 2303.3330078125,
-        "y": -71.99998474121094
+        "x": 2303.33349609375,
+        "y": -72.0
     }
 }
 
@@ -13872,10 +13890,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1810.66650390625,
-            "y": 680.0,
-            "width": 209.3330078125,
-            "height": 280.0001220703125
+            "x": -1809.333251953125,
+            "y": 679.9999389648438,
+            "width": 209.33349609375,
+            "height": 280.0
         }
     },
     "m_Slots": [
@@ -14283,7 +14301,7 @@
     "m_ObjectId": "d8e1856d4d3f48a0a34fc2cabd84217b",
     "m_Title": "Remap to Needed Grid Count",
     "m_Position": {
-        "x": -2651.999755859375,
+        "x": -2652.0,
         "y": -60.0
     }
 }
@@ -15260,8 +15278,8 @@
     "m_ObjectId": "ed763103fec14b28832052dfcfe508e3",
     "m_Title": "Manual Scrolling ",
     "m_Position": {
-        "x": -1265.333251953125,
-        "y": 363.33331298828127
+        "x": -1265.3333740234375,
+        "y": 363.3333435058594
     }
 }
 
