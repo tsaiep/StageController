@@ -13,6 +13,10 @@ public class SLMUnit : MonoBehaviour
     [Tooltip("MovingBeamLight_SpreadTilt 的 Transform（控制 localRotation.x）")]
     public Transform spreadTiltTransform;
 
+    [Header("Preview")]
+    [Tooltip("Mesh renderers that receive template preview colors in the editor.")]
+    public MeshRenderer[] previewColorRenderers;
+
     [Header("單元演出設定")]
     public bool invertPan = false;
     public bool invertTilt = false;

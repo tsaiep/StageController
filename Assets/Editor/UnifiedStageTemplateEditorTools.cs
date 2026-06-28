@@ -822,7 +822,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             DisableLights(instance);
 
             _instances[i] = instance;
-            _renderers[i] = FindPreviewRenderers(instance);
+            _renderers[i] = FindPreviewColorRenderers(instance);
             _panTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_Pan");
             _tiltTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_Tilt");
             _spreadPanTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_SpreadPan");
@@ -1260,14 +1260,15 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         }
     }
 
-    private static List<MeshRenderer> FindPreviewRenderers(GameObject root)
+    private static List<MeshRenderer> FindPreviewColorRenderers(GameObject root)
     {
-        MeshRenderer[] all = root.GetComponentsInChildren<MeshRenderer>(true);
-        List<MeshRenderer> preferred = all
-            .Where(r => r != null && r.name.IndexOf("cylinder", StringComparison.OrdinalIgnoreCase) >= 0)
-            .ToList();
+        SLMUnit unit = root.GetComponentInChildren<SLMUnit>(true);
+        if (unit == null || unit.previewColorRenderers == null)
+            return new List<MeshRenderer>();
 
-        return preferred.Count > 0 ? preferred : all.Where(r => r != null).ToList();
+        return unit.previewColorRenderers
+            .Where(renderer => renderer != null)
+            .ToList();
     }
 
     private static Transform FindChildTransform(Transform root, string childName)
