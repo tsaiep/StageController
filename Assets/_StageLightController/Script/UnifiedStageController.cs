@@ -6,6 +6,9 @@ public class UnifiedStageController : MonoBehaviour
 {
     private const float MinVlbSideSoftness = 0.0001f;
     private const float MaxVlbSideSoftness = 10f;
+    private static readonly int LaserMeshBaseColorShaderId = Shader.PropertyToID("_BaseColor");
+    private static readonly int LaserMeshSoftnessShaderId = Shader.PropertyToID("_Softness");
+    private MaterialPropertyBlock _laserMeshPropertyBlock;
 
     public struct WeightedGradientContribution
     {
@@ -39,7 +42,8 @@ public class UnifiedStageController : MonoBehaviour
     {
         [InspectorName("Volumetric Spot Light")] VolumetricSpot,
         [InspectorName("Spot Light")] Spot,
-        [InspectorName("Point Light")] Point
+        [InspectorName("Point Light")] Point,
+        [InspectorName("Laser Mesh")] LaserMesh
     }
 
     public enum BeatTimeReference
@@ -429,8 +433,55 @@ public class UnifiedStageController : MonoBehaviour
             }
 
             // ===== 燈光 =====
+            if (activeLightMode == StageLightMode.LaserMesh)
+            {
+                bool laserMeshIsTimelineBlending = gradientContributions.Count > 1;
+                Gradient laserMeshBuildTarget = (isTimeJump || laserMeshIsTimelineBlending) ? unit.currentGradient : unit.targetGradient;
+
+                BuildWeightedFinalGradient(
+                    unit,
+                    gradientContributions,
+                    laserMeshBuildTarget,
+                    unit.gradientKeyTimes,
+                    ref unit.gradientColorKeys,
+                    ref unit.gradientAlphaKeys);
+
+                if (!isTimeJump && !laserMeshIsTimelineBlending)
+                {
+                    LerpGradientInto(
+                        unit.currentGradient,
+                        unit.currentGradient,
+                        unit.targetGradient,
+                        dt * 25f,
+                        unit.gradientKeyTimes,
+                        ref unit.gradientColorKeys,
+                        ref unit.gradientAlphaKeys);
+                }
+
+                Color laserMeshFinalColor = unit.currentGradient != null
+                    ? UnifiedStageGradientUtility.ForceOpaque(unit.currentGradient.Evaluate(0f))
+                    : Color.black;
+
+                ApplyLaserMeshRenderers(unit, true, laserMeshFinalColor, mixedSoftness, mixedLightRange);
+            }
+            else
+            {
+                ApplyLaserMeshRenderers(unit, false, Color.black, mixedSoftness, mixedLightRange);
+            }
+
             if (unit.targetLight != null)
             {
+                if (activeLightMode == StageLightMode.LaserMesh)
+                {
+                    var laserMeshVlb = unit.targetLight.GetComponent<VLB.VolumetricLightBeamHD>();
+                    ApplyLightMode(unit, laserMeshVlb, activeLightMode);
+
+                    var laserMeshCookie = unit.targetLight.GetComponent<VLB.VolumetricCookieHD>();
+                    if (laserMeshCookie != null) laserMeshCookie.enabled = false;
+
+                    continue;
+                }
+
                 float modeIntensityScale = activeLightMode == StageLightMode.Point ? 0.15f : 1f;
                 unit.targetLight.intensity = baseIntensity * mixedInten * modeIntensityScale;
                 unit.targetLight.range = Mathf.Max(0.01f, mixedLightRange);
@@ -486,8 +537,43 @@ public class UnifiedStageController : MonoBehaviour
                 }
 
                 var cookie = unit.targetLight.GetComponent<VLB.VolumetricCookieHD>();
-                if (cookie != null) cookie.enabled = activeScatter;
+                if (cookie != null) cookie.enabled = activeScatter && activeLightMode != StageLightMode.LaserMesh;
             }
+        }
+    }
+
+    private void ApplyLaserMeshRenderers(SLMUnit unit, bool active, Color color, float softness, float lightRange)
+    {
+        if (unit == null || unit.laserMeshRenderers == null)
+            return;
+
+        for (int i = 0; i < unit.laserMeshRenderers.Length; i++)
+        {
+            MeshRenderer renderer = unit.laserMeshRenderers[i];
+            if (renderer == null)
+                continue;
+
+            if (renderer.gameObject.activeSelf != active)
+                renderer.gameObject.SetActive(active);
+
+            if (renderer.enabled != active)
+                renderer.enabled = active;
+
+            if (!active)
+                continue;
+
+            Transform rendererTransform = renderer.transform;
+            Vector3 scale = rendererTransform.localScale;
+            scale.y = Mathf.Max(0f, lightRange);
+            rendererTransform.localScale = scale;
+
+            if (_laserMeshPropertyBlock == null)
+                _laserMeshPropertyBlock = new MaterialPropertyBlock();
+
+            renderer.GetPropertyBlock(_laserMeshPropertyBlock);
+            _laserMeshPropertyBlock.SetColor(LaserMeshBaseColorShaderId, color);
+            _laserMeshPropertyBlock.SetFloat(LaserMeshSoftnessShaderId, softness);
+            renderer.SetPropertyBlock(_laserMeshPropertyBlock);
         }
     }
 
@@ -861,23 +947,46 @@ public class UnifiedStageController : MonoBehaviour
         switch (mode)
         {
             case StageLightMode.VolumetricSpot:
+                RestoreLightEnabledAfterLaserMesh(unit);
                 unit.targetLight.type = LightType.Spot;
                 if (vlb != null) vlb.enabled = true;
                 break;
 
             case StageLightMode.Spot:
+                RestoreLightEnabledAfterLaserMesh(unit);
                 unit.targetLight.type = LightType.Spot;
                 if (vlb != null) vlb.enabled = false;
                 break;
 
             case StageLightMode.Point:
+                RestoreLightEnabledAfterLaserMesh(unit);
                 unit.targetLight.type = LightType.Point;
+                if (vlb != null) vlb.enabled = false;
+                break;
+
+            case StageLightMode.LaserMesh:
+                if (!unit.lightDisabledByLaserMesh)
+                {
+                    unit.lightEnabledBeforeLaserMesh = unit.targetLight.enabled;
+                    unit.lightDisabledByLaserMesh = true;
+                }
+
+                unit.targetLight.enabled = false;
                 if (vlb != null) vlb.enabled = false;
                 break;
         }
 
         unit.appliedLightMode = mode;
         unit.hasAppliedLightMode = true;
+    }
+
+    private static void RestoreLightEnabledAfterLaserMesh(SLMUnit unit)
+    {
+        if (unit == null || unit.targetLight == null || !unit.lightDisabledByLaserMesh)
+            return;
+
+        unit.targetLight.enabled = unit.lightEnabledBeforeLaserMesh;
+        unit.lightDisabledByLaserMesh = false;
     }
 
     private static float CalculateVlbSideSoftness(float softness)

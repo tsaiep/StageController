@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public class SLMUnit : MonoBehaviour
 {
@@ -14,9 +15,10 @@ public class SLMUnit : MonoBehaviour
     [Tooltip("MovingBeamLight_SpreadTilt 的 Transform（控制 localRotation.x）")]
     public Transform spreadTiltTransform;
 
-    [Header("Preview")]
-    [Tooltip("Mesh renderers that receive template preview colors in the editor.")]
-    public MeshRenderer[] previewColorRenderers;
+    [Header("Laser Mesh")]
+    [Tooltip("Mesh renderers used by Laser Mesh mode and the template preview.")]
+    [FormerlySerializedAs("previewColorRenderers")]
+    public MeshRenderer[] laserMeshRenderers;
 
     [Header("單元演出設定")]
     public bool invertPan = false;
@@ -50,6 +52,8 @@ public class SLMUnit : MonoBehaviour
     [System.NonSerialized] public bool hasConfiguredVlbGradientMode;
     [HideInInspector] public bool hasAppliedLightMode;
     [HideInInspector] public UnifiedStageController.StageLightMode appliedLightMode;
+    [HideInInspector] public bool lightDisabledByLaserMesh;
+    [HideInInspector] public bool lightEnabledBeforeLaserMesh;
 
     // tiltRotationVector.x 的符號快取（由 UnifiedStageController 寫入）
     // Vector3.left (x=-1) → -1f；Vector3.right (x=+1) → +1f

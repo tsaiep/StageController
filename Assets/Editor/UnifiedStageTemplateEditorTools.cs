@@ -706,6 +706,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 {
     private const float PreviewUnitSpacing = 1.5f;
     private static readonly int BaseColorShaderId = Shader.PropertyToID("_BaseColor");
+    private static readonly int SoftnessShaderId = Shader.PropertyToID("_Softness");
     private static readonly Vector3 PreviewCameraTarget = new Vector3(0f, 0.8f, 0f);
 
     private PreviewRenderUtility _preview;
@@ -824,7 +825,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             DisableLights(instance);
 
             _instances[i] = instance;
-            _renderers[i] = FindPreviewColorRenderers(instance);
+            _renderers[i] = FindLaserMeshRenderers(instance);
             _vlbBeams[i] = instance.GetComponentsInChildren<VLB.VolumetricLightBeamHD>(true);
             _panTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_Pan");
             _tiltTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_Tilt");
@@ -895,7 +896,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 
             Gradient finalGradient = EvaluateFinalGradient(template, rootTime, unitTime, unitDelay, i, previewUnitCount);
             Color color = finalGradient != null ? finalGradient.Evaluate(0f) : Color.black;
-            ApplyColor(i, color);
+            ApplyColor(i, color, template.softness, template.lightRange);
             ApplyBeamGradient(i, finalGradient, template);
         }
     }
@@ -1250,7 +1251,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         return result < 0 ? result + length : result;
     }
 
-    private void ApplyColor(int unitIndex, Color color)
+    private void ApplyColor(int unitIndex, Color color, float softness, float lightRange)
     {
         List<MeshRenderer> renderers = _renderers[unitIndex];
         if (renderers == null)
@@ -1261,8 +1262,20 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             if (renderer == null)
                 continue;
 
+            if (!renderer.gameObject.activeSelf)
+                renderer.gameObject.SetActive(true);
+
+            if (!renderer.enabled)
+                renderer.enabled = true;
+
+            Transform rendererTransform = renderer.transform;
+            Vector3 scale = rendererTransform.localScale;
+            scale.y = Mathf.Max(0f, lightRange);
+            rendererTransform.localScale = scale;
+
             renderer.GetPropertyBlock(_propertyBlock);
             _propertyBlock.SetColor(BaseColorShaderId, color);
+            _propertyBlock.SetFloat(SoftnessShaderId, softness);
             renderer.SetPropertyBlock(_propertyBlock);
         }
     }
@@ -1293,13 +1306,13 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         }
     }
 
-    private static List<MeshRenderer> FindPreviewColorRenderers(GameObject root)
+    private static List<MeshRenderer> FindLaserMeshRenderers(GameObject root)
     {
         SLMUnit unit = root.GetComponentInChildren<SLMUnit>(true);
-        if (unit == null || unit.previewColorRenderers == null)
+        if (unit == null || unit.laserMeshRenderers == null)
             return new List<MeshRenderer>();
 
-        return unit.previewColorRenderers
+        return unit.laserMeshRenderers
             .Where(renderer => renderer != null)
             .ToList();
     }
