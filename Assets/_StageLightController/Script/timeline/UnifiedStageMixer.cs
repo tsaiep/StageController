@@ -122,6 +122,7 @@ public class UnifiedStageMixer : PlayableBehaviour
             {
                 weight              = weight,
                 gradient            = b.clipGradient,
+                beamLengthGradient  = b.beamLengthGradient,
                 mode                = b.clipMode,
                 speed               = b.rotationSpeed,
                 range               = b.rotationRange,

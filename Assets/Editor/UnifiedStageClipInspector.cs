@@ -146,6 +146,7 @@ public class UnifiedStageClipInspector : Editor
         template.lightMode = clip.lightMode;
         template.lightRange = clip.lightRange;
         template.lightGradient = UnifiedStageClip.CloneGradient(clip.lightGradient);
+        template.beamLengthGradient = UnifiedStageGradientUtility.CloneOrDefaultBeamLengthGradient(clip.beamLengthGradient);
         template.intensityMultiplier = clip.intensityMultiplier;
         template.sensitivity = clip.sensitivity;
         template.smoothness = clip.smoothness;

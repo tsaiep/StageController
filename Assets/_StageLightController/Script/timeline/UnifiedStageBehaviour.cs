@@ -5,6 +5,7 @@ using UnityEngine.Playables;
 public class UnifiedStageBehaviour : PlayableBehaviour
 {
     public Gradient clipGradient;
+    public Gradient beamLengthGradient;
     [Tooltip("總體亮度倍率")] public float clipIntensity;
     [Tooltip("靈敏度")] public float sensitivity;
     [Tooltip("平滑度")] public float smoothness;

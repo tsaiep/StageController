@@ -711,6 +711,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
     private PreviewRenderUtility _preview;
     private GameObject[] _instances = new GameObject[0];
     private List<MeshRenderer>[] _renderers = new List<MeshRenderer>[0];
+    private VLB.VolumetricLightBeamHD[][] _vlbBeams = new VLB.VolumetricLightBeamHD[0][];
     private Transform[] _panTransforms = new Transform[0];
     private Transform[] _tiltTransforms = new Transform[0];
     private Transform[] _spreadPanTransforms = new Transform[0];
@@ -782,6 +783,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         _sourcePrefab = prefab;
         _instances = new GameObject[previewUnitCount];
         _renderers = new List<MeshRenderer>[previewUnitCount];
+        _vlbBeams = new VLB.VolumetricLightBeamHD[previewUnitCount][];
         _panTransforms = new Transform[previewUnitCount];
         _tiltTransforms = new Transform[previewUnitCount];
         _spreadPanTransforms = new Transform[previewUnitCount];
@@ -823,6 +825,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 
             _instances[i] = instance;
             _renderers[i] = FindPreviewColorRenderers(instance);
+            _vlbBeams[i] = instance.GetComponentsInChildren<VLB.VolumetricLightBeamHD>(true);
             _panTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_Pan");
             _tiltTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_Tilt");
             _spreadPanTransforms[i] = FindChildTransform(instance.transform, "MovingBeamLight_SpreadPan");
@@ -847,6 +850,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 
             _instances[i] = null;
             _renderers[i] = null;
+            _vlbBeams[i] = null;
             _panTransforms[i] = null;
             _tiltTransforms[i] = null;
             _spreadPanTransforms[i] = null;
@@ -889,8 +893,10 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             Vector2 spreadAngles = EvaluateSpreadAngles(template, rootTime, unitTime, i, previewUnitCount);
             ApplyPreviewRotations(i, angles.x, angles.y, spreadAngles.x, spreadAngles.y);
 
-            Color color = EvaluateColor(template, rootTime, unitTime, unitDelay, i, previewUnitCount);
+            Gradient finalGradient = EvaluateFinalGradient(template, rootTime, unitTime, unitDelay, i, previewUnitCount);
+            Color color = finalGradient != null ? finalGradient.Evaluate(0f) : Color.black;
             ApplyColor(i, color);
+            ApplyBeamGradient(i, finalGradient, template);
         }
     }
 
@@ -1094,7 +1100,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         return new Vector2(spreadPan, spreadTilt);
     }
 
-    private static Color EvaluateColor(UnifiedStageTemplate template, float rootTime, float unitTime, float unitDelay, int index, int previewUnitCount)
+    private static Gradient EvaluateFinalGradient(UnifiedStageTemplate template, float rootTime, float unitTime, float unitDelay, int index, int previewUnitCount)
     {
         Gradient gradient = template.lightGradient;
         Color baseColor;
@@ -1146,7 +1152,8 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
                 break;
         }
 
-        return baseColor * template.globalColor;
+        Color tint = baseColor * template.globalColor;
+        return UnifiedStageGradientUtility.CreateTintedBeamGradient(template.beamLengthGradient, tint);
     }
 
     private static Color EvaluateBeatSnapColor(UnifiedStageTemplate template, float rootTime, int index, int previewUnitCount)
@@ -1257,6 +1264,32 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             renderer.GetPropertyBlock(_propertyBlock);
             _propertyBlock.SetColor(BaseColorShaderId, color);
             renderer.SetPropertyBlock(_propertyBlock);
+        }
+    }
+
+    private void ApplyBeamGradient(int unitIndex, Gradient gradient, UnifiedStageTemplate template)
+    {
+        if (_vlbBeams == null || unitIndex < 0 || unitIndex >= _vlbBeams.Length)
+            return;
+
+        VLB.VolumetricLightBeamHD[] beams = _vlbBeams[unitIndex];
+        if (beams == null)
+            return;
+
+        Color fallbackColor = gradient != null ? gradient.Evaluate(0f) : Color.black;
+        foreach (VLB.VolumetricLightBeamHD beam in beams)
+        {
+            if (beam == null)
+                continue;
+
+            beam.colorFromLight = false;
+            beam.colorMode = VLB.ColorMode.Gradient;
+            beam.colorGradient = UnifiedStageGradientUtility.CloneGradient(gradient);
+            beam.colorFlat = fallbackColor;
+            beam.spotAngle = template != null ? template.beamAngle : beam.spotAngle;
+            beam.sideSoftness = template != null ? Mathf.Lerp(0.0001f, 10f, Mathf.Clamp01(template.softness / 100f)) : beam.sideSoftness;
+            if (beam.enabled)
+                beam.UpdateAfterManualPropertyChange();
         }
     }
 

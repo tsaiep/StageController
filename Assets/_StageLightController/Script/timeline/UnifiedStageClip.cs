@@ -10,6 +10,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Header("燈光感應設定")]
     [ColorUsage(true, true), Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
     [Tooltip("燈光漸變")] public Gradient lightGradient = new Gradient();
+    [Tooltip("Beam Length Gradient：光束頭尾方向的顏色漸層控制")] public Gradient beamLengthGradient = UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
     [Tooltip("總體亮度倍率")] public float intensityMultiplier = 1.0f;
 
     [Header("顏色取樣設定")]
@@ -105,6 +106,9 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             applyTemplate = null;
         }
 
+        if (beamLengthGradient == null)
+            beamLengthGradient = UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
+
         if (!mutableDataDetached)
         {
             DetachMutableData();
@@ -122,6 +126,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         {
             globalColor            = template.globalColor;
             lightGradient          = CloneGradient(template.lightGradient);
+            beamLengthGradient     = UnifiedStageGradientUtility.CloneOrDefaultBeamLengthGradient(template.beamLengthGradient);
             intensityMultiplier    = template.intensityMultiplier;
             colorSampleMode        = template.colorSampleMode;
             sensitivity            = template.sensitivity;
@@ -176,6 +181,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     private void DetachMutableData()
     {
         lightGradient = CloneGradient(lightGradient);
+        beamLengthGradient = UnifiedStageGradientUtility.CloneOrDefaultBeamLengthGradient(beamLengthGradient);
         beatSnapColors = CloneColorArray(beatSnapColors);
         beatGroupDelayCurve = CloneAnimationCurve(beatGroupDelayCurve);
         beatLightDelayCurve = CloneAnimationCurve(beatLightDelayCurve);
@@ -190,12 +196,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
 
     public static Gradient CloneGradient(Gradient source)
     {
-        if (source == null) return null;
-
-        var clone = new Gradient();
-        clone.SetKeys(source.colorKeys, source.alphaKeys);
-        clone.mode = source.mode;
-        return clone;
+        return UnifiedStageGradientUtility.CloneGradient(source);
     }
 
     public static AnimationCurve CloneAnimationCurve(AnimationCurve source)
@@ -221,6 +222,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         var behaviour = playable.GetBehaviour();
 
         behaviour.clipGradient          = lightGradient;
+        behaviour.beamLengthGradient    = beamLengthGradient;
         behaviour.clipIntensity         = intensityMultiplier;
         behaviour.sensitivity           = sensitivity;
         behaviour.smoothness            = smoothness;

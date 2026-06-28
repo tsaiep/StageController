@@ -33,6 +33,8 @@ public class SLMUnit : MonoBehaviour
     [HideInInspector] public float curSpreadTilt, velSpreadTilt;
     [HideInInspector] public float frozenPan, frozenTilt;
     [HideInInspector] public Color frozenColor;
+    [HideInInspector] public Gradient frozenGradient;
+    [HideInInspector] public Gradient currentGradient;
     [HideInInspector] public bool hasAppliedLightMode;
     [HideInInspector] public UnifiedStageController.StageLightMode appliedLightMode;
 

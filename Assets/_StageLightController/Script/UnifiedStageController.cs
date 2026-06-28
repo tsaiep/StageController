@@ -7,6 +7,13 @@ public class UnifiedStageController : MonoBehaviour
     private const float MinVlbSideSoftness = 0.0001f;
     private const float MaxVlbSideSoftness = 10f;
 
+    private struct WeightedGradientContribution
+    {
+        public Gradient gradient;
+        public Color tint;
+        public float weight;
+    }
+
     public enum RotationMode
     {
         [InspectorName("靜止模式")] Static,
@@ -163,7 +170,7 @@ public class UnifiedStageController : MonoBehaviour
             unit.tiltAxisSignCache = (tAxisX >= 0f) ? 1f : -1f;
 
             // --- 累加變數 ---
-            Color unitColor = Color.black;
+            var gradientContributions = new List<WeightedGradientContribution>(clips.Count);
             float totalPan = 0f, totalTilt = 0f;
             float totalSpreadPan = 0f, totalSpreadTilt = 0f;
             float targetModeWeight = 0f;
@@ -174,6 +181,7 @@ public class UnifiedStageController : MonoBehaviour
                 unit.frozenPan   = unit.curPan;
                 unit.frozenTilt  = unit.curTilt;
                 unit.frozenColor = (unit.targetLight != null) ? unit.targetLight.color : Color.black;
+                unit.frozenGradient = CaptureCurrentGradient(unit);
             }
 
             // --- 逐 Clip 計算 ---
@@ -223,7 +231,7 @@ public class UnifiedStageController : MonoBehaviour
                 if (enableColorUpdate)
                 {
                     Color clipColor = ComputeClipColor(clip, unit, rootTime, unitEt, unitDelay);
-                    unitColor += clipColor * clip.weight;
+                    AddGradientContribution(gradientContributions, clip, unit, clipColor);
                 }
 
                 // ===== 旋轉 =====
@@ -425,8 +433,12 @@ public class UnifiedStageController : MonoBehaviour
                 unit.targetLight.intensity = baseIntensity * mixedInten * modeIntensityScale;
                 unit.targetLight.range = Mathf.Max(0.01f, mixedLightRange);
 
-                Color targetColor = unitColor;
-                Color finalColor = isTimeJump ? targetColor : Color.Lerp(unit.targetLight.color, targetColor, dt * 25f);
+                Gradient targetGradient = BuildWeightedFinalGradient(gradientContributions);
+                Gradient finalGradient = isTimeJump || unit.currentGradient == null
+                    ? targetGradient
+                    : UnifiedStageGradientUtility.LerpGradients(unit.currentGradient, targetGradient, dt * 25f);
+                unit.currentGradient = UnifiedStageGradientUtility.CloneGradient(finalGradient);
+                Color finalColor = finalGradient != null ? finalGradient.Evaluate(0f) : Color.black;
 
                 unit.targetLight.color = finalColor;
 
@@ -442,6 +454,8 @@ public class UnifiedStageController : MonoBehaviour
                 if (vlb != null)
                 {
                     vlb.colorFromLight = false;
+                    vlb.colorMode = VLB.ColorMode.Gradient;
+                    vlb.colorGradient = UnifiedStageGradientUtility.CloneGradient(finalGradient);
                     vlb.colorFlat = finalColor;
                     vlb.spotAngle = mixedBeamAngle;
                     vlb.sideSoftness = CalculateVlbSideSoftness(mixedSoftness);
@@ -453,6 +467,138 @@ public class UnifiedStageController : MonoBehaviour
                 if (cookie != null) cookie.enabled = activeScatter;
             }
         }
+    }
+
+    private static void AddGradientContribution(
+        List<WeightedGradientContribution> contributions,
+        ActiveClipInfo clip,
+        SLMUnit unit,
+        Color clipColor)
+    {
+        if (contributions == null || clip.weight <= 0f)
+            return;
+
+        if (clip.isFreezeFrame && !clip.freezeUseClipGradient && unit != null && unit.frozenGradient != null)
+        {
+            contributions.Add(new WeightedGradientContribution
+            {
+                gradient = unit.frozenGradient,
+                tint = clip.globalColor,
+                weight = clip.weight
+            });
+            return;
+        }
+
+        contributions.Add(new WeightedGradientContribution
+        {
+            gradient = clip.beamLengthGradient,
+            tint = clipColor,
+            weight = clip.weight
+        });
+    }
+
+    private static Gradient BuildWeightedFinalGradient(List<WeightedGradientContribution> contributions)
+    {
+        if (contributions == null || contributions.Count == 0)
+            return UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+
+        List<float> times = CollectContributionTimes(contributions);
+        var colorKeys = new GradientColorKey[times.Count];
+        var alphaKeys = new GradientAlphaKey[times.Count];
+        GradientMode mode = GradientMode.Blend;
+
+        for (int i = 0; i < contributions.Count; i++)
+        {
+            if (contributions[i].gradient != null)
+            {
+                mode = contributions[i].gradient.mode;
+                break;
+            }
+        }
+
+        for (int i = 0; i < times.Count; i++)
+        {
+            float time = times[i];
+            Color color = new Color(0f, 0f, 0f, 0f);
+
+            for (int c = 0; c < contributions.Count; c++)
+            {
+                WeightedGradientContribution contribution = contributions[c];
+                Gradient gradient = contribution.gradient ?? UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
+                Color sample = gradient.Evaluate(time);
+                Color tinted = UnifiedStageGradientUtility.MultiplyRgb(sample, contribution.tint);
+                color += tinted * contribution.weight;
+            }
+
+            colorKeys[i] = new GradientColorKey(color, time);
+            alphaKeys[i] = new GradientAlphaKey(color.a, time);
+        }
+
+        var result = new Gradient();
+        result.SetKeys(colorKeys, alphaKeys);
+        result.mode = mode;
+        return result;
+    }
+
+    private static List<float> CollectContributionTimes(List<WeightedGradientContribution> contributions)
+    {
+        var times = new List<float> { 0f, 1f };
+
+        for (int i = 0; i < contributions.Count; i++)
+        {
+            Gradient gradient = contributions[i].gradient;
+            if (gradient == null)
+            {
+                AddUniqueGradientTime(times, 0f);
+                AddUniqueGradientTime(times, 1f);
+                continue;
+            }
+
+            foreach (GradientColorKey key in gradient.colorKeys)
+                AddUniqueGradientTime(times, key.time);
+
+            foreach (GradientAlphaKey key in gradient.alphaKeys)
+                AddUniqueGradientTime(times, key.time);
+        }
+
+        times.Sort();
+        return times;
+    }
+
+    private static void AddUniqueGradientTime(List<float> times, float time)
+    {
+        time = Mathf.Clamp01(time);
+        for (int i = 0; i < times.Count; i++)
+        {
+            if (Mathf.Abs(times[i] - time) <= 0.0001f)
+                return;
+        }
+
+        times.Add(time);
+    }
+
+    private static Gradient CaptureCurrentGradient(SLMUnit unit)
+    {
+        if (unit == null)
+            return UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+
+        if (unit.currentGradient != null)
+            return UnifiedStageGradientUtility.CloneGradient(unit.currentGradient);
+
+        Color fallbackColor = unit.targetLight != null ? unit.targetLight.color : Color.black;
+        if (unit.targetLight != null)
+        {
+            var vlb = unit.targetLight.GetComponent<VLB.VolumetricLightBeamHD>();
+            if (vlb != null)
+            {
+                if (vlb.colorMode == VLB.ColorMode.Gradient && vlb.colorGradient != null)
+                    return UnifiedStageGradientUtility.CloneGradient(vlb.colorGradient);
+
+                fallbackColor = vlb.colorFlat;
+            }
+        }
+
+        return UnifiedStageGradientUtility.CreateSolidGradient(fallbackColor);
     }
 
     private void ApplyLightMode(SLMUnit unit, VLB.VolumetricLightBeamHD vlb, StageLightMode mode)

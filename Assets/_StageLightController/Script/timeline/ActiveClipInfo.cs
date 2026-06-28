@@ -8,6 +8,7 @@ public struct ActiveClipInfo
 {
     public float weight;
     public Gradient gradient;
+    public Gradient beamLengthGradient;
     public UnifiedStageController.RotationMode mode;
     public float speed;
     public float range;

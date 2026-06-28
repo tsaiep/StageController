@@ -19,6 +19,7 @@ public class UnifiedStageTemplate : ScriptableObject
 
     [Header("燈光感應設定")]
     [Tooltip("燈光漸變")] public Gradient lightGradient;
+    [Tooltip("Beam Length Gradient：光束頭尾方向的顏色漸層控制")] public Gradient beamLengthGradient = UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
     [Tooltip("總體亮度倍率")] public float intensityMultiplier = 1f;
 
     [Header("顏色取樣設定")]
@@ -74,4 +75,9 @@ public class UnifiedStageTemplate : ScriptableObject
     [Tooltip("依所屬燈組內 Index 取樣的 Spread Angle 倍率曲線（indexInGroup/(groupSize-1)，再乘到 SpreadTilt.x）")]
     public AnimationCurve spreadAngleCurveByIndex = AnimationCurve.Constant(0, 1, 1);
     [Tooltip("展開旋轉曲線（Sample 旋轉動作循環，0~1 → 0~360° 附加到 SpreadPan.y）")] public AnimationCurve spreadPanCurve = AnimationCurve.Constant(0, 1, 0);
+    void OnValidate()
+    {
+        if (beamLengthGradient == null)
+            beamLengthGradient = UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
+    }
 }
