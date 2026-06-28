@@ -38,41 +38,41 @@ public static class UnifiedStageGradientUtility
         return source != null ? CloneGradient(source) : CreateDefaultBeamLengthGradient();
     }
 
+    public static void CopyGradientInto(Gradient source, Gradient destination)
+    {
+        if (destination == null)
+            return;
+
+        if (source == null)
+            source = CreateDefaultBeamLengthGradient();
+
+        GradientColorKey[] sourceColorKeys = GetUsableColorKeys(source);
+        var colorKeys = new GradientColorKey[sourceColorKeys.Length];
+        var alphaKeys = new GradientAlphaKey[sourceColorKeys.Length];
+        for (int i = 0; i < sourceColorKeys.Length; i++)
+        {
+            colorKeys[i] = new GradientColorKey(ForceOpaque(sourceColorKeys[i].color), sourceColorKeys[i].time);
+            alphaKeys[i] = new GradientAlphaKey(1f, sourceColorKeys[i].time);
+        }
+
+        destination.SetKeys(colorKeys, alphaKeys);
+        destination.mode = source.mode;
+    }
+
     public static Gradient CreateTintedBeamGradient(Gradient beamLengthGradient, Color tint)
     {
         Gradient source = beamLengthGradient ?? CreateDefaultBeamLengthGradient();
 
-        GradientColorKey[] sourceColorKeys = source.colorKeys;
-        GradientAlphaKey[] sourceAlphaKeys = source.alphaKeys;
-
-        if (sourceColorKeys == null || sourceColorKeys.Length == 0)
-        {
-            sourceColorKeys = new[]
-            {
-                new GradientColorKey(Color.white, 0f),
-                new GradientColorKey(Color.white, 1f)
-            };
-        }
-
-        if (sourceAlphaKeys == null || sourceAlphaKeys.Length == 0)
-        {
-            sourceAlphaKeys = new[]
-            {
-                new GradientAlphaKey(1f, 0f),
-                new GradientAlphaKey(1f, 1f)
-            };
-        }
+        GradientColorKey[] sourceColorKeys = GetUsableColorKeys(source);
 
         var colorKeys = new GradientColorKey[sourceColorKeys.Length];
+        var alphaKeys = new GradientAlphaKey[sourceColorKeys.Length];
         for (int i = 0; i < sourceColorKeys.Length; i++)
         {
             Color color = MultiplyRgb(sourceColorKeys[i].color, tint);
             colorKeys[i] = new GradientColorKey(color, sourceColorKeys[i].time);
+            alphaKeys[i] = new GradientAlphaKey(1f, sourceColorKeys[i].time);
         }
-
-        var alphaKeys = new GradientAlphaKey[sourceAlphaKeys.Length];
-        for (int i = 0; i < sourceAlphaKeys.Length; i++)
-            alphaKeys[i] = new GradientAlphaKey(sourceAlphaKeys[i].alpha * tint.a, sourceAlphaKeys[i].time);
 
         var result = new Gradient();
         result.SetKeys(colorKeys, alphaKeys);
@@ -82,6 +82,7 @@ public static class UnifiedStageGradientUtility
 
     public static Gradient CreateSolidGradient(Color color)
     {
+        color = ForceOpaque(color);
         var gradient = new Gradient();
         gradient.SetKeys(
             new[]
@@ -91,8 +92,8 @@ public static class UnifiedStageGradientUtility
             },
             new[]
             {
-                new GradientAlphaKey(color.a, 0f),
-                new GradientAlphaKey(color.a, 1f)
+                new GradientAlphaKey(1f, 0f),
+                new GradientAlphaKey(1f, 1f)
             });
         return gradient;
     }
@@ -100,9 +101,9 @@ public static class UnifiedStageGradientUtility
     public static Gradient LerpGradients(Gradient from, Gradient to, float t)
     {
         if (from == null)
-            return CloneGradient(to);
+            return CloneOpaqueGradient(to);
         if (to == null)
-            return CloneGradient(from);
+            return CloneOpaqueGradient(from);
 
         t = Mathf.Clamp01(t);
         List<float> times = CollectKeyTimes(from, to);
@@ -113,8 +114,9 @@ public static class UnifiedStageGradientUtility
         {
             float time = times[i];
             Color color = Color.Lerp(from.Evaluate(time), to.Evaluate(time), t);
+            color = ForceOpaque(color);
             colorKeys[i] = new GradientColorKey(color, time);
-            alphaKeys[i] = new GradientAlphaKey(color.a, time);
+            alphaKeys[i] = new GradientAlphaKey(1f, time);
         }
 
         var result = new Gradient();
@@ -125,7 +127,36 @@ public static class UnifiedStageGradientUtility
 
     public static Color MultiplyRgb(Color a, Color b)
     {
-        return new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
+        return new Color(a.r * b.r, a.g * b.g, a.b * b.b, 1f);
+    }
+
+    public static Color ForceOpaque(Color color)
+    {
+        color.a = 1f;
+        return color;
+    }
+
+    private static Gradient CloneOpaqueGradient(Gradient source)
+    {
+        if (source == null)
+            return null;
+
+        var clone = new Gradient();
+        CopyGradientInto(source, clone);
+        return clone;
+    }
+
+    private static GradientColorKey[] GetUsableColorKeys(Gradient gradient)
+    {
+        GradientColorKey[] colorKeys = gradient != null ? gradient.colorKeys : null;
+        if (colorKeys != null && colorKeys.Length > 0)
+            return colorKeys;
+
+        return new[]
+        {
+            new GradientColorKey(Color.white, 0f),
+            new GradientColorKey(Color.white, 1f)
+        };
     }
 
     private static List<float> CollectKeyTimes(params Gradient[] gradients)
@@ -138,9 +169,6 @@ public static class UnifiedStageGradientUtility
                 continue;
 
             foreach (GradientColorKey key in gradient.colorKeys)
-                AddUniqueTime(times, key.time);
-
-            foreach (GradientAlphaKey key in gradient.alphaKeys)
                 AddUniqueTime(times, key.time);
         }
 

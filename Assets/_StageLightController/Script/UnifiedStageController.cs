@@ -7,7 +7,7 @@ public class UnifiedStageController : MonoBehaviour
     private const float MinVlbSideSoftness = 0.0001f;
     private const float MaxVlbSideSoftness = 10f;
 
-    private struct WeightedGradientContribution
+    public struct WeightedGradientContribution
     {
         public Gradient gradient;
         public Color tint;
@@ -170,7 +170,9 @@ public class UnifiedStageController : MonoBehaviour
             unit.tiltAxisSignCache = (tAxisX >= 0f) ? 1f : -1f;
 
             // --- 累加變數 ---
-            var gradientContributions = new List<WeightedGradientContribution>(clips.Count);
+            EnsureGradientRuntimeCache(unit, clips.Count);
+            var gradientContributions = unit.gradientContributions;
+            gradientContributions.Clear();
             float totalPan = 0f, totalTilt = 0f;
             float totalSpreadPan = 0f, totalSpreadTilt = 0f;
             float targetModeWeight = 0f;
@@ -181,7 +183,7 @@ public class UnifiedStageController : MonoBehaviour
                 unit.frozenPan   = unit.curPan;
                 unit.frozenTilt  = unit.curTilt;
                 unit.frozenColor = (unit.targetLight != null) ? unit.targetLight.color : Color.black;
-                unit.frozenGradient = CaptureCurrentGradient(unit);
+                CaptureCurrentGradient(unit);
             }
 
             // --- 逐 Clip 計算 ---
@@ -433,12 +435,32 @@ public class UnifiedStageController : MonoBehaviour
                 unit.targetLight.intensity = baseIntensity * mixedInten * modeIntensityScale;
                 unit.targetLight.range = Mathf.Max(0.01f, mixedLightRange);
 
-                Gradient targetGradient = BuildWeightedFinalGradient(gradientContributions);
-                Gradient finalGradient = isTimeJump || unit.currentGradient == null
-                    ? targetGradient
-                    : UnifiedStageGradientUtility.LerpGradients(unit.currentGradient, targetGradient, dt * 25f);
-                unit.currentGradient = UnifiedStageGradientUtility.CloneGradient(finalGradient);
-                Color finalColor = finalGradient != null ? finalGradient.Evaluate(0f) : Color.black;
+                bool isTimelineBlending = gradientContributions.Count > 1;
+                Gradient buildTarget = (isTimeJump || isTimelineBlending) ? unit.currentGradient : unit.targetGradient;
+
+                BuildWeightedFinalGradient(
+                    unit,
+                    gradientContributions,
+                    buildTarget,
+                    unit.gradientKeyTimes,
+                    ref unit.gradientColorKeys,
+                    ref unit.gradientAlphaKeys);
+
+                if (!isTimeJump && !isTimelineBlending)
+                {
+                    LerpGradientInto(
+                        unit.currentGradient,
+                        unit.currentGradient,
+                        unit.targetGradient,
+                        dt * 25f,
+                        unit.gradientKeyTimes,
+                        ref unit.gradientColorKeys,
+                        ref unit.gradientAlphaKeys);
+                }
+
+                Color finalColor = unit.currentGradient != null
+                    ? UnifiedStageGradientUtility.ForceOpaque(unit.currentGradient.Evaluate(0f))
+                    : Color.black;
 
                 unit.targetLight.color = finalColor;
 
@@ -453,9 +475,9 @@ public class UnifiedStageController : MonoBehaviour
 
                 if (vlb != null)
                 {
-                    vlb.colorFromLight = false;
-                    vlb.colorMode = VLB.ColorMode.Gradient;
-                    vlb.colorGradient = UnifiedStageGradientUtility.CloneGradient(finalGradient);
+                    if (vlb.colorFromLight)
+                        vlb.colorFromLight = false;
+                    EnsureVlbGradientMode(unit, vlb);
                     vlb.colorFlat = finalColor;
                     vlb.spotAngle = mixedBeamAngle;
                     vlb.sideSoftness = CalculateVlbSideSoftness(mixedSoftness);
@@ -497,14 +519,56 @@ public class UnifiedStageController : MonoBehaviour
         });
     }
 
-    private static Gradient BuildWeightedFinalGradient(List<WeightedGradientContribution> contributions)
+    private static void EnsureGradientRuntimeCache(SLMUnit unit, int clipCapacity)
     {
-        if (contributions == null || contributions.Count == 0)
-            return UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+        if (unit.gradientContributions == null)
+            unit.gradientContributions = new List<WeightedGradientContribution>(Mathf.Max(4, clipCapacity));
+        if (unit.gradientKeyTimes == null)
+            unit.gradientKeyTimes = new List<float>(8);
+        if (unit.currentGradient == null)
+            unit.currentGradient = UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+        if (unit.targetGradient == null)
+            unit.targetGradient = UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+        if (unit.frozenGradient == null)
+            unit.frozenGradient = UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+    }
 
-        List<float> times = CollectContributionTimes(contributions);
-        var colorKeys = new GradientColorKey[times.Count];
-        var alphaKeys = new GradientAlphaKey[times.Count];
+    private static void EnsureVlbGradientMode(SLMUnit unit, VLB.VolumetricLightBeamHD vlb)
+    {
+        if (unit == null || vlb == null)
+            return;
+
+        if (unit.hasConfiguredVlbGradientMode && vlb.colorMode == VLB.ColorMode.Gradient && vlb.colorGradient == unit.currentGradient)
+            return;
+
+        vlb.colorMode = VLB.ColorMode.Gradient;
+        vlb.colorGradient = unit.currentGradient;
+        unit.hasConfiguredVlbGradientMode = true;
+    }
+
+    private static void BuildWeightedFinalGradient(
+        SLMUnit unit,
+        List<WeightedGradientContribution> contributions,
+        Gradient result,
+        List<float> keyTimes,
+        ref GradientColorKey[] colorKeys,
+        ref GradientAlphaKey[] alphaKeys)
+    {
+        if (result == null)
+            return;
+
+        if (contributions == null || contributions.Count == 0)
+        {
+            SetSolidGradient(result, Color.black, ref colorKeys, ref alphaKeys);
+            return;
+        }
+
+        if (contributions.Count == 1 && TryBuildSingleContributionGradientFromCache(unit, contributions[0], result, keyTimes, ref colorKeys, ref alphaKeys))
+            return;
+
+        CollectContributionTimes(contributions, keyTimes);
+        EnsureGradientKeyArraySizes(keyTimes.Count, ref colorKeys, ref alphaKeys);
+        float weightScale = ComputeContributionWeightScale(contributions);
         GradientMode mode = GradientMode.Blend;
 
         for (int i = 0; i < contributions.Count; i++)
@@ -516,33 +580,192 @@ public class UnifiedStageController : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < times.Count; i++)
+        for (int i = 0; i < keyTimes.Count; i++)
         {
-            float time = times[i];
-            Color color = new Color(0f, 0f, 0f, 0f);
+            float time = keyTimes[i];
+            Color color = new Color(0f, 0f, 0f, 1f);
 
             for (int c = 0; c < contributions.Count; c++)
             {
                 WeightedGradientContribution contribution = contributions[c];
-                Gradient gradient = contribution.gradient ?? UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
-                Color sample = gradient.Evaluate(time);
+                Color sample = EvaluateBeamLengthColor(contribution.gradient, time);
                 Color tinted = UnifiedStageGradientUtility.MultiplyRgb(sample, contribution.tint);
-                color += tinted * contribution.weight;
+                color += tinted * contribution.weight * weightScale;
             }
 
+            color = UnifiedStageGradientUtility.ForceOpaque(color);
             colorKeys[i] = new GradientColorKey(color, time);
-            alphaKeys[i] = new GradientAlphaKey(color.a, time);
+            alphaKeys[i] = new GradientAlphaKey(1f, time);
         }
 
-        var result = new Gradient();
         result.SetKeys(colorKeys, alphaKeys);
         result.mode = mode;
-        return result;
     }
 
-    private static List<float> CollectContributionTimes(List<WeightedGradientContribution> contributions)
+    private static void LerpGradientInto(
+        Gradient result,
+        Gradient from,
+        Gradient to,
+        float t,
+        List<float> keyTimes,
+        ref GradientColorKey[] colorKeys,
+        ref GradientAlphaKey[] alphaKeys)
     {
-        var times = new List<float> { 0f, 1f };
+        if (result == null || from == null || to == null)
+            return;
+
+        t = Mathf.Clamp01(t);
+        CollectGradientTimes(from, to, keyTimes);
+        EnsureGradientKeyArraySizes(keyTimes.Count, ref colorKeys, ref alphaKeys);
+
+        for (int i = 0; i < keyTimes.Count; i++)
+        {
+            float time = keyTimes[i];
+            Color color = Color.Lerp(from.Evaluate(time), to.Evaluate(time), t);
+            color = UnifiedStageGradientUtility.ForceOpaque(color);
+            colorKeys[i] = new GradientColorKey(color, time);
+            alphaKeys[i] = new GradientAlphaKey(1f, time);
+        }
+
+        result.SetKeys(colorKeys, alphaKeys);
+        result.mode = to.mode;
+    }
+
+    private static void SetSolidGradient(
+        Gradient result,
+        Color color,
+        ref GradientColorKey[] colorKeys,
+        ref GradientAlphaKey[] alphaKeys)
+    {
+        color = UnifiedStageGradientUtility.ForceOpaque(color);
+        EnsureGradientKeyArraySizes(2, ref colorKeys, ref alphaKeys);
+        colorKeys[0] = new GradientColorKey(color, 0f);
+        colorKeys[1] = new GradientColorKey(color, 1f);
+        alphaKeys[0] = new GradientAlphaKey(1f, 0f);
+        alphaKeys[1] = new GradientAlphaKey(1f, 1f);
+        result.SetKeys(colorKeys, alphaKeys);
+        result.mode = GradientMode.Blend;
+    }
+
+    private static void EnsureGradientKeyArraySizes(
+        int count,
+        ref GradientColorKey[] colorKeys,
+        ref GradientAlphaKey[] alphaKeys)
+    {
+        if (colorKeys == null || colorKeys.Length != count)
+            colorKeys = new GradientColorKey[count];
+        if (alphaKeys == null || alphaKeys.Length != count)
+            alphaKeys = new GradientAlphaKey[count];
+    }
+
+    private static bool TryBuildSingleContributionGradientFromCache(
+        SLMUnit unit,
+        WeightedGradientContribution contribution,
+        Gradient result,
+        List<float> keyTimes,
+        ref GradientColorKey[] colorKeys,
+        ref GradientAlphaKey[] alphaKeys)
+    {
+        if (unit == null || result == null)
+            return false;
+
+        EnsureBeamLengthCache(unit, contribution.gradient, keyTimes);
+        int count = unit.cachedBeamLengthTimes != null ? unit.cachedBeamLengthTimes.Length : 0;
+        if (count <= 0)
+            return false;
+
+        EnsureGradientKeyArraySizes(count, ref colorKeys, ref alphaKeys);
+
+        float weightScale = Mathf.Min(contribution.weight, 1f);
+        Color weightedTint = contribution.tint * weightScale;
+        for (int i = 0; i < count; i++)
+        {
+            Color color = UnifiedStageGradientUtility.MultiplyRgb(unit.cachedBeamLengthColors[i], weightedTint);
+            float time = unit.cachedBeamLengthTimes[i];
+            colorKeys[i] = new GradientColorKey(color, time);
+            alphaKeys[i] = new GradientAlphaKey(1f, time);
+        }
+
+        result.SetKeys(colorKeys, alphaKeys);
+        result.mode = unit.cachedBeamLengthGradientMode;
+        return true;
+    }
+
+    private static void EnsureBeamLengthCache(SLMUnit unit, Gradient gradient, List<float> keyTimes)
+    {
+        bool useContentHash = !Application.isPlaying;
+        int hash = useContentHash ? GetGradientContentHash(gradient) : 0;
+        if (unit.cachedBeamLengthGradient == gradient &&
+            (!useContentHash || unit.cachedBeamLengthGradientHash == hash) &&
+            unit.cachedBeamLengthTimes != null &&
+            unit.cachedBeamLengthColors != null &&
+            unit.cachedBeamLengthAlphas != null)
+        {
+            return;
+        }
+
+        unit.cachedBeamLengthGradient = gradient;
+        unit.cachedBeamLengthGradientHash = hash;
+        unit.cachedBeamLengthGradientMode = gradient != null ? gradient.mode : GradientMode.Blend;
+
+        CollectGradientTimes(gradient, null, keyTimes);
+        int count = keyTimes.Count;
+
+        if (unit.cachedBeamLengthTimes == null || unit.cachedBeamLengthTimes.Length != count)
+        {
+            unit.cachedBeamLengthTimes = new float[count];
+            unit.cachedBeamLengthColors = new Color[count];
+            unit.cachedBeamLengthAlphas = new float[count];
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            float time = keyTimes[i];
+            unit.cachedBeamLengthTimes[i] = time;
+            unit.cachedBeamLengthColors[i] = EvaluateBeamLengthColor(gradient, time);
+            unit.cachedBeamLengthAlphas[i] = 1f;
+        }
+    }
+
+    private static float ComputeContributionWeightScale(List<WeightedGradientContribution> contributions)
+    {
+        float totalWeight = 0f;
+        for (int i = 0; i < contributions.Count; i++)
+            totalWeight += Mathf.Max(0f, contributions[i].weight);
+
+        return totalWeight > 1f ? 1f / totalWeight : 1f;
+    }
+
+    private static Color EvaluateBeamLengthColor(Gradient gradient, float time)
+    {
+        if (gradient != null)
+            return UnifiedStageGradientUtility.ForceOpaque(gradient.Evaluate(time));
+
+        return UnifiedStageGradientUtility.ForceOpaque(Color.Lerp(Color.white, Color.black, Mathf.Clamp01(time)));
+    }
+
+    private static int GetGradientContentHash(Gradient gradient)
+    {
+        if (gradient == null)
+            return 0;
+
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 31 + (int)gradient.mode;
+            foreach (GradientColorKey key in gradient.colorKeys)
+            {
+                hash = hash * 31 + key.time.GetHashCode();
+                hash = hash * 31 + UnifiedStageGradientUtility.ForceOpaque(key.color).GetHashCode();
+            }
+
+            return hash;
+        }
+    }
+
+    private static void CollectContributionTimes(List<WeightedGradientContribution> contributions, List<float> times)
+    {
+        ResetGradientTimes(times);
 
         for (int i = 0; i < contributions.Count; i++)
         {
@@ -556,13 +779,33 @@ public class UnifiedStageController : MonoBehaviour
 
             foreach (GradientColorKey key in gradient.colorKeys)
                 AddUniqueGradientTime(times, key.time);
-
-            foreach (GradientAlphaKey key in gradient.alphaKeys)
-                AddUniqueGradientTime(times, key.time);
         }
 
         times.Sort();
-        return times;
+    }
+
+    private static void CollectGradientTimes(Gradient a, Gradient b, List<float> times)
+    {
+        ResetGradientTimes(times);
+        AddGradientTimes(a, times);
+        AddGradientTimes(b, times);
+        times.Sort();
+    }
+
+    private static void ResetGradientTimes(List<float> times)
+    {
+        times.Clear();
+        times.Add(0f);
+        times.Add(1f);
+    }
+
+    private static void AddGradientTimes(Gradient gradient, List<float> times)
+    {
+        if (gradient == null)
+            return;
+
+        foreach (GradientColorKey key in gradient.colorKeys)
+            AddUniqueGradientTime(times, key.time);
     }
 
     private static void AddUniqueGradientTime(List<float> times, float time)
@@ -577,13 +820,19 @@ public class UnifiedStageController : MonoBehaviour
         times.Add(time);
     }
 
-    private static Gradient CaptureCurrentGradient(SLMUnit unit)
+    private static void CaptureCurrentGradient(SLMUnit unit)
     {
         if (unit == null)
-            return UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+            return;
+
+        if (unit.frozenGradient == null)
+            unit.frozenGradient = UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
 
         if (unit.currentGradient != null)
-            return UnifiedStageGradientUtility.CloneGradient(unit.currentGradient);
+        {
+            UnifiedStageGradientUtility.CopyGradientInto(unit.currentGradient, unit.frozenGradient);
+            return;
+        }
 
         Color fallbackColor = unit.targetLight != null ? unit.targetLight.color : Color.black;
         if (unit.targetLight != null)
@@ -592,13 +841,16 @@ public class UnifiedStageController : MonoBehaviour
             if (vlb != null)
             {
                 if (vlb.colorMode == VLB.ColorMode.Gradient && vlb.colorGradient != null)
-                    return UnifiedStageGradientUtility.CloneGradient(vlb.colorGradient);
+                {
+                    UnifiedStageGradientUtility.CopyGradientInto(vlb.colorGradient, unit.frozenGradient);
+                    return;
+                }
 
                 fallbackColor = vlb.colorFlat;
             }
         }
 
-        return UnifiedStageGradientUtility.CreateSolidGradient(fallbackColor);
+        SetSolidGradient(unit.frozenGradient, fallbackColor, ref unit.gradientColorKeys, ref unit.gradientAlphaKeys);
     }
 
     private void ApplyLightMode(SLMUnit unit, VLB.VolumetricLightBeamHD vlb, StageLightMode mode)
@@ -752,7 +1004,7 @@ public class UnifiedStageController : MonoBehaviour
                 ? ((clip.gradient != null) ? clip.gradient.Evaluate(clip.normalizedClipTime) : Color.white)
                 : unit.frozenColor;
 
-            return fc * clip.globalColor;
+            return UnifiedStageGradientUtility.ForceOpaque(fc * clip.globalColor);
         }
 
         Color baseColor;
@@ -804,7 +1056,7 @@ public class UnifiedStageController : MonoBehaviour
             case ColorSampleMode.BeatSnap:
             {
                 if (clip.beatSnapColors == null || clip.beatSnapColors.Length == 0)
-                    return Color.white * clip.globalColor;
+                    return UnifiedStageGradientUtility.ForceOpaque(Color.white * clip.globalColor);
 
                 float beatTime = (clip.beatTimeRef == BeatTimeReference.ClipLocal) ? clip.effectiveTime : rootTime;
                 float beatLen  = 60f / Mathf.Max(clip.bpm, 0.001f);
@@ -848,7 +1100,7 @@ public class UnifiedStageController : MonoBehaviour
                 break;
         }
 
-        return baseColor * clip.globalColor;
+        return UnifiedStageGradientUtility.ForceOpaque(baseColor * clip.globalColor);
     }
 
     private static float ComputeBeatTimeOffset(ActiveClipInfo clip, SLMUnit unit)

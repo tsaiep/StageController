@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SLMUnit : MonoBehaviour
 {
@@ -33,8 +34,20 @@ public class SLMUnit : MonoBehaviour
     [HideInInspector] public float curSpreadTilt, velSpreadTilt;
     [HideInInspector] public float frozenPan, frozenTilt;
     [HideInInspector] public Color frozenColor;
-    [HideInInspector] public Gradient frozenGradient;
-    [HideInInspector] public Gradient currentGradient;
+    [System.NonSerialized] public Gradient frozenGradient;
+    [System.NonSerialized] public Gradient currentGradient;
+    [System.NonSerialized] public Gradient targetGradient;
+    [System.NonSerialized] public List<UnifiedStageController.WeightedGradientContribution> gradientContributions;
+    [System.NonSerialized] public List<float> gradientKeyTimes;
+    [System.NonSerialized] public GradientColorKey[] gradientColorKeys;
+    [System.NonSerialized] public GradientAlphaKey[] gradientAlphaKeys;
+    [System.NonSerialized] public Gradient cachedBeamLengthGradient;
+    [System.NonSerialized] public int cachedBeamLengthGradientHash;
+    [System.NonSerialized] public GradientMode cachedBeamLengthGradientMode;
+    [System.NonSerialized] public float[] cachedBeamLengthTimes;
+    [System.NonSerialized] public Color[] cachedBeamLengthColors;
+    [System.NonSerialized] public float[] cachedBeamLengthAlphas;
+    [System.NonSerialized] public bool hasConfiguredVlbGradientMode;
     [HideInInspector] public bool hasAppliedLightMode;
     [HideInInspector] public UnifiedStageController.StageLightMode appliedLightMode;
 
