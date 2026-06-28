@@ -346,6 +346,7 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
     private bool _applyRotationSettings = true;
     private bool _applyFixtureSettings = true;
     private bool _stackPreviewLights;
+    private int _previewLightAmount = 5;
     private double _lastPreviewRepaintTime;
 
     public static void Open(UnifiedStageClip clip, UnifiedStageController controller)
@@ -603,11 +604,12 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
             {
                 EditorGUILayout.LabelField("Preview Setting", EditorStyles.boldLabel);
                 _stackPreviewLights = EditorGUILayout.Toggle("Stack Preview Lights", _stackPreviewLights);
+                _previewLightAmount = Mathf.Max(1, EditorGUILayout.IntField("Preview Light Amount", _previewLightAmount));
             }
         }
 
         Rect previewRect = GUILayoutUtility.GetRect(10f, 250f, GUILayout.ExpandWidth(true), GUILayout.Height(250f));
-        _previewRenderer.Render(previewRect, EditorStyles.helpBox, _selectedTemplate, GetPreviewPrefab(), _stackPreviewLights);
+        _previewRenderer.Render(previewRect, EditorStyles.helpBox, _selectedTemplate, GetPreviewPrefab(), _stackPreviewLights, _previewLightAmount);
 
         EditorGUILayout.Space(8);
         using (new EditorGUILayout.HorizontalScope())
@@ -702,20 +704,20 @@ internal class UnifiedStageTemplateSelectorWindow : EditorWindow
 
 internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 {
-    private const int PreviewUnitCount = 3;
+    private const float PreviewUnitSpacing = 1.5f;
     private static readonly int BaseColorShaderId = Shader.PropertyToID("_BaseColor");
     private static readonly Vector3 PreviewCameraTarget = new Vector3(0f, 0.8f, 0f);
 
     private PreviewRenderUtility _preview;
-    private readonly GameObject[] _instances = new GameObject[PreviewUnitCount];
-    private readonly List<MeshRenderer>[] _renderers = new List<MeshRenderer>[PreviewUnitCount];
-    private readonly Transform[] _panTransforms = new Transform[PreviewUnitCount];
-    private readonly Transform[] _tiltTransforms = new Transform[PreviewUnitCount];
-    private readonly Transform[] _spreadPanTransforms = new Transform[PreviewUnitCount];
-    private readonly Transform[] _spreadTiltTransforms = new Transform[PreviewUnitCount];
-    private readonly float[] _currentPan = new float[PreviewUnitCount];
-    private readonly float[] _currentTilt = new float[PreviewUnitCount];
-    private readonly bool[] _hasCurrentAngles = new bool[PreviewUnitCount];
+    private GameObject[] _instances = new GameObject[0];
+    private List<MeshRenderer>[] _renderers = new List<MeshRenderer>[0];
+    private Transform[] _panTransforms = new Transform[0];
+    private Transform[] _tiltTransforms = new Transform[0];
+    private Transform[] _spreadPanTransforms = new Transform[0];
+    private Transform[] _spreadTiltTransforms = new Transform[0];
+    private float[] _currentPan = new float[0];
+    private float[] _currentTilt = new float[0];
+    private bool[] _hasCurrentAngles = new bool[0];
     private readonly MaterialPropertyBlock _propertyBlock = new MaterialPropertyBlock();
     private GameObject _sourcePrefab;
     private double _startTime;
@@ -733,11 +735,12 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         DestroyPreview();
     }
 
-    public void Render(Rect rect, GUIStyle background, UnifiedStageTemplate template, GameObject previewPrefab, bool stackUnitsAtOrigin)
+    public void Render(Rect rect, GUIStyle background, UnifiedStageTemplate template, GameObject previewPrefab, bool stackUnitsAtOrigin, int previewUnitCount)
     {
         if (rect.width <= 1f || rect.height <= 1f)
             return;
 
+        previewUnitCount = Mathf.Max(1, previewUnitCount);
         HandleCameraInput(rect);
 
         if (template == null)
@@ -757,7 +760,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         if (Event.current.type != EventType.Repaint)
             return;
 
-        EnsurePreview(previewPrefab);
+        EnsurePreview(previewPrefab, previewUnitCount);
         UpdateInstances(template, stackUnitsAtOrigin);
 
         UpdateCamera();
@@ -769,14 +772,24 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, false);
     }
 
-    private void EnsurePreview(GameObject prefab)
+    private void EnsurePreview(GameObject prefab, int previewUnitCount)
     {
-        if (_preview != null && _sourcePrefab == prefab)
+        if (_preview != null && _sourcePrefab == prefab && _instances.Length == previewUnitCount)
             return;
 
         DestroyPreview();
 
         _sourcePrefab = prefab;
+        _instances = new GameObject[previewUnitCount];
+        _renderers = new List<MeshRenderer>[previewUnitCount];
+        _panTransforms = new Transform[previewUnitCount];
+        _tiltTransforms = new Transform[previewUnitCount];
+        _spreadPanTransforms = new Transform[previewUnitCount];
+        _spreadTiltTransforms = new Transform[previewUnitCount];
+        _currentPan = new float[previewUnitCount];
+        _currentTilt = new float[previewUnitCount];
+        _hasCurrentAngles = new bool[previewUnitCount];
+
         _preview = new PreviewRenderUtility();
         _preview.camera.clearFlags = CameraClearFlags.Color;
         _preview.camera.backgroundColor = new Color(0.16f, 0.16f, 0.16f, 1f);
@@ -799,12 +812,12 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             }
         }
 
-        for (int i = 0; i < PreviewUnitCount; i++)
+        for (int i = 0; i < previewUnitCount; i++)
         {
             GameObject instance = UnityEngine.Object.Instantiate(prefab);
             instance.name = "Template Preview Unit " + i;
             instance.hideFlags = HideFlags.HideAndDontSave;
-            instance.transform.position = new Vector3((i - 1) * 1.5f, 0f, 0f);
+            instance.transform.position = GetPreviewUnitPosition(i, previewUnitCount, false);
             instance.transform.rotation = Quaternion.identity;
             DisableLights(instance);
 
@@ -850,17 +863,18 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
     {
         float rootTime = (float)(EditorApplication.timeSinceStartup - _startTime);
 
-        for (int i = 0; i < PreviewUnitCount; i++)
+        int previewUnitCount = _instances.Length;
+        for (int i = 0; i < previewUnitCount; i++)
         {
             GameObject instance = _instances[i];
             if (instance == null)
                 continue;
 
-            float normalizedInGroup = PreviewUnitCount > 1 ? (float)i / (PreviewUnitCount - 1) : 0f;
+            float normalizedInGroup = previewUnitCount > 1 ? (float)i / (previewUnitCount - 1) : 0f;
             float unitDelay = 0f;
 
             if (template.lightDelayCurve != null && template.lightDelayFactor > 0f)
-                unitDelay += template.lightDelayCurve.Evaluate(normalizedInGroup) * template.lightDelayFactor * PreviewUnitCount;
+                unitDelay += template.lightDelayCurve.Evaluate(normalizedInGroup) * template.lightDelayFactor * previewUnitCount;
 
             float unitTime = Mathf.Max(0f, rootTime - template.cyclePauseTime) - unitDelay + template.animationOffset;
             float rangeMultiplier = template.lightRotationRangeCurve != null
@@ -869,20 +883,24 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 
             Vector2 angles = EvaluateAngles(template, unitTime, i, template.rotationRange * rangeMultiplier);
             angles = NormalizeContinuousAngles(i, angles);
-            instance.transform.position = GetPreviewUnitPosition(i, stackUnitsAtOrigin);
+            instance.transform.position = GetPreviewUnitPosition(i, previewUnitCount, stackUnitsAtOrigin);
             instance.transform.rotation = Quaternion.identity;
 
-            Vector2 spreadAngles = EvaluateSpreadAngles(template, rootTime, unitTime, i);
+            Vector2 spreadAngles = EvaluateSpreadAngles(template, rootTime, unitTime, i, previewUnitCount);
             ApplyPreviewRotations(i, angles.x, angles.y, spreadAngles.x, spreadAngles.y);
 
-            Color color = EvaluateColor(template, rootTime, unitTime, unitDelay, i);
+            Color color = EvaluateColor(template, rootTime, unitTime, unitDelay, i, previewUnitCount);
             ApplyColor(i, color);
         }
     }
 
-    private static Vector3 GetPreviewUnitPosition(int index, bool stackUnitsAtOrigin)
+    private static Vector3 GetPreviewUnitPosition(int index, int count, bool stackUnitsAtOrigin)
     {
-        return stackUnitsAtOrigin ? Vector3.zero : new Vector3((index - 1) * 1.5f, 0f, 0f);
+        if (stackUnitsAtOrigin)
+            return Vector3.zero;
+
+        float centerOffset = (count - 1) * 0.5f;
+        return new Vector3((index - centerOffset) * PreviewUnitSpacing, 0f, 0f);
     }
 
     private Vector2 NormalizeContinuousAngles(int index, Vector2 targetAngles)
@@ -1054,21 +1072,21 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         return new Vector2(pan, tilt);
     }
 
-    private static Vector2 EvaluateSpreadAngles(UnifiedStageTemplate template, float rootTime, float unitTime, int index)
+    private static Vector2 EvaluateSpreadAngles(UnifiedStageTemplate template, float rootTime, float unitTime, int index, int previewUnitCount)
     {
         float cyclePeriod = UnifiedStageBehaviour.GetMotionCyclePeriod(template.rotationMode, template.rotationSpeed);
         float cycleT = cyclePeriod > 0.0001f
             ? Mathf.Repeat(unitTime / cyclePeriod, 1f)
             : Mathf.Repeat(rootTime / 5f, 1f);
 
-        float normalizedByLast = PreviewUnitCount > 1 ? (float)index / (PreviewUnitCount - 1) : 0f;
+        float normalizedByLast = previewUnitCount > 1 ? (float)index / (previewUnitCount - 1) : 0f;
         float curveAngle = template.spreadAngleCurve != null ? template.spreadAngleCurve.Evaluate(cycleT) : 1f;
         float curveAngleByIndex = template.spreadAngleCurveByIndex != null
             ? template.spreadAngleCurveByIndex.Evaluate(normalizedByLast)
             : 1f;
         float spreadTilt = template.spreadAngle * curveAngle * curveAngleByIndex;
 
-        float normalizedByCount = PreviewUnitCount > 1 ? (float)index / PreviewUnitCount : 0f;
+        float normalizedByCount = previewUnitCount > 1 ? (float)index / previewUnitCount : 0f;
         float baseSpreadPan = normalizedByCount * template.spreadArcRange;
         float curvePan = template.spreadPanCurve != null ? template.spreadPanCurve.Evaluate(cycleT) : 0f;
         float spreadPan = Mathf.DeltaAngle(0f, baseSpreadPan + curvePan * 360f);
@@ -1076,7 +1094,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         return new Vector2(spreadPan, spreadTilt);
     }
 
-    private static Color EvaluateColor(UnifiedStageTemplate template, float rootTime, float unitTime, float unitDelay, int index)
+    private static Color EvaluateColor(UnifiedStageTemplate template, float rootTime, float unitTime, float unitDelay, int index, int previewUnitCount)
     {
         Gradient gradient = template.lightGradient;
         Color baseColor;
@@ -1104,7 +1122,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             case UnifiedStageController.ColorSampleMode.BeatGradient:
             {
                 float beatLen = 60f / Mathf.Max(template.bpm, 0.001f);
-                float beatOffset = ComputeBeatOffset(template, index);
+                float beatOffset = ComputeBeatOffset(template, index, previewUnitCount);
                 float t = Mathf.Repeat((rootTime - beatOffset + template.beatPhaseOffset) / beatLen, 1f);
                 baseColor = gradient != null ? gradient.Evaluate(t) : Color.white;
                 break;
@@ -1112,7 +1130,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 
             case UnifiedStageController.ColorSampleMode.BeatSnap:
             {
-                baseColor = EvaluateBeatSnapColor(template, rootTime, index);
+                baseColor = EvaluateBeatSnapColor(template, rootTime, index, previewUnitCount);
                 break;
             }
 
@@ -1131,7 +1149,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         return baseColor * template.globalColor;
     }
 
-    private static Color EvaluateBeatSnapColor(UnifiedStageTemplate template, float rootTime, int index)
+    private static Color EvaluateBeatSnapColor(UnifiedStageTemplate template, float rootTime, int index, int previewUnitCount)
     {
         if (template.beatSnapColors == null || template.beatSnapColors.Length == 0)
             return Color.white;
@@ -1139,7 +1157,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         float beatLen = 60f / Mathf.Max(template.bpm, 0.001f);
         float beatPosition = (rootTime + template.beatPhaseOffset) / beatLen;
         int beatIndex = Mathf.FloorToInt(beatPosition);
-        int colorIndex = PositiveModulo(beatIndex + ComputeBeatSnapOffset(template, index), template.beatSnapColors.Length);
+        int colorIndex = PositiveModulo(beatIndex + ComputeBeatSnapOffset(template, index, previewUnitCount), template.beatSnapColors.Length);
         Color color = template.beatSnapColors[colorIndex];
 
         float transition = Mathf.Max(template.beatSnapTransitionTime, 0f);
@@ -1151,7 +1169,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
 
             if (beatLocal >= transitionStart)
             {
-                int nextIndex = PositiveModulo(beatIndex + 1 + ComputeBeatSnapOffset(template, index), template.beatSnapColors.Length);
+                int nextIndex = PositiveModulo(beatIndex + 1 + ComputeBeatSnapOffset(template, index, previewUnitCount), template.beatSnapColors.Length);
                 color = Color.Lerp(color, template.beatSnapColors[nextIndex], Mathf.InverseLerp(transitionStart, beatLen, beatLocal));
             }
         }
@@ -1159,9 +1177,9 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         return color;
     }
 
-    private static float ComputeBeatOffset(UnifiedStageTemplate template, int index)
+    private static float ComputeBeatOffset(UnifiedStageTemplate template, int index, int previewUnitCount)
     {
-        float normalized = PreviewUnitCount > 1 ? (float)index / (PreviewUnitCount - 1) : 0f;
+        float normalized = previewUnitCount > 1 ? (float)index / (previewUnitCount - 1) : 0f;
         float offset = 0f;
 
         if (template.beatLightDelayFactor > 0f)
@@ -1170,12 +1188,12 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
         return offset;
     }
 
-    private static int ComputeBeatSnapOffset(UnifiedStageTemplate template, int index)
+    private static int ComputeBeatSnapOffset(UnifiedStageTemplate template, int index, int previewUnitCount)
     {
         if (template.beatLightDelayFactor <= 0f)
             return 0;
 
-        int rank = ComputeCurveRank(index, PreviewUnitCount, template.beatLightDelayCurve);
+        int rank = ComputeCurveRank(index, previewUnitCount, template.beatLightDelayCurve);
         return Mathf.FloorToInt(rank / template.beatLightDelayFactor);
     }
 
