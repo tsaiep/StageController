@@ -43,7 +43,37 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -105,10 +135,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 35
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 5
@@ -292,6 +322,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -432,7 +463,37 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 3
   sensitivity: 1.5
   smoothness: 8
@@ -496,10 +557,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 45
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 1
   rotationSpeed: 3
@@ -683,6 +744,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -1007,7 +1069,37 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -1069,10 +1161,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 45
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 5
@@ -1265,6 +1357,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -1313,7 +1406,37 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -1375,10 +1498,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 45
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 2
@@ -1571,6 +1694,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 0
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 0
@@ -1619,7 +1743,37 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -1681,10 +1835,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 35
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 0
   rotationSpeed: 2
@@ -1868,6 +2022,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -2223,7 +2378,37 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -2285,10 +2470,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 35
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 4
@@ -2481,6 +2666,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -2621,7 +2807,37 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 3
   sensitivity: 1.5
   smoothness: 8
@@ -2684,10 +2900,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 50
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 2
@@ -2880,6 +3096,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -2928,7 +3145,37 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -2992,10 +3239,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 45
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 3
@@ -3179,6 +3426,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -3227,7 +3475,37 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 5
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -3289,10 +3567,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 45
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 3
@@ -3485,6 +3763,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -3533,7 +3812,37 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.25
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -3595,10 +3904,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 50
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 2
   rotationSpeed: 5
@@ -3791,6 +4100,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
@@ -3818,7 +4128,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 0
+    m_Start: 0.0000000000000008326672684688674
     m_ClipIn: 0
     m_Asset: {fileID: 3768802087826640189}
     m_Duration: 30
@@ -3931,7 +4241,37 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  intensityMultiplier: 0.3
+  beamLengthGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 0, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  intensityMultiplier: 1
   colorSampleMode: 0
   sensitivity: 1.5
   smoothness: 8
@@ -3993,10 +4333,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   freezeUseClipGradient: 0
-  lightMode: 0
+  lightMode: 3
   lightRange: 35
   beamAngle: 1
-  softness: 100
+  softness: 50
   enableScatterMode: 0
   rotationMode: 5
   rotationSpeed: 4
@@ -4180,6 +4520,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyTemplate: {fileID: 0}
+  selectedTemplate: {fileID: 0}
   applyTemplateColorSettings: 1
   applyTemplateRotationSettings: 1
   applyTemplateFixtureSettings: 1
