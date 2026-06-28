@@ -536,7 +536,9 @@ public class PatternPlacer : MonoBehaviour
     public static List<InstanceId> FindByGroup(string groupId)
     {
         var list = new List<InstanceId>();
-        var all = GameObject.FindObjectsOfType<InstanceId>(true);
+        var all = UnityEngine.Object.FindObjectsByType<InstanceId>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
         foreach (var x in all)
         {
             if (x.groupId == groupId) list.Add(x);
