@@ -86,5 +86,7 @@ public class LightstripMixerBehaviour : PlayableBehaviour
             selectedBehaviour.scrollingSmoothFactor,
             selectedBehaviour.sparklingSpeed,
             selectedBehaviour.sparklingSmoothFactor);
+
+        controller.ApplyTimelineTime((float)rootTime);
     }
 }

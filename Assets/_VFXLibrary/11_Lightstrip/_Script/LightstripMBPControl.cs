@@ -64,6 +64,7 @@ public class LightstripMBPControl : MonoBehaviour
     private static readonly int SparklingModeRandomWeightId = Shader.PropertyToID("_Sparkling_Mode_Random_Weight");
     private static readonly int SparklingSmoothFactorId = Shader.PropertyToID("_Sparkling_Smooth_Factor");
     private static readonly int SparklingSpeedId = Shader.PropertyToID("_Sparkling_Speed");
+    private static readonly int TimelineTimeId = Shader.PropertyToID("_TimelineTime");
 
     [Header("Targets")]
     [Tooltip("Renderers that share this controller's Lightstrip material parameters. Each entry can override _Light_Unit_Count. Null entries are skipped.")]
@@ -97,6 +98,7 @@ public class LightstripMBPControl : MonoBehaviour
     private int bakedGradientHash;
     private int bakedGradientResolution;
     private int appliedGradientContentHash;
+    private float timelineTime;
     private bool propertiesDirty = true;
     private bool gradientDirty = true;
 
@@ -166,6 +168,34 @@ public class LightstripMBPControl : MonoBehaviour
 
         MarkDirty();
         ApplyProperties();
+    }
+
+    public void ApplyTimelineTime(float currentTimelineTime)
+    {
+        if (!TrySetFloat(ref timelineTime, currentTimelineTime))
+            return;
+
+        EnsureInitialized();
+
+        for (int i = 0; i < lightstripRenderers.Count; i++)
+        {
+            LightstripRendererSettings rendererSettings = lightstripRenderers[i];
+            if (rendererSettings == null)
+                continue;
+
+            Renderer targetRenderer = rendererSettings.renderer;
+            if (targetRenderer == null)
+                continue;
+
+            targetRenderer.GetPropertyBlock(propertyBlock);
+            propertyBlock.SetFloat(TimelineTimeId, timelineTime);
+            targetRenderer.SetPropertyBlock(propertyBlock);
+        }
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+            SceneView.RepaintAll();
+#endif
     }
 
     private void OnEnable()
@@ -272,6 +302,7 @@ public class LightstripMBPControl : MonoBehaviour
         propertyBlock.SetFloat(SparklingModeRandomWeightId, properties.sparklingModeRandomWeight);
         propertyBlock.SetFloat(SparklingSmoothFactorId, properties.sparklingSmoothFactor);
         propertyBlock.SetFloat(SparklingSpeedId, properties.sparklingSpeed);
+        propertyBlock.SetFloat(TimelineTimeId, timelineTime);
 
         if (gradientTexture != null)
             propertyBlock.SetTexture(gradientTexturePropertyId, gradientTexture);

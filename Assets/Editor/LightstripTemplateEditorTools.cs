@@ -823,7 +823,8 @@ internal sealed class LightstripTemplatePreviewRenderer : IDisposable
             _lastAppliedTemplate = template;
         }
 
-        float normalizedTime = Mathf.Repeat((float)(EditorApplication.timeSinceStartup - _startTime) / 4f, 1f);
+        float previewTime = (float)(EditorApplication.timeSinceStartup - _startTime);
+        float normalizedTime = Mathf.Repeat(previewTime / 4f, 1f);
         float manualModeControl = template.manualModeControl != null ? template.manualModeControl.Evaluate(normalizedTime) : 0f;
         manualModeControl = manualModeControl - Mathf.Floor(manualModeControl);
 
@@ -849,6 +850,8 @@ internal sealed class LightstripTemplatePreviewRenderer : IDisposable
             template.sparklingSpeed,
             template.sparklingSmoothFactor
         );
+
+        _controller.ApplyTimelineTime(previewTime);
     }
 
     private void EnsurePreviewTargets()
