@@ -16,7 +16,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     public VisualEffect vfx;
 
     [Header("Simulation")]
-    public float fixedStep = 1f / 60f;
+    public float targetFPS = 60f;
     public uint seed = 12345;
     public bool simulateInEditMode = true;
 
@@ -35,6 +35,8 @@ public class TimelineVFXScrubber : MonoBehaviour
     private bool isSamplingTimeline;
     private bool isRebuilding;
     private bool vfxIsResetOrHidden;
+
+    private float FixedStep => 1f / Mathf.Max(1f, targetFPS);
 
     private void Reset()
     {
@@ -57,7 +59,7 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private void OnValidate()
     {
-        fixedStep = Mathf.Max(0.0001f, fixedStep);
+        targetFPS = Mathf.Max(1f, targetFPS);
 
         if (vfx == null)
             vfx = GetComponent<VisualEffect>();
@@ -369,7 +371,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     private void SimulateFromZero(double sessionStartTime, double targetLocalTime, bool sampleTimelineProperties)
     {
         double simulated = 0.0;
-        double step = fixedStep;
+        double step = FixedStep;
         int nextTriggerIndex = GetNextTriggerIndexAfter(sessionStartTime);
 
         using (new DirectorTimeSampler(this, sampleTimelineProperties))
@@ -435,7 +437,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     private void SimulateForward(double timelineDelta, double targetTimelineTime, bool sampleTimelineProperties)
     {
         double simulated = 0.0;
-        double step = fixedStep;
+        double step = FixedStep;
         double startTime = lastSimulatedTimelineTime;
 
         using (new DirectorTimeSampler(this, sampleTimelineProperties))
