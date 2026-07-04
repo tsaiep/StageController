@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5982687147543576973}
   - component: {fileID: 8325184129639951074}
+  - component: {fileID: 4283548638081301149}
   - component: {fileID: 1565368529514514545}
   m_Layer: 0
   m_Name: P_FeelCue
@@ -363,6 +364,29 @@ MonoBehaviour:
         StopVisualEffectOnStopFeedback: 0
         StopVisualEffectOnReset: 0
         StopVisualEffectOnInit: 1
+--- !u!114 &4283548638081301149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7766994784374006241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0a9d0f6f904f75a3151eb8f3c2a9d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  director: {fileID: 0}
+  vfx: {fileID: 0}
+  startTimelineTime: 0
+  useManualStartTime: 0
+  activeSession: 1
+  fixedStep: 0.016666668
+  seed: 12345
+  reinitAsPlay: 1
+  simulateInEditMode: 1
+  seekThreshold: 0.1
+  sampleTimelinePropertiesDuringRebuild: 1
 --- !u!114 &1565368529514514545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,7 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Events:
     m_Signals:
-    - {fileID: 11400000, guid: fc2b6501fc02bb24fa8df8ce83d6d4a3, type: 2}
+    - {fileID: 11400000, guid: fd559b9993484b246890335cfa6063fe, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
