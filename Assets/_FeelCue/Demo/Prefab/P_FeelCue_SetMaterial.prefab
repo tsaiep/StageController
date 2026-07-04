@@ -262,7 +262,7 @@ PrefabInstance:
       objectReference: {fileID: 6797879503345177199}
     - target: {fileID: 1565368529514514545, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: m_Events.m_Events.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1565368529514514545, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: m_Events.m_Events.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -286,15 +286,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 2.036
       objectReference: {fileID: 0}
     - target: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 2.51
       objectReference: {fileID: 0}
     - target: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3468,7 +3468,8 @@ PrefabInstance:
       propertyPath: managedReferences[384993432878186578].PlayEvents.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4283548638081301149, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
