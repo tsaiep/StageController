@@ -21,6 +21,7 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private const double UninitializedTime = double.NaN;
     private const double TriggerTimeEpsilon = 1e-5;
+    private const double TriggerMergeWindow = 0.05;
     private const double SeekThreshold = 0.1;
     private const bool SampleTimelinePropertiesDuringRebuild = true;
 
@@ -74,6 +75,16 @@ public class TimelineVFXScrubber : MonoBehaviour
             return;
 
         double signalTimelineTime = director.time;
+        if (HasSimulatedPast(signalTimelineTime))
+            RemoveTriggersAtOrAfter(signalTimelineTime - TriggerTimeEpsilon);
+
+        if (activeSession &&
+            triggerTimelineTimes.Count > 0 &&
+            signalTimelineTime < GetSessionStartTime() - TriggerMergeWindow)
+        {
+            ClearRuntimeSession(signalTimelineTime, true);
+        }
+
         activeSession = true;
         bool addedTriggerTime = AddTriggerTime(signalTimelineTime);
 
@@ -92,11 +103,20 @@ public class TimelineVFXScrubber : MonoBehaviour
         SendManagedPlayEvent();
     }
 
+    [ContextMenu("Clear Managed Bursts")]
     public void ClearManagedBursts()
+    {
+        ClearRuntimeSession(GetCurrentTimelineTimeOrZero(), true);
+    }
+
+    private void ClearRuntimeSession(double targetTimelineTime, bool resetVFX)
     {
         triggerTimelineTimes.Clear();
         activeSession = false;
-        ResetOrHideVFX(GetCurrentTimelineTimeOrZero());
+        lastSimulatedTimelineTime = UninitializedTime;
+
+        if (resetVFX)
+            ResetOrHideVFX(targetTimelineTime);
     }
 
     public void RebuildToCurrentTimelineTime()
@@ -129,7 +149,31 @@ public class TimelineVFXScrubber : MonoBehaviour
         }
 
         double currentTimelineTime = director.time;
+        if (triggerTimelineTimes.Count == 0)
+        {
+            ClearRuntimeSession(currentTimelineTime, true);
+            return;
+        }
+
+        bool isRewind = !double.IsNaN(lastSimulatedTimelineTime) &&
+                        currentTimelineTime < lastSimulatedTimelineTime;
+        if (isRewind)
+        {
+            RemoveTriggersAtOrAfter(currentTimelineTime - TriggerTimeEpsilon);
+            if (triggerTimelineTimes.Count == 0)
+            {
+                ClearRuntimeSession(currentTimelineTime, true);
+                return;
+            }
+        }
+
         double sessionStartTime = GetSessionStartTime();
+        if (currentTimelineTime < sessionStartTime - TriggerMergeWindow)
+        {
+            ClearRuntimeSession(currentTimelineTime, true);
+            return;
+        }
+
         double localTime = currentTimelineTime - sessionStartTime;
         if (localTime < 0.0)
         {
@@ -338,6 +382,12 @@ public class TimelineVFXScrubber : MonoBehaviour
         return triggerTimelineTimes.Count > 0 ? triggerTimelineTimes[0] : 0.0;
     }
 
+    private bool HasSimulatedPast(double timelineTime)
+    {
+        return !double.IsNaN(lastSimulatedTimelineTime) &&
+               timelineTime < lastSimulatedTimelineTime - TriggerTimeEpsilon;
+    }
+
     private bool ShouldRebuildForSignal(double signalTimelineTime)
     {
         if (vfxIsResetOrHidden || double.IsNaN(lastSimulatedTimelineTime))
@@ -351,7 +401,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     {
         for (int i = 0; i < triggerTimelineTimes.Count; i++)
         {
-            if (Math.Abs(triggerTimelineTimes[i] - triggerTime) <= TriggerTimeEpsilon)
+            if (Math.Abs(triggerTimelineTimes[i] - triggerTime) <= TriggerMergeWindow)
                 return false;
 
             if (triggerTime < triggerTimelineTimes[i])
@@ -363,6 +413,15 @@ public class TimelineVFXScrubber : MonoBehaviour
 
         triggerTimelineTimes.Add(triggerTime);
         return true;
+    }
+
+    private void RemoveTriggersAtOrAfter(double timelineTime)
+    {
+        for (int i = triggerTimelineTimes.Count - 1; i >= 0; i--)
+        {
+            if (triggerTimelineTimes[i] >= timelineTime)
+                triggerTimelineTimes.RemoveAt(i);
+        }
     }
 
     private void SendManagedPlayEvent()
