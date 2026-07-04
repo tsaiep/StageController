@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 using UnityEngine.VFX;
 
 [ExecuteAlways]
@@ -26,6 +27,9 @@ public class TimelineVFXScrubber : MonoBehaviour
     private const bool SampleTimelinePropertiesDuringRebuild = true;
 
     private readonly List<double> triggerTimelineTimes = new List<double>();
+    [SerializeField, HideInInspector] private PlayableDirector autoAssignedDirector;
+    [SerializeField, HideInInspector] private bool directorManuallyOverridden;
+
     private double lastSimulatedTimelineTime = UninitializedTime;
     private bool activeSession;
     private bool isSamplingTimeline;
@@ -35,7 +39,8 @@ public class TimelineVFXScrubber : MonoBehaviour
     private void Reset()
     {
         vfx = GetComponent<VisualEffect>();
-        director = GetComponentInParent<PlayableDirector>();
+        directorManuallyOverridden = false;
+        AutoAssignDirector();
     }
 
     private void OnEnable()
@@ -57,6 +62,7 @@ public class TimelineVFXScrubber : MonoBehaviour
         if (vfx == null)
             vfx = GetComponent<VisualEffect>();
 
+        ResolveDirectorReference();
         triggerTimelineTimes.Sort();
     }
 
@@ -219,6 +225,82 @@ public class TimelineVFXScrubber : MonoBehaviour
     {
         if (vfx == null)
             vfx = GetComponent<VisualEffect>();
+
+        ResolveDirectorReference();
+    }
+
+    private void ResolveDirectorReference()
+    {
+        if (directorManuallyOverridden)
+        {
+            if (director != null)
+                return;
+
+            directorManuallyOverridden = false;
+        }
+
+        if (autoAssignedDirector != null &&
+            director != null &&
+            director != autoAssignedDirector)
+        {
+            directorManuallyOverridden = true;
+            return;
+        }
+
+        if (director == null)
+            directorManuallyOverridden = false;
+
+        if (!directorManuallyOverridden)
+            AutoAssignDirector();
+    }
+
+    private void AutoAssignDirector()
+    {
+        autoAssignedDirector = FindDefaultPlayableDirector();
+        director = autoAssignedDirector;
+    }
+
+    private static PlayableDirector FindDefaultPlayableDirector()
+    {
+        for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
+        {
+            Scene scene = SceneManager.GetSceneAt(sceneIndex);
+            if (!scene.IsValid() || !scene.isLoaded)
+                continue;
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            Array.Sort(roots, CompareRootSiblingIndex);
+
+            for (int i = 0; i < roots.Length; i++)
+            {
+                PlayableDirector directorInRoot = FindFirstDirectorInHierarchy(roots[i].transform);
+                if (directorInRoot != null)
+                    return directorInRoot;
+            }
+        }
+
+        return null;
+    }
+
+    private static int CompareRootSiblingIndex(GameObject a, GameObject b)
+    {
+        return a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex());
+    }
+
+    private static PlayableDirector FindFirstDirectorInHierarchy(Transform root)
+    {
+        PlayableDirector directorOnThisObject = root.GetComponent<PlayableDirector>();
+        if (directorOnThisObject != null)
+            return directorOnThisObject;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            PlayableDirector directorInChild = FindFirstDirectorInHierarchy(root.GetChild(i));
+            if (directorInChild != null)
+                return directorInChild;
+        }
+
+        return null;
     }
 
     private void PrepareVFXForManagedSimulation()
