@@ -140,7 +140,6 @@ GameObject:
   - component: {fileID: 5982687147543576973}
   - component: {fileID: 8325184129639951074}
   - component: {fileID: 4283548638081301149}
-  - component: {fileID: 1565368529514514545}
   m_Layer: 0
   m_Name: P_FeelCue
   m_TagString: Untagged
@@ -362,7 +361,19 @@ MonoBehaviour:
         DebugActive: 0
         PlayEvents:
           m_PersistentCalls:
-            m_Calls: []
+            m_Calls:
+            - m_Target: {fileID: 4283548638081301149}
+              m_TargetAssemblyTypeName: TimelineVFXScrubber, Assembly-CSharp
+              m_MethodName: PlayManagedBurstWithSeed
+              m_Mode: 3
+              m_Arguments:
+                m_ObjectArgument: {fileID: 0}
+                m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+                m_IntArgument: 0
+                m_FloatArgument: 0
+                m_StringArgument: 
+                m_BoolArgument: 0
+              m_CallState: 1
         StopEvents:
           m_PersistentCalls:
             m_Calls: []
@@ -474,45 +485,3 @@ MonoBehaviour:
   simulateInEditMode: 1
   autoAssignedDirector: {fileID: 0}
   directorManuallyOverridden: 0
---- !u!114 &1565368529514514545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7766994784374006241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Events:
-    m_Signals:
-    - {fileID: 11400000, guid: fd559b9993484b246890335cfa6063fe, type: 2}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 8325184129639951074}
-          m_TargetAssemblyTypeName: MoreMountains.Feedbacks.MMF_Player, MoreMountains.Tools
-          m_MethodName: PlayFeedbacks
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 1
-        - m_Target: {fileID: 4283548638081301149}
-          m_TargetAssemblyTypeName: TimelineVFXScrubber, Assembly-CSharp
-          m_MethodName: PlayManagedBurstWithSeed
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
