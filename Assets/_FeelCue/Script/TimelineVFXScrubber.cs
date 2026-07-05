@@ -111,6 +111,18 @@ public class TimelineVFXScrubber : MonoBehaviour
         SendManagedPlayEvent();
     }
 
+    public void SetSeed(int newSeed)
+    {
+        seed = unchecked((uint)Mathf.Max(0, newSeed));
+        PrepareVFXForManagedSimulation();
+    }
+
+    public void PlayManagedBurstWithSeed(int newSeed)
+    {
+        SetSeed(newSeed);
+        PlayManagedBurst();
+    }
+
     [ContextMenu("Clear Managed Bursts")]
     public void ClearManagedBursts()
     {
