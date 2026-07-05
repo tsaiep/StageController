@@ -1,6 +1,8 @@
 using UnityEngine.Playables;
+using UnityEngine.Scripting.APIUpdating;
 
-public class SeededMMFVFXMixer : PlayableBehaviour
+[MovedFrom(false, null, null, "SeededMMFVFXMixer")]
+public class MMFVFXMixer : PlayableBehaviour
 {
     private const double SeekThreshold = 0.1;
     private const double TimeEpsilon = 1e-5;
@@ -17,7 +19,7 @@ public class SeededMMFVFXMixer : PlayableBehaviour
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
     {
-        TimelineVFXSeededMMFTrigger trigger = playerData as TimelineVFXSeededMMFTrigger;
+        TimelineMMFVFXTrigger trigger = playerData as TimelineMMFVFXTrigger;
         if (trigger == null)
             return;
 
@@ -39,9 +41,9 @@ public class SeededMMFVFXMixer : PlayableBehaviour
         int inputCount = playable.GetInputCount();
         for (int i = 0; i < inputCount; i++)
         {
-            ScriptPlayable<SeededMMFVFXBehaviour> inputPlayable =
-                (ScriptPlayable<SeededMMFVFXBehaviour>)playable.GetInput(i);
-            SeededMMFVFXBehaviour behaviour = inputPlayable.GetBehaviour();
+            ScriptPlayable<MMFVFXBehaviour> inputPlayable =
+                (ScriptPlayable<MMFVFXBehaviour>)playable.GetInput(i);
+            MMFVFXBehaviour behaviour = inputPlayable.GetBehaviour();
             ClipTiming clipTiming = GetClipTiming(i);
 
             if (rootTime < clipTiming.start - TimeEpsilon)
@@ -62,7 +64,7 @@ public class SeededMMFVFXMixer : PlayableBehaviour
 
             behaviour.triggered = true;
             behaviour.wasActive = true;
-            trigger.PlayWithSeed(behaviour.seed);
+            trigger.Play();
         }
 
         lastRootTime = rootTime;

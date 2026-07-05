@@ -1,10 +1,10 @@
 using UnityEngine.Playables;
+using UnityEngine.Scripting.APIUpdating;
 
 [System.Serializable]
-public class SeededMMFVFXBehaviour : PlayableBehaviour
+[MovedFrom(false, null, null, "SeededMMFVFXBehaviour")]
+public class MMFVFXBehaviour : PlayableBehaviour
 {
-    public int seed = 12345;
-
     [System.NonSerialized] public bool triggered;
     [System.NonSerialized] public bool wasActive;
 }

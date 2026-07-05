@@ -2,21 +2,23 @@ using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.Timeline;
 
-[TrackColor(0.9f, 0.55f, 0.15f)]
-[TrackBindingType(typeof(TimelineVFXSeededMMFTrigger))]
-[TrackClipType(typeof(SeededMMFVFXClip))]
-[DisplayName("Seeded MMF VFX Track")]
-public class SeededMMFVFXTrack : TrackAsset
+[TrackColor(0.55f, 0.25f, 0.95f)]
+[TrackBindingType(typeof(TimelineMMFVFXTrigger))]
+[TrackClipType(typeof(MMFVFXClip))]
+[DisplayName("MMF VFX Track")]
+[MovedFrom(false, null, null, "SeededMMFVFXTrack")]
+public class MMFVFXTrack : TrackAsset
 {
     public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
     {
-        ScriptPlayable<SeededMMFVFXMixer> mixer = ScriptPlayable<SeededMMFVFXMixer>.Create(graph, inputCount);
-        SeededMMFVFXMixer behaviour = mixer.GetBehaviour();
+        ScriptPlayable<MMFVFXMixer> mixer = ScriptPlayable<MMFVFXMixer>.Create(graph, inputCount);
+        MMFVFXMixer behaviour = mixer.GetBehaviour();
         behaviour.clipTimings = GetClips()
             .OrderBy(clip => clip.start)
-            .Select(clip => new SeededMMFVFXMixer.ClipTiming
+            .Select(clip => new MMFVFXMixer.ClipTiming
             {
                 start = clip.start,
                 end = clip.end
@@ -29,7 +31,7 @@ public class SeededMMFVFXTrack : TrackAsset
     protected override void OnCreateClip(TimelineClip clip)
     {
         base.OnCreateClip(clip);
-        clip.displayName = "Seeded MMF VFX";
-        clip.duration = 0.05;
+        clip.displayName = "MMF VFX";
+        clip.duration = 1.0;
     }
 }

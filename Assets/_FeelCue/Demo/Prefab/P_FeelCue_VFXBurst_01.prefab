@@ -171,6 +171,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_FeelCue_VFXBurst_01
       objectReference: {fileID: 0}
+    - target: {fileID: 8176610519322436188, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 91d387a13e912a34bb6d2541e47e8590, type: 3}
+    - target: {fileID: 8325184129639951074, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: PlayCount
+      value: 45
+      objectReference: {fileID: 0}
     - target: {fileID: 8325184129639951074, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: 'managedReferences[3]'
       value: MoreMountains.Tools MoreMountains.Feedbacks.MMF_Sound
@@ -516,6 +524,14 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8325184129639951074, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: managedReferences[3105843370892460116].Timing.PlayCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8325184129639951074, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: managedReferences[3105843370892460117].Timing.PlayCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8325184129639951074, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: managedReferences[3].CustomRolloffCurve.m_RotationOrder
       value: 4
       objectReference: {fileID: 0}
@@ -621,19 +637,40 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7464593129008272149}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7766994784374006241, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4985051687211241558}
   m_SourcePrefab: {fileID: 100100000, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
 --- !u!114 &476681277999191467 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8325184129639951074, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
   m_PrefabInstance: {fileID: 8436787756487688009}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2223816526844960424}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6da43522623d4704e979466dc7650b65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2223816526844960424 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7766994784374006241, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+  m_PrefabInstance: {fileID: 8436787756487688009}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4985051687211241558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2223816526844960424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41ab413b3aa29174fa7aca743348df33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mmfPlayer: {fileID: 476681277999191467}
 --- !u!4 &2743742760211283652 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}

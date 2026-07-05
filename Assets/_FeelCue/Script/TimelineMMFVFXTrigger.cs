@@ -1,14 +1,15 @@
 using MoreMountains.Feedbacks;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 [DisallowMultipleComponent]
-[AddComponentMenu("Stage Controller/Timeline VFX Seeded MMF Trigger")]
-public class TimelineVFXSeededMMFTrigger : MonoBehaviour
+[AddComponentMenu("Stage Controller/Timeline MMF VFX Trigger")]
+[MovedFrom(false, null, null, "TimelineVFXSeededMMFTrigger")]
+public class TimelineMMFVFXTrigger : MonoBehaviour
 {
     private const float DuplicateCallGuardSeconds = 0.05f;
 
     public MMF_Player mmfPlayer;
-    public TimelineVFXScrubber scrubber;
 
     private int lastPlayFrame = -1;
     private float lastPlayRealtime = -999f;
@@ -16,18 +17,14 @@ public class TimelineVFXSeededMMFTrigger : MonoBehaviour
     private void Reset()
     {
         mmfPlayer = GetComponent<MMF_Player>();
-        scrubber = GetComponent<TimelineVFXScrubber>();
     }
 
-    public void PlayWithSeed(int seed)
+    public void Play()
     {
         if (IsDuplicatePlayCall())
             return;
 
         MarkPlayCall();
-
-        if (scrubber != null)
-            scrubber.SetSeed(seed);
 
         if (mmfPlayer != null)
             mmfPlayer.PlayFeedbacks();
