@@ -57,7 +57,7 @@ VisualEffect:
       - m_Value: 1
         m_Name: Spread Angle
         m_Overridden: 1
-      - m_Value: 10
+      - m_Value: 7
         m_Name: Initial Speed
         m_Overridden: 1
       - m_Value: 0.445
@@ -274,10 +274,10 @@ VisualEffect:
       - m_Value: 0.757
         m_Name: Velocity Randomize
         m_Overridden: 0
-      - m_Value: 10
+      - m_Value: 9
         m_Name: Initial Speed
         m_Overridden: 1
-      - m_Value: 0.768
+      - m_Value: 0.512
         m_Name: Speed Randomize
         m_Overridden: 1
       - m_Value: 16
@@ -297,7 +297,7 @@ VisualEffect:
       - m_Value: {x: 0.1, y: 0.5}
         m_Name: Rotation Speed Range
         m_Overridden: 1
-      - m_Value: {x: 0.2, y: 0.6}
+      - m_Value: {x: 0.15, y: 0.45}
         m_Name: Particle Size Range
         m_Overridden: 1
     m_Vector3f:
@@ -539,7 +539,7 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 3
+      - m_Value: 4
         m_Name: Drag
         m_Overridden: 1
       - m_Value: 10
@@ -560,13 +560,13 @@ VisualEffect:
       - m_Value: 0.768
         m_Name: Speed Randomize
         m_Overridden: 1
-      - m_Value: 32
+      - m_Value: 24
         m_Name: Spawn Count
         m_Overridden: 1
       - m_Value: 0
         m_Name: Turbulence Strength
         m_Overridden: 1
-      - m_Value: -2.5
+      - m_Value: 0
         m_Name: Gravity
         m_Overridden: 1
     m_Vector2f:
@@ -577,7 +577,7 @@ VisualEffect:
       - m_Value: {x: 0, y: 0}
         m_Name: Rotation Speed Range
         m_Overridden: 1
-      - m_Value: {x: 0.05, y: 0.2}
+      - m_Value: {x: 0.2, y: 0.5}
         m_Name: Particle Size Range
         m_Overridden: 1
     m_Vector3f:
@@ -622,7 +622,7 @@ VisualEffect:
       m_Array:
       - m_Value:
           serializedVersion: 2
-          key0: {r: 1, g: 0.51373154, b: 0, a: 1}
+          key0: {r: 4, g: 2.0549262, b: 0, a: 1}
           key1: {r: 1, g: 0.51373154, b: 0, a: 1}
           key2: {r: 1, g: 0.23511335, b: 0, a: 1}
           key3: {r: 1, g: 0, b: 0, a: 0}
@@ -630,7 +630,7 @@ VisualEffect:
           key5: {r: 0, g: 0, b: 0, a: 0}
           key6: {r: 0, g: 0, b: 0, a: 0}
           key7: {r: 0, g: 0, b: 0, a: 0}
-          ctime0: 0
+          ctime0: 255
           ctime1: 65535
           ctime2: 65535
           ctime3: 65535
@@ -686,7 +686,7 @@ VisualEffect:
         m_Overridden: 1
     m_NamedObject:
       m_Array:
-      - m_Value: {fileID: 2800000, guid: 9bb5c6405db724aa0bdb3de1dad5f15e, type: 3}
+      - m_Value: {fileID: 2800000, guid: 7d4511258de72b248a57c4833c1c0aaf, type: 3}
         m_Name: Base Map
         m_Overridden: 1
     m_Bool:

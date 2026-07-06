@@ -18,8 +18,8 @@ MonoBehaviour:
       serializedVersion: 2
       x: 851
       y: -1433
-      width: 475
-      height: 2277
+      width: 476
+      height: 3055
     contents:
     - model: {fileID: 8926484042661614608}
       id: 0
@@ -28,6 +28,9 @@ MonoBehaviour:
       id: 0
       isStickyNote: 0
     - model: {fileID: 8926484042661614662}
+      id: 0
+      isStickyNote: 0
+    - model: {fileID: 8926484042661615134}
       id: 0
       isStickyNote: 0
   stickyNoteInfos: []
@@ -43,7 +46,7 @@ MonoBehaviour:
     x: -804
     y: -1433
     width: 2131
-    height: 2993
+    height: 3055
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -505,7 +508,7 @@ VisualEffectResource:
   m_Infos:
     m_RendererSettings:
       motionVectorGenerationMode: 0
-      shadowCastingMode: 0
+      shadowCastingMode: 1
       rayTracingMode: 0
       receiveShadows: 0
       reflectionProbeUsage: 0
@@ -9083,10 +9086,11 @@ MonoBehaviour:
   - {fileID: 8926484042661615147}
   - {fileID: 8926484042661615150}
   - {fileID: 8926484042661615153}
-  m_UIPosition: {x: 877, y: 770}
+  m_UIPosition: {x: 877, y: 786}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
+  - {fileID: 8926484042661615199}
   - {fileID: 8926484042661615135}
   - {fileID: 8926484042661615136}
   - {fileID: 8926484042661615137}
@@ -9124,7 +9128,7 @@ MonoBehaviour:
   indirectDraw: 0
   computeCulling: 0
   frustumCulling: 0
-  castShadows: 0
+  castShadows: 1
   useExposureWeight: 0
   enableRayTracing: 0
   decimationFactor: 1
@@ -9154,7 +9158,7 @@ MonoBehaviour:
   useEmissiveChannelScale: 0
   useColorAbsorption: 1
   doubleSided: 0
-  receiveShadows: 1
+  receiveShadows: 0
   MeshCount: 1
   lod: 0
 --- !u!114 &8926484042661615135
@@ -10872,3 +10876,37 @@ MonoBehaviour:
   m_Direction: 1
   m_LinkedSlots:
   - {fileID: 8926484042661615136}
+--- !u!114 &8926484042661615199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f780aa281814f9842a7c076d436932e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIIgnoredErrors: []
+  m_Parent: {fileID: 0}
+  m_Children: []
+  m_UIPosition: {x: 0, y: 0}
+  m_UICollapsed: 1
+  m_UISuperCollapsed: 0
+  m_MasterSlot: {fileID: 8926484042661615199}
+  m_MasterData:
+    m_Owner: {fileID: 8926484042661615134}
+    m_Value:
+      m_Type:
+        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      m_SerializableObject: 0.5
+    m_Space: -1
+  m_Property:
+    name: alphaThreshold
+    m_serializedType:
+      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+  m_Direction: 0
+  m_LinkedSlots: []

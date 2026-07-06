@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.VFX;
 
 [ExecuteAlways]
@@ -13,7 +14,7 @@ public class TimelineVFXScrubber : MonoBehaviour
 {
     [Header("References")]
     public PlayableDirector director;
-    public VisualEffect vfx;
+    public List<VisualEffect> vfxList = new List<VisualEffect>();
 
     [Header("Simulation")]
     public float targetFPS = 60f;
@@ -27,6 +28,8 @@ public class TimelineVFXScrubber : MonoBehaviour
     private const bool SampleTimelinePropertiesDuringRebuild = true;
 
     private readonly List<double> triggerTimelineTimes = new List<double>();
+    [FormerlySerializedAs("vfx")]
+    [SerializeField, HideInInspector] private VisualEffect legacyVfx;
     [SerializeField, HideInInspector] private PlayableDirector autoAssignedDirector;
     [SerializeField, HideInInspector] private bool directorManuallyOverridden;
 
@@ -40,7 +43,11 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private void Reset()
     {
-        vfx = GetComponent<VisualEffect>();
+        vfxList = new List<VisualEffect>();
+        VisualEffect localVfx = GetComponent<VisualEffect>();
+        if (localVfx != null)
+            vfxList.Add(localVfx);
+
         directorManuallyOverridden = false;
         AutoAssignDirector();
     }
@@ -61,8 +68,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     {
         targetFPS = Mathf.Max(1f, targetFPS);
 
-        if (vfx == null)
-            vfx = GetComponent<VisualEffect>();
+        EnsureVFXReferences();
 
         ResolveDirectorReference();
         triggerTimelineTimes.Sort();
@@ -215,7 +221,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             return false;
 
         EnsureReferences();
-        return director != null && vfx != null;
+        return director != null && HasAnyVFX();
     }
 
     private double GetCurrentTimelineTimeOrZero()
@@ -225,10 +231,43 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private void EnsureReferences()
     {
-        if (vfx == null)
-            vfx = GetComponent<VisualEffect>();
-
+        EnsureVFXReferences();
         ResolveDirectorReference();
+    }
+
+    private void EnsureVFXReferences()
+    {
+        if (vfxList == null)
+            vfxList = new List<VisualEffect>();
+
+        if (legacyVfx != null)
+        {
+            if (!vfxList.Contains(legacyVfx))
+                vfxList.Add(legacyVfx);
+
+            legacyVfx = null;
+        }
+
+        if (HasAnyVFX())
+            return;
+
+        VisualEffect localVfx = GetComponent<VisualEffect>();
+        if (localVfx != null)
+            vfxList.Add(localVfx);
+    }
+
+    private bool HasAnyVFX()
+    {
+        if (vfxList == null)
+            return false;
+
+        for (int i = 0; i < vfxList.Count; i++)
+        {
+            if (vfxList[i] != null)
+                return true;
+        }
+
+        return false;
     }
 
     private void ResolveDirectorReference()
@@ -307,17 +346,24 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private void PrepareVFXForManagedSimulation()
     {
-        if (vfx == null)
+        if (vfxList == null)
             return;
 
-        vfx.pause = true;
-        vfx.resetSeedOnPlay = false;
-        vfx.startSeed = seed;
+        for (int i = 0; i < vfxList.Count; i++)
+        {
+            VisualEffect currentVfx = vfxList[i];
+            if (currentVfx == null)
+                continue;
+
+            currentVfx.pause = true;
+            currentVfx.resetSeedOnPlay = false;
+            currentVfx.startSeed = seed;
+        }
     }
 
     private void ResetOrHideVFX(double targetTimelineTime)
     {
-        if (vfx == null)
+        if (!HasAnyVFX())
             return;
 
         if (vfxIsResetOrHidden)
@@ -326,19 +372,26 @@ public class TimelineVFXScrubber : MonoBehaviour
             return;
         }
 
-        vfx.pause = true;
-        vfx.resetSeedOnPlay = false;
-        vfx.startSeed = seed;
-        vfx.Stop();
-        vfx.Reinit();
-        vfx.Stop();
+        PrepareVFXForManagedSimulation();
+
+        for (int i = 0; i < vfxList.Count; i++)
+        {
+            VisualEffect currentVfx = vfxList[i];
+            if (currentVfx == null)
+                continue;
+
+            currentVfx.Stop();
+            currentVfx.Reinit();
+            currentVfx.Stop();
+        }
+
         vfxIsResetOrHidden = true;
         lastSimulatedTimelineTime = targetTimelineTime;
     }
 
     private void RebuildTo(double targetTimelineTime, bool sampleTimelineProperties)
     {
-        if (vfx == null)
+        if (!HasAnyVFX())
             return;
 
         isRebuilding = true;
@@ -355,9 +408,16 @@ public class TimelineVFXScrubber : MonoBehaviour
 
             PrepareVFXForManagedSimulation();
 
-            vfx.Reinit();
+            for (int i = 0; i < vfxList.Count; i++)
+            {
+                VisualEffect currentVfx = vfxList[i];
+                if (currentVfx == null)
+                    continue;
 
-            vfx.pause = true;
+                currentVfx.Reinit();
+                currentVfx.pause = true;
+            }
+
             vfxIsResetOrHidden = false;
             SimulateFromZero(sessionStartTime, localTime, sampleTimelineProperties);
             lastSimulatedTimelineTime = targetTimelineTime;
@@ -403,7 +463,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             return;
 
         SampleTimelineAt(sessionStartTime + toLocalTime);
-        vfx.Simulate((float)delta, 1u);
+        SimulateAllVFX((float)delta);
     }
 
     private bool TryGetNextTriggerLocalTime(
@@ -446,7 +506,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             {
                 double stepTimelineTime = startTime + simulated + step;
                 SampleTimelineAt(stepTimelineTime);
-                vfx.Simulate((float)step, 1u);
+                SimulateAllVFX((float)step);
                 simulated += step;
             }
 
@@ -454,7 +514,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             if (remainder > 0.0)
             {
                 SampleTimelineAt(targetTimelineTime);
-                vfx.Simulate((float)remainder, 1u);
+                SimulateAllVFX((float)remainder);
             }
         }
 
@@ -510,10 +570,32 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private void SendManagedPlayEvent()
     {
-        if (vfx == null)
+        if (vfxList == null)
             return;
 
-        vfx.SendEvent(VisualEffectAsset.PlayEventName);
+        for (int i = 0; i < vfxList.Count; i++)
+        {
+            VisualEffect currentVfx = vfxList[i];
+            if (currentVfx == null)
+                continue;
+
+            currentVfx.SendEvent(VisualEffectAsset.PlayEventName);
+        }
+    }
+
+    private void SimulateAllVFX(float deltaTime)
+    {
+        if (vfxList == null)
+            return;
+
+        for (int i = 0; i < vfxList.Count; i++)
+        {
+            VisualEffect currentVfx = vfxList[i];
+            if (currentVfx == null)
+                continue;
+
+            currentVfx.Simulate(deltaTime, 1u);
+        }
     }
 
     private void SampleTimelineAt(double timelineTime)
