@@ -1,6 +1,7 @@
 # 11_Emissive Lightstrip FX
 
 這是模擬燈條/燈泡群體動態的特效系統，以自發光材質為基底，以 Tiemline Custom Track 控制，並且包含模板功能
+
 Notion 版本：
 https://www.notion.so/11_Emissive-Lightstrip-FX-37c8a373d31780678397fbc8b8c237ac?source=copy_link
 
