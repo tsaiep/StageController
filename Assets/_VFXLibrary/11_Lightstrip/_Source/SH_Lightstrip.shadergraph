@@ -2693,7 +2693,7 @@
     "m_Title": "Sparkling Time Remap",
     "m_Position": {
         "x": 518.0000610351563,
-        "y": 906.6666870117188
+        "y": 906.6665649414063
     }
 }
 
@@ -3086,8 +3086,8 @@
     "m_ObjectId": "11c07ea8105249d7b61a00232dcba462",
     "m_Title": "Scrolling Result Blending",
     "m_Position": {
-        "x": -337.3333435058594,
-        "y": -66.66659545898438
+        "x": -337.33349609375,
+        "y": -66.66666412353516
     }
 }
 
@@ -3831,7 +3831,7 @@
     "m_FunctionName": "CoreGradient",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "float2 StepUV = floor(UV*10)/10;\nfloat xCoord = lerp(StepUV.x,UV.x,Mode)/10;\nOut = StepUV.y + xCoord;\nGridsSeed = StepUV.y + StepUV.x/10;"
+    "m_FunctionBody": "float2 StepUV = floor(UV*8)/8;\nfloat xCoord = lerp(StepUV.x,UV.x,Mode)/8;\nOut = StepUV.y + xCoord;\nGridsSeed = StepUV.y + StepUV.x/8;"
 }
 
 {
@@ -4215,7 +4215,7 @@
     "m_Title": "Head Lean",
     "m_Position": {
         "x": 542.0000610351563,
-        "y": 428.0
+        "y": 427.9999694824219
     }
 }
 
@@ -6131,8 +6131,8 @@
     "m_ObjectId": "444d0b5f199e4e2183aa22bb8563feb7",
     "m_Title": "Sparkling Time  & Manual Control",
     "m_Position": {
-        "x": -1279.999755859375,
-        "y": 904.6666870117188
+        "x": -1280.0,
+        "y": 904.6665649414063
     }
 }
 
@@ -7796,8 +7796,8 @@
     "m_ObjectId": "6595ecff9c424f0da130d22a319d036b",
     "m_Title": "Scrolling Time",
     "m_Position": {
-        "x": -1269.3333740234375,
-        "y": -64.66659545898438
+        "x": -1269.333251953125,
+        "y": -64.66666412353516
     }
 }
 
@@ -7855,8 +7855,8 @@
     "m_ObjectId": "66046585ce1e4d6d8badc55e95b21c25",
     "m_Title": "General",
     "m_Position": {
-        "x": 3316.666748046875,
-        "y": -765.9999389648438
+        "x": 3316.666259765625,
+        "y": -765.9998779296875
     }
 }
 
@@ -9354,7 +9354,7 @@
     "m_ObjectId": "81967fe4498a48b2bf896a548a3d281f",
     "m_Title": "Gradient Shape",
     "m_Position": {
-        "x": 538.6666870117188,
+        "x": 538.666748046875,
         "y": -76.0
     }
 }
@@ -9524,8 +9524,8 @@
     "m_ObjectId": "8437edc69b2544c0bbf52f3403033404",
     "m_Title": "Sparkling Random",
     "m_Position": {
-        "x": -1568.6666259765625,
-        "y": 1476.66650390625
+        "x": -1568.6663818359375,
+        "y": 1476.6666259765625
     }
 }
 
@@ -9608,7 +9608,7 @@
     "m_Title": "Coloring",
     "m_Position": {
         "x": 3086.666748046875,
-        "y": -70.66659545898438
+        "y": -70.66666412353516
     }
 }
 
@@ -10472,7 +10472,7 @@
     "m_Title": "Make Step Grids",
     "m_Position": {
         "x": -2643.333251953125,
-        "y": 620.6666870117188
+        "y": 620.6665649414063
     }
 }
 
@@ -10724,7 +10724,7 @@
     "m_ObjectId": "99475f37cf5d45dfbb3490c86cced4ad",
     "m_Title": "Ping-Pong Mode",
     "m_Position": {
-        "x": -1270.6666259765625,
+        "x": -1270.66650390625,
         "y": -570.6666870117188
     }
 }
@@ -11892,7 +11892,7 @@
     "m_ObjectId": "b1e085a810f64a79bfe3d8455d937ae7",
     "m_Title": "Final Blending",
     "m_Position": {
-        "x": 2303.33349609375,
+        "x": 2303.332763671875,
         "y": -72.0
     }
 }
@@ -15405,8 +15405,8 @@
     "m_ObjectId": "ed763103fec14b28832052dfcfe508e3",
     "m_Title": "Manual Scrolling ",
     "m_Position": {
-        "x": -1265.3333740234375,
-        "y": 363.3333740234375
+        "x": -1265.33349609375,
+        "y": 363.3332824707031
     }
 }
 

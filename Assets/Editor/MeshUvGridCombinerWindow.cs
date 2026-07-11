@@ -9,7 +9,8 @@ using UnityEngine.Rendering;
 
 public class MeshUvGridCombinerWindow : EditorWindow
 {
-    private const int GridSize = 10;
+    private const int GridSize = 8;
+    private const int GridCellCount = GridSize * GridSize;
     private const float CellSize = 1f / GridSize;
     private const string DefaultAssetPath = "Assets/GeneratedMeshes/CombinedMesh.asset";
 
@@ -239,10 +240,10 @@ public class MeshUvGridCombinerWindow : EditorWindow
 
         for (int sourceIndex = 0; sourceIndex < validSources.Count; sourceIndex++)
         {
-            if (!warnedAboutGridOverflow && sourceIndex >= GridSize * GridSize)
+            if (!warnedAboutGridOverflow && sourceIndex >= GridCellCount)
             {
                 warnedAboutGridOverflow = true;
-                Debug.LogWarning("Mesh UV Grid Combiner: More than 100 meshes were supplied. UV1 cells past the 10 x 10 grid will exceed the 0-1 UV range.");
+                Debug.LogWarning($"Mesh UV Grid Combiner: More than {GridCellCount} meshes were supplied. UV1 cells past the {GridSize} x {GridSize} grid will exceed the 0-1 UV range.");
             }
 
             SourceMeshEntry source = validSources[sourceIndex];
