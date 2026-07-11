@@ -165,3 +165,45 @@ Turbulence Frequency - 粒子的立場 Noise 頻率
 Rotation Speed Range - 粒子的自轉速度範圍
 
 ### V_ParticleConstant_LitMesh
+
+Spawn
+
+Spawn Duration - 粒子持續生成時間
+
+Spawn Count - 生成粒子數量
+
+Particle Size Range - 粒子尺寸範圍
+
+Lifetime Range - 粒子生命範圍
+
+Spread Angle - 粒子噴發的擴散角度，範圍將重建為0至180度
+
+Spawn Mesh - 粒子使用模型
+
+Along Velocity - 勾選此項使粒子指向其速度方向
+
+Base Map - 模型使用的 Diffuse 貼圖
+
+Color Gradient - 個別粒子顏色於此漸層上隨機取樣
+
+Lifetime Animation
+
+Size Over Lifetime - 模型生命期間尺寸變化
+
+Color Over Lifetime - 模型生命期間顏色變化，含Alpha
+
+Force
+
+Initial Velocity - 粒子生成時的初始速度
+
+Speed Randomize - 個別粒子的初始速度隨機程度，設定0為全部粒子等速，1為初始速度1倍至0倍之間隨機
+
+Gravity - 地心引力強度
+
+Drag - 粒子受到的阻力，配合其他力相關參數做出夠聚集、黏稠的動態
+
+Turbulence Strength -  粒子的立場 Noise 強度
+
+Turbulence Frequency - 粒子的立場 Noise 頻率
+
+Rotation Speed Range - 粒子的自轉速度範圍

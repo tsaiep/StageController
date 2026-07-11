@@ -57,7 +57,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 2887
     y: 3
-    width: 3446
+    width: 3445
     height: 3677
 --- !u!114 &114350483966674976
 MonoBehaviour:
@@ -166,8 +166,8 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
-  - name: Spawn Count
-    path: Spawn Count
+  - name: Spawn Rate
+    path: Spawn Rate
     tooltip: 
     space: -1
     spaceable: 0
@@ -177,7 +177,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 32
+      m_SerializableObject: 128
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -7019,12 +7019,12 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
   - {fileID: 8926484042661615127}
-  m_ExposedName: Spawn Count
+  m_ExposedName: Spawn Rate
   m_Exposed: 1
   m_Order: 2
   m_Category: Spawn
@@ -7074,7 +7074,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 32
+      m_SerializableObject: 128
     m_Space: -1
   m_Property:
     name: o
