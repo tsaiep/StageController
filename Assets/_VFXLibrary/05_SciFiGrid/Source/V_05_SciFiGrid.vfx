@@ -442,13 +442,13 @@ MonoBehaviour:
   - name: Control
     collapsed: 0
   - name: Grids
-    collapsed: 1
+    collapsed: 0
   - name: Wave
-    collapsed: 1
+    collapsed: 0
   - name: Pluse
-    collapsed: 1
+    collapsed: 0
   - name: Child
-    collapsed: 1
+    collapsed: 0
   uiBounds:
     serializedVersion: 2
     x: -3954
@@ -465,7 +465,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d4c867f6b72b714dbb5fd1780afe208, type: 3}
-  m_Name: V_Wave_V3
+  m_Name: V_05_SciFiGrid
   m_EditorClassIdentifier: 
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 0}
@@ -662,6 +662,22 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
+  - name: Particle Size
+    path: Particle Size
+    tooltip: 
+    space: -1
+    spaceable: 0
+    sheetType: m_Float
+    realType: Single
+    defaultValue:
+      m_Type:
+        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      m_SerializableObject: 0.05
+    min: -Infinity
+    max: Infinity
+    enumValues: []
+    descendantCount: 0
   - name: Particle Color
     path: Particle Color
     tooltip: 
@@ -789,22 +805,6 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
-  - name: Pluse Wave Strength
-    path: Pluse Wave Strength
-    tooltip: 
-    space: -1
-    spaceable: 0
-    sheetType: m_Float
-    realType: Single
-    defaultValue:
-      m_Type:
-        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
-          PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0
-    min: -Infinity
-    max: Infinity
-    enumValues: []
-    descendantCount: 0
   - name: Noise Scale
     path: Noise Scale
     tooltip: 
@@ -836,22 +836,6 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
-  - name: Particle Size
-    path: Particle Size
-    tooltip: 
-    space: -1
-    spaceable: 0
-    sheetType: m_Float
-    realType: Single
-    defaultValue:
-      m_Type:
-        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
-          PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0.05
-    min: -Infinity
-    max: Infinity
-    enumValues: []
-    descendantCount: 0
   - name: Pulse Color
     path: Pulse Color
     tooltip: 
@@ -864,6 +848,22 @@ MonoBehaviour:
         m_SerializableType: UnityEngine.Color, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
       m_SerializableObject: '{"r":1.0,"g":0.0,"b":0.0,"a":0.0}'
+    min: -Infinity
+    max: Infinity
+    enumValues: []
+    descendantCount: 0
+  - name: Pluse Wave Strength
+    path: Pluse Wave Strength
+    tooltip: 
+    space: -1
+    spaceable: 0
+    sheetType: m_Float
+    realType: Single
+    defaultValue:
+      m_Type:
+        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      m_SerializableObject: 0
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -958,7 +958,7 @@ VisualEffectResource:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: V_Wave_V3
+  m_Name: V_05_SciFiGrid
   m_Graph: {fileID: 114350483966674976}
   m_Infos:
     m_RendererSettings:
@@ -3372,7 +3372,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615352}
   m_ExposedName: Row
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 4
   m_Category: Grids
   m_Min:
     m_Type:
@@ -3490,7 +3490,7 @@ MonoBehaviour:
   m_ExposedName: Particle Size
   m_Exposed: 1
   m_Order: 1
-  m_Category: Pluse
+  m_Category: Grids
   m_Min:
     m_Type:
       m_SerializableType: 
@@ -4468,7 +4468,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615594}
   m_ExposedName: Column
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 3
   m_Category: Grids
   m_Min:
     m_Type:
@@ -5485,7 +5485,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615840}
   m_ExposedName: Particle Spacing
   m_Exposed: 1
-  m_Order: 13
+  m_Order: 6
   m_Category: Grids
   m_Min:
     m_Type:
@@ -6745,7 +6745,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616140}
   m_ExposedName: Pulse Range
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 3
   m_Category: Pluse
   m_Min:
     m_Type:
@@ -9262,7 +9262,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616338}
   m_ExposedName: Pulse Width
   m_Exposed: 1
-  m_Order: 11
+  m_Order: 4
   m_Category: Pluse
   m_Min:
     m_Type:
@@ -11021,7 +11021,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616410}
   m_ExposedName: Pulse Speed
   m_Exposed: 1
-  m_Order: 14
+  m_Order: 5
   m_Category: Pluse
   m_Min:
     m_Type:
@@ -11532,7 +11532,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616430}
   m_ExposedName: Pulse Color
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 1
   m_Category: Pluse
   m_Min:
     m_Type:
@@ -12920,8 +12920,8 @@ MonoBehaviour:
   - {fileID: 8926484042661616501}
   m_ExposedName: Pluse Wave Strength
   m_Exposed: 1
-  m_Order: 9
-  m_Category: Wave
+  m_Order: 2
+  m_Category: Pluse
   m_Min:
     m_Type:
       m_SerializableType: 
@@ -15466,7 +15466,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616608}
   m_ExposedName: Particle Color
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 2
   m_Category: Grids
   m_Min:
     m_Type:
@@ -16196,7 +16196,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616629}
   m_ExposedName: Particle Texture
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 0
   m_Category: Grids
   m_Min:
     m_Type:
@@ -17880,7 +17880,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616695}
   m_ExposedName: Bend from Center
   m_Exposed: 1
-  m_Order: 12
+  m_Order: 5
   m_Category: Grids
   m_Min:
     m_Type:
@@ -18090,6 +18090,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616712}
   - {fileID: 8926484042661616713}
   - {fileID: 8926484042661616872}
+  - {fileID: 8926484042661616969}
   m_OutputSlots:
   - {fileID: 8926484042661616714}
   m_Operands:
@@ -18102,6 +18103,10 @@ MonoBehaviour:
       m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
         PublicKeyToken=b77a5c561934e089
   - name: c
+    type:
+      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+  - name: d
     type:
       m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
         PublicKeyToken=b77a5c561934e089
@@ -23499,6 +23504,14 @@ MonoBehaviour:
     expandedSlots: []
     expanded: 1
     supecollapsed: 0
+  - m_Id: 1
+    linkedSlots:
+    - outputSlot: {fileID: 8926484042661616959}
+      inputSlot: {fileID: 8926484042661616969}
+    position: {x: 197.33333, y: 1416.6666}
+    expandedSlots: []
+    expanded: 1
+    supecollapsed: 0
 --- !u!114 &8926484042661616959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23536,6 +23549,7 @@ MonoBehaviour:
   - {fileID: 8926484042661616961}
   - {fileID: 8926484042661616967}
   - {fileID: 8926484042661616964}
+  - {fileID: 8926484042661616969}
 --- !u!114 &8926484042661616960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23824,3 +23838,38 @@ MonoBehaviour:
         PublicKeyToken=b77a5c561934e089
   m_Direction: 1
   m_LinkedSlots: []
+--- !u!114 &8926484042661616969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f780aa281814f9842a7c076d436932e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIIgnoredErrors: []
+  m_Parent: {fileID: 0}
+  m_Children: []
+  m_UIPosition: {x: 0, y: 0}
+  m_UICollapsed: 1
+  m_UISuperCollapsed: 0
+  m_MasterSlot: {fileID: 8926484042661616969}
+  m_MasterData:
+    m_Owner: {fileID: 8926484042661616711}
+    m_Value:
+      m_Type:
+        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      m_SerializableObject: 1
+    m_Space: -1
+  m_Property:
+    name: d
+    m_serializedType:
+      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+  m_Direction: 0
+  m_LinkedSlots:
+  - {fileID: 8926484042661616959}

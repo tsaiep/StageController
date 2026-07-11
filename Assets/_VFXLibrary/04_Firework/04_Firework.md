@@ -2,7 +2,7 @@
 
 包含數組煙火效果，分為單次發射與持續分設兩類，並各有數種變體，其中單次發射有一變體可匯入自訂圖片，令煙火爆開時形狀取樣該圖
 
-Notion版本：https://www.notion.so/04_Firework-d6ecadc081ca427e935b3f613f2fef7e?source=copy_link
+Notion 版本：https://www.notion.so/04_Firework-d6ecadc081ca427e935b3f613f2fef7e?source=copy_link
 
 ---
 

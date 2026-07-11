@@ -3,7 +3,7 @@
 這是通用的單次粒子噴發效果，噴發類型包含 Lit/Unlit Mesh/Unlit Billboard Particle 以及一個可設定持續噴發數秒的Lit Particles 變體，未來可依照需求再修改更多噴發類型。可自行替換模型與貼圖對應不同的主題與風格
 
 
-Notion版本：https://www.notion.so/02_ParticleBurst-e2454d4edca945e99a40d3e6416d9e35?source=copy_link
+Notion 版本：https://www.notion.so/02_ParticleBurst-e2454d4edca945e99a40d3e6416d9e35?source=copy_link
 
 ---
 
