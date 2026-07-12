@@ -460,7 +460,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1801,7 +1801,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2914750679332621374, guid: 532b5fb695a427944b4ff4c9a3595a24, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3658967304934548876, guid: 532b5fb695a427944b4ff4c9a3595a24, type: 3}
       propertyPath: m_Name
