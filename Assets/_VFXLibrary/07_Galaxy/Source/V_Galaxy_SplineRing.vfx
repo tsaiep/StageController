@@ -300,8 +300,8 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
-  - name: Noise Raidal Scale
-    path: Noise Raidal Scale
+  - name: Noise Scale
+    path: Noise Scale
     tooltip: 
     space: -1
     spaceable: 0
@@ -311,7 +311,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 15
+      m_SerializableObject: 0.1
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -332,6 +332,22 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
+  - name: Noise Raidal Scale
+    path: Noise Raidal Scale
+    tooltip: 
+    space: -1
+    spaceable: 0
+    sheetType: m_Float
+    realType: Single
+    defaultValue:
+      m_Type:
+        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      m_SerializableObject: 15
+    min: -Infinity
+    max: Infinity
+    enumValues: []
+    descendantCount: 0
   - name: Noise Raidal Strength
     path: Noise Raidal Strength
     tooltip: 
@@ -346,22 +362,6 @@ MonoBehaviour:
       m_SerializableObject: 0
     min: 0
     max: 1
-    enumValues: []
-    descendantCount: 0
-  - name: Noise Scale
-    path: Noise Scale
-    tooltip: 
-    space: -1
-    spaceable: 0
-    sheetType: m_Float
-    realType: Single
-    defaultValue:
-      m_Type:
-        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
-          PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0.1
-    min: -Infinity
-    max: Infinity
     enumValues: []
     descendantCount: 0
   m_ImportDependencies: []
@@ -5039,7 +5039,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614977}
   m_ExposedName: Noise Scale
   m_Exposed: 1
-  m_Order: 11
+  m_Order: 1
   m_Category: Noise
   m_Min:
     m_Type:
@@ -5120,7 +5120,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614979}
   m_ExposedName: Noise Speed
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 2
   m_Category: Noise
   m_Min:
     m_Type:
@@ -5201,7 +5201,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614981}
   m_ExposedName: Noise Strength
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 0
   m_Category: Noise
   m_Min:
     m_Type:
@@ -7889,7 +7889,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615123}
   m_ExposedName: Noise Raidal Strength
   m_Exposed: 1
-  m_Order: 10
+  m_Order: 4
   m_Category: Noise
   m_Min:
     m_Type:
@@ -8067,7 +8067,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615128}
   m_ExposedName: Noise Raidal Scale
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 3
   m_Category: Noise
   m_Min:
     m_Type:
