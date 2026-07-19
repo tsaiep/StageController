@@ -1,12 +1,12 @@
 # 09_Trail
 
 這是用於製作拖尾、流星、火花軌跡的特效，包含沿著曲線飛行的版本，以及綁定物件位置產生拖尾的版本。可用於舞台上的飛行光點、魔法彈道、火花殘影或需要跟隨目標移動的視覺軌跡。
-
+Notion 版本：https://www.notion.so/09_Trail-5b335489f8fc4d7f80f6ac51f1a8c4ed?v=39a8a373d31780a7a033000cf3a1b2f9&source=copy_link
 ---
 
 ## 使用方式
 
-### P_MeteorAlongCurve
+### V_TrailAlongCurve
 
 設定靜態的基本參數
 
@@ -19,27 +19,24 @@
 
 控制項
 
-1. 建議使用 Animation Track 或 `Assets\_FeelCue\Script\VFXPropertiesControl.cs` 控制 `Control` 參數，讓流星沿曲線從起點跑到終點
-2. 使用 `Fade` 控制整體淡出
+1. 建議使用 Animation Track 或 `Assets\_FeelCue\Script\VFXPropertiesControl.cs` 控制 `Control` 參數，讓粒子沿曲線從起點跑到終點
+2. 使用 `Fade` 控制路徑線段淡出
 3. 可在 Timeline 或 Animation 中移動 `Target`，搭配 VFX Property Binder 將 `Target Postion` 更新到 VFX Graph
 
-### P_MeteorBinding / P_SparkTrailBinding
+### V_TrailBinding
 
 設定靜態的基本參數
 
-1. 直接將 prefab 放入場景，將需要拖尾的物件位置綁定到 VFX Graph
-2. Root 物件上的 Visual Effect 使用 `V_TrailBinding`，適合物件移動時持續留下軌跡
-3. `Spawn Control` 控制是否生成拖尾粒子
-4. `Trail Count` 控制拖尾線段數量，可依效果需求調整
-5. `Head Display` 分類控制頭部粒子的貼圖、寬度、生命與擾動
-6. `Dust` 分類控制拖尾周圍火花或碎粒子的生成數量、範圍、生命、尺寸、顏色與閃爍
+1. 直接將 prefab 放入要跟隨的物件之下，或者使用 **Parent Constraint component** 來綁定位置
+   https://docs.unity3d.com/6000.0/Documentation/Manual/class-ParentConstraint.html
+2. `Spawn Control` 控制是否生成拖尾粒子
+3. `Trail Count` 控制拖尾線段數量，可依效果需求調整
+4. `Head Display` 分類控制頭部粒子的貼圖、寬度、生命與擾動
+5. `Dust` 分類控制拖尾周圍火花或碎粒子的生成數量、範圍、生命、尺寸、顏色與閃爍
 
 控制項
 
-1. 建議使用 Animation Track 或 `Assets\_FeelCue\Script\VFXPropertiesControl.cs` 控制 `Spawn Control` 參數，達成拖尾生成與停止
-2. `P_MeteorBinding` 適合較大的流星或能量拖尾
-3. `P_SparkTrailBinding` 適合較細碎、粒子量較高的火花拖尾
-4. 若目標物件在播放時移動，需確認 VFX Property Binder 會持續更新綁定目標位置
+1. 使用`Spawn Control`控制粒子生成，建議使用 Animation Track 控制
 
 ---
 
@@ -51,7 +48,7 @@ Control
 
 Control - 曲線播放進度控制，0 為起點，1 為終點
 
-Fade - 整體淡出控制
+Fade - 控制路徑線段淡出
 
 Head Display
 
@@ -71,15 +68,15 @@ Head Turbulence Scale - 頭部粒子的擾動尺寸
 
 Path Display
 
-Path Texture - 拖尾路徑使用的貼圖
+Path Texture - 路徑線段使用的貼圖
 
-Pathl Texture Scale - 拖尾路徑貼圖沿路徑的縮放倍率
+Pathl Texture Scale - 路徑線段貼圖沿路徑的縮放倍率
 
-Path Color - 拖尾路徑顏色
+Path Color - 路徑線段顏色
 
-Path Width - 拖尾路徑寬度
+Path Width - 路徑線段寬度
 
-Path Scrolling Speed - 拖尾路徑貼圖流動速度
+Path Scrolling Speed - 路徑線段貼圖流動速度
 
 Dust
 
@@ -105,23 +102,23 @@ Dust Turbulence Scale - Dust 粒子擾動尺寸
 
 Curve Shape
 
-Segement Count - 曲線取樣段數，數值越高路徑越細緻，但運算成本也越高
+Segement Count -  路徑線段段數，數值越高路徑越細緻，但運算成本也越高
 
-Curve Strength - 曲線彎曲強度
+Curve Strength -  路徑線段彎曲強度
 
-Control Point Slide - 控制點沿起終點方向的偏移
+Control Point Slide -  路徑線段控制點沿起終點方向的偏移
 
-Control Point Pinch - 控制點往中心收束的程度
+Control Point Pinch -  路徑線段控制點往中心收束的程度
 
-Same DIr? - 控制曲線兩端方向是否採用相同方向邏輯
+Same DIr? - 控制 路徑線段兩端方向是否採用相同方向
 
-Height - 曲線高度
+Height -  路徑線段隆起高度
 
-Angle - 曲線彎曲方向角度
+Angle -  路徑線段彎曲方向旋轉
 
 Binding
 
-Target Postion - 飛行目標位置，通常由 VFX Property Binder 綁定 `Target` Transform，不用手動輸入
+Target Postion - 飛行目標位置，由 VFX Property Binder 綁定 `Target` Transform，不用手動輸入
 
 ### V_TrailBinding
 
@@ -175,14 +172,6 @@ Dust Turbulence Scale - Dust 粒子擾動尺寸
 
 P_MeteorAlongCurve
 
-Visual Effect - 播放 `V_TrailAlongCurve`
-
 VFX Property Binder - 將 `Target` Transform 的位置寫入 `Target Postion`
 
 Target - 曲線終點，調整位置即可改變流星飛行目標
-
-P_MeteorBinding / P_SparkTrailBinding
-
-Visual Effect - 播放 `V_TrailBinding`
-
-VFX Property Binder - 將綁定目標的位置傳入 Visual Effect，使移動物件產生拖尾
