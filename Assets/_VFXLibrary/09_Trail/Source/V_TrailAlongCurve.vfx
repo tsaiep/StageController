@@ -250,7 +250,7 @@ MonoBehaviour:
     x: -975
     y: -314
     width: 6932
-    height: 3781
+    height: 3878
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3620,7 +3620,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614673}
   m_ExposedName: Curve Strength
   m_Exposed: 1
-  m_Order: 12
+  m_Order: 22
   m_Category: Curve Shape
   m_Min:
     m_Type:
@@ -3710,7 +3710,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614675}
   m_ExposedName: Control Point Slide
   m_Exposed: 1
-  m_Order: 15
+  m_Order: 25
   m_Category: Curve Shape
   m_Min:
     m_Type:
@@ -3802,7 +3802,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614677}
   m_ExposedName: Control Point Pinch
   m_Exposed: 1
-  m_Order: 16
+  m_Order: 26
   m_Category: Curve Shape
   m_Min:
     m_Type:
@@ -3894,7 +3894,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614679}
   m_ExposedName: Same DIr?
   m_Exposed: 1
-  m_Order: 17
+  m_Order: 27
   m_Category: Curve Shape
   m_Min:
     m_Type:
@@ -3984,7 +3984,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614681}
   m_ExposedName: Height
   m_Exposed: 1
-  m_Order: 18
+  m_Order: 28
   m_Category: Curve Shape
   m_Min:
     m_Type:
@@ -4074,7 +4074,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614683}
   m_ExposedName: Angle
   m_Exposed: 1
-  m_Order: 19
+  m_Order: 29
   m_Category: Curve Shape
   m_Min:
     m_Type:
@@ -4164,7 +4164,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614685}
   m_ExposedName: Target Postion
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 12
   m_Category: Binding
   m_Min:
     m_Type:
@@ -4817,7 +4817,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614709}
   m_ExposedName: Path Texture
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: Path Display
   m_Min:
     m_Type:
@@ -4901,7 +4901,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614711}
   m_ExposedName: Pathl Texture Scale
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 6
   m_Category: Path Display
   m_Min:
     m_Type:
@@ -5188,7 +5188,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614719}
   m_ExposedName: Path Color
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 10
   m_Category: Path Display
   m_Min:
     m_Type:
@@ -5470,7 +5470,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614731}
   m_ExposedName: Path Width
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 14
   m_Category: Path Display
   m_Min:
     m_Type:
@@ -5806,7 +5806,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614755}
   m_ExposedName: Path Scrolling Speed
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 16
   m_Category: Path Display
   m_Min:
     m_Type:
@@ -6082,7 +6082,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614773}
   m_ExposedName: Control
   m_Exposed: 1
-  m_Order: 20
+  m_Order: 30
   m_Category: 
   m_Min:
     m_Type:
@@ -6547,7 +6547,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614793}
   m_ExposedName: Fade
   m_Exposed: 1
-  m_Order: 21
+  m_Order: 31
   m_Category: 
   m_Min:
     m_Type:
@@ -15447,7 +15447,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 5189, y: 3244}
+  m_UIPosition: {x: 5144, y: 3244}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -15624,7 +15624,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615317}
   m_ExposedName: Head Width
   m_Exposed: 1
-  m_Order: 9
+  m_Order: 18
   m_Category: Head Display
   m_Min:
     m_Type:
@@ -15714,7 +15714,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615321}
   m_ExposedName: Head Color
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 8
   m_Category: Head Display
   m_Min:
     m_Type:
@@ -15931,7 +15931,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615327}
   m_ExposedName: Head Texture
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 4
   m_Category: Head Display
   m_Min:
     m_Type:
@@ -16012,7 +16012,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615329}
   m_ExposedName: Head Lifetime Noise Scale
   m_Exposed: 1
-  m_Order: 11
+  m_Order: 21
   m_Category: Head Display
   m_Min:
     m_Type:
@@ -16093,7 +16093,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615331}
   m_ExposedName: Head Turbulence Strength
   m_Exposed: 1
-  m_Order: 13
+  m_Order: 23
   m_Category: Head Display
   m_Min:
     m_Type:
@@ -16174,7 +16174,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615333}
   m_ExposedName: Head Turbulence Scale
   m_Exposed: 1
-  m_Order: 14
+  m_Order: 24
   m_Category: Head Display
   m_Min:
     m_Type:
@@ -16255,7 +16255,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615335}
   m_ExposedName: Head Lifetime Range
   m_Exposed: 1
-  m_Order: 10
+  m_Order: 20
   m_Category: Head Display
   m_Min:
     m_Type:
@@ -22438,7 +22438,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617444}
   m_ExposedName: Dust Spawn Radius
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 3
   m_Category: Dust
   m_Min:
     m_Type:
@@ -22519,7 +22519,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617446}
   m_ExposedName: Dust Spawn Rate
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: Dust
   m_Min:
     m_Type:
@@ -22600,7 +22600,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617448}
   m_ExposedName: Dust Size Range
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 13
   m_Category: Dust
   m_Min:
     m_Type:
@@ -22753,7 +22753,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617452}
   m_ExposedName: Dust Lifetime Range
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 11
   m_Category: Dust
   m_Min:
     m_Type:
@@ -22906,7 +22906,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617456}
   m_ExposedName: Dust Color 2
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 9
   m_Category: Dust
   m_Min:
     m_Type:
@@ -23123,7 +23123,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617462}
   m_ExposedName: Dust Texture
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 5
   m_Category: Dust
   m_Min:
     m_Type:
@@ -23204,7 +23204,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617464}
   m_ExposedName: Dust Turbulence Scale
   m_Exposed: 1
-  m_Order: 9
+  m_Order: 19
   m_Category: Dust
   m_Min:
     m_Type:
@@ -23285,7 +23285,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617466}
   m_ExposedName: Dust Turbulence Strength
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 17
   m_Category: Dust
   m_Min:
     m_Type:
@@ -23366,7 +23366,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617468}
   m_ExposedName: Dust Sparkling Speed
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 15
   m_Category: Dust
   m_Min:
     m_Type:
@@ -23456,7 +23456,7 @@ MonoBehaviour:
   - {fileID: 8926484042661617470}
   m_ExposedName: Dust Color 1
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 7
   m_Category: Dust
   m_Min:
     m_Type:
