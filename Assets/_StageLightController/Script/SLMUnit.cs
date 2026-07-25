@@ -43,6 +43,8 @@ public class SLMUnit : MonoBehaviour
     [System.NonSerialized] public List<float> gradientKeyTimes;
     [System.NonSerialized] public GradientColorKey[] gradientColorKeys;
     [System.NonSerialized] public GradientAlphaKey[] gradientAlphaKeys;
+    [System.NonSerialized] public float[] audioBrightnessValues;
+    [System.NonSerialized] public bool[] audioBrightnessInitialized;
     [System.NonSerialized] public Gradient cachedBeamLengthGradient;
     [System.NonSerialized] public int cachedBeamLengthGradientHash;
     [System.NonSerialized] public GradientMode cachedBeamLengthGradientMode;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using MoreMountains.Tools;
 
 [ExecuteAlways]
 public class UnifiedStageController : MonoBehaviour
@@ -56,6 +57,7 @@ public class UnifiedStageController : MonoBehaviour
     public SLMUnit[] slmUnits;
     public Transform defaultTarget;
     public AudioSource audioSource;
+    public MMAudioAnalyzer audioAnalyzer;
 
     [Header("Template Preview")]
     [Tooltip("Prefab used by the editor preview. The preview instantiates three hidden copies and only updates mesh colors/rotations.")]
@@ -237,6 +239,9 @@ public class UnifiedStageController : MonoBehaviour
                 if (enableColorUpdate)
                 {
                     Color clipColor = ComputeClipColor(clip, unit, rootTime, unitEt, unitDelay);
+                    float audioBrightnessScale = ComputeAudioAnalyzerBrightnessScale(clip, unit, ci, isTimeJump, dt);
+                    if (!Mathf.Approximately(audioBrightnessScale, 1f))
+                        clipColor = UnifiedStageGradientUtility.ForceOpaque(clipColor * audioBrightnessScale);
                     AddGradientContribution(gradientContributions, clip, unit, clipColor);
                 }
 
@@ -577,6 +582,52 @@ public class UnifiedStageController : MonoBehaviour
         }
     }
 
+    private float ComputeAudioAnalyzerBrightnessScale(ActiveClipInfo clip, SLMUnit unit, int clipIndex, bool isTimeJump, float dt)
+    {
+        if (!clip.useAudioAnalyzerBrightness)
+            return 1f;
+
+        if (audioAnalyzer == null || audioAnalyzer.Beats == null || audioAnalyzer.Beats.Length == 0)
+            return 1f;
+
+        if (clip.audioBeatIndices == null || clip.audioBeatIndices.Length == 0)
+            return 1f;
+
+        int interval = Mathf.Max(1, clip.audioBeatLightInterval);
+        int indexInGroup = unit != null ? Mathf.Max(0, unit.indexInGroup) : 0;
+        int slot = (indexInGroup / interval) % clip.audioBeatIndices.Length;
+        int beatID = Mathf.Max(0, clip.audioBeatIndices[slot]);
+
+        if (beatID >= audioAnalyzer.Beats.Length)
+            return 1f;
+
+        Beat beat = audioAnalyzer.Beats[beatID];
+        if (beat == null)
+            return 1f;
+
+        float beatValue = Mathf.Max(0f, beat.CurrentValue);
+        float targetScale = Mathf.Max(0f, clip.audioBrightnessOffset + beatValue * clip.audioBrightnessMultiplier);
+        float lerpSpeed = Mathf.Max(0f, clip.audioBrightnessLerp);
+
+        if (unit == null || lerpSpeed <= 0f || isTimeJump || dt <= 0f)
+            return targetScale;
+
+        EnsureAudioBrightnessRuntimeCache(unit, clipIndex + 1);
+        if (!unit.audioBrightnessInitialized[clipIndex])
+        {
+            unit.audioBrightnessValues[clipIndex] = targetScale;
+            unit.audioBrightnessInitialized[clipIndex] = true;
+            return targetScale;
+        }
+
+        unit.audioBrightnessValues[clipIndex] = Mathf.Lerp(
+            unit.audioBrightnessValues[clipIndex],
+            targetScale,
+            lerpSpeed * dt);
+
+        return unit.audioBrightnessValues[clipIndex];
+    }
+
     private static void AddGradientContribution(
         List<WeightedGradientContribution> contributions,
         ActiveClipInfo clip,
@@ -611,12 +662,37 @@ public class UnifiedStageController : MonoBehaviour
             unit.gradientContributions = new List<WeightedGradientContribution>(Mathf.Max(4, clipCapacity));
         if (unit.gradientKeyTimes == null)
             unit.gradientKeyTimes = new List<float>(8);
+        EnsureAudioBrightnessRuntimeCache(unit, clipCapacity);
         if (unit.currentGradient == null)
             unit.currentGradient = UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
         if (unit.targetGradient == null)
             unit.targetGradient = UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
         if (unit.frozenGradient == null)
             unit.frozenGradient = UnifiedStageGradientUtility.CreateSolidGradient(Color.black);
+    }
+
+    private static void EnsureAudioBrightnessRuntimeCache(SLMUnit unit, int clipCapacity)
+    {
+        if (unit == null)
+            return;
+
+        int capacity = Mathf.Max(1, clipCapacity);
+        if (unit.audioBrightnessValues != null && unit.audioBrightnessValues.Length >= capacity &&
+            unit.audioBrightnessInitialized != null && unit.audioBrightnessInitialized.Length >= capacity)
+            return;
+
+        float[] oldValues = unit.audioBrightnessValues;
+        bool[] oldInitialized = unit.audioBrightnessInitialized;
+        unit.audioBrightnessValues = new float[capacity];
+        unit.audioBrightnessInitialized = new bool[capacity];
+
+        if (oldValues == null || oldInitialized == null)
+            return;
+
+        int copyCount = Mathf.Min(oldValues.Length, unit.audioBrightnessValues.Length);
+        System.Array.Copy(oldValues, unit.audioBrightnessValues, copyCount);
+        copyCount = Mathf.Min(oldInitialized.Length, unit.audioBrightnessInitialized.Length);
+        System.Array.Copy(oldInitialized, unit.audioBrightnessInitialized, copyCount);
     }
 
     private static void EnsureVlbGradientMode(SLMUnit unit, VLB.VolumetricLightBeamHD vlb)

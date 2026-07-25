@@ -40,6 +40,19 @@ public class UnifiedStageTemplate : ScriptableObject
     public AnimationCurve beatGroupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("跟隨節拍組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
     public AnimationCurve beatLightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Header("Audio Analyzer Brightness")]
+    [Tooltip("Use UnifiedStageController.audioAnalyzer Beat values to scale this template's final brightness.")]
+    public bool useAudioAnalyzerBrightness = false;
+    [Tooltip("How many lights keep the same Beat index before moving to the next entry in Audio Beat Indices.")]
+    public int audioBeatLightInterval = 1;
+    [Tooltip("Beat indices assigned across lights in each group.")]
+    public int[] audioBeatIndices = new int[] { 0 };
+    [Tooltip("Brightness scale when Beat.CurrentValue is 0. 0 = black, 1 = original brightness.")]
+    public float audioBrightnessOffset = 1f;
+    [Tooltip("Additional brightness scale applied by Beat.CurrentValue.")]
+    public float audioBrightnessMultiplier = 1f;
+    [Tooltip("Extra smoothing for the audio brightness scale. 0 = no extra smoothing.")]
+    public float audioBrightnessLerp = 0f;
     [ColorUsage(true, true), Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
@@ -79,5 +92,12 @@ public class UnifiedStageTemplate : ScriptableObject
     {
         if (beamLengthGradient == null)
             beamLengthGradient = UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
+
+        audioBeatLightInterval = Mathf.Max(1, audioBeatLightInterval);
+        if (audioBeatIndices == null || audioBeatIndices.Length == 0)
+            audioBeatIndices = new int[] { 0 };
+        for (int i = 0; i < audioBeatIndices.Length; i++)
+            audioBeatIndices[i] = Mathf.Max(0, audioBeatIndices[i]);
+        audioBrightnessLerp = Mathf.Max(0f, audioBrightnessLerp);
     }
 }

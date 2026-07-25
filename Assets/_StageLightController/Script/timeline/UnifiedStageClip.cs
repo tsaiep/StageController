@@ -33,6 +33,20 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     public AnimationCurve beatGroupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("跟隨節拍組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
     public AnimationCurve beatLightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+
+    [Header("Audio Analyzer Brightness")]
+    [Tooltip("Use UnifiedStageController.audioAnalyzer Beat values to scale this clip's final brightness.")]
+    public bool useAudioAnalyzerBrightness = false;
+    [Tooltip("How many lights keep the same Beat index before moving to the next entry in Audio Beat Indices.")]
+    public int audioBeatLightInterval = 1;
+    [Tooltip("Beat indices assigned across lights in each group.")]
+    public int[] audioBeatIndices = new int[] { 0 };
+    [Tooltip("Brightness scale when Beat.CurrentValue is 0. 0 = black, 1 = original brightness.")]
+    public float audioBrightnessOffset = 1f;
+    [Tooltip("Additional brightness scale applied by Beat.CurrentValue.")]
+    public float audioBrightnessMultiplier = 1f;
+    [Tooltip("Extra smoothing for the audio brightness scale. 0 = no extra smoothing.")]
+    public float audioBrightnessLerp = 0f;
     [Tooltip("凍結前幀——啟用後改為以 Clip 自身 Light Gradient 取色（Clip 頭尾對應 0-1），並與前後 Clip 正常 Blending；停用則凍結前一個 Clip 的瞬間顏色")] public bool freezeUseClipGradient = false;
 
     [Header("燈具物理設定")]
@@ -109,6 +123,13 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         if (beamLengthGradient == null)
             beamLengthGradient = UnifiedStageGradientUtility.CreateDefaultBeamLengthGradient();
 
+        audioBeatLightInterval = Mathf.Max(1, audioBeatLightInterval);
+        if (audioBeatIndices == null || audioBeatIndices.Length == 0)
+            audioBeatIndices = new int[] { 0 };
+        for (int i = 0; i < audioBeatIndices.Length; i++)
+            audioBeatIndices[i] = Mathf.Max(0, audioBeatIndices[i]);
+        audioBrightnessLerp = Mathf.Max(0f, audioBrightnessLerp);
+
         if (!mutableDataDetached)
         {
             DetachMutableData();
@@ -140,6 +161,12 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             beatLightDelayFactor   = template.beatLightDelayFactor;
             beatGroupDelayCurve    = CloneAnimationCurve(template.beatGroupDelayCurve);
             beatLightDelayCurve    = CloneAnimationCurve(template.beatLightDelayCurve);
+            useAudioAnalyzerBrightness = template.useAudioAnalyzerBrightness;
+            audioBeatLightInterval = template.audioBeatLightInterval;
+            audioBeatIndices = CloneIntArray(template.audioBeatIndices);
+            audioBrightnessOffset = template.audioBrightnessOffset;
+            audioBrightnessMultiplier = template.audioBrightnessMultiplier;
+            audioBrightnessLerp = template.audioBrightnessLerp;
             freezeUseClipGradient  = template.freezeUseClipGradient;
         }
 
@@ -185,6 +212,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         beatSnapColors = CloneColorArray(beatSnapColors);
         beatGroupDelayCurve = CloneAnimationCurve(beatGroupDelayCurve);
         beatLightDelayCurve = CloneAnimationCurve(beatLightDelayCurve);
+        audioBeatIndices = CloneIntArray(audioBeatIndices);
         groupDelayCurve = CloneAnimationCurve(groupDelayCurve);
         groupRotationRangeCurve = CloneAnimationCurve(groupRotationRangeCurve);
         lightDelayCurve = CloneAnimationCurve(lightDelayCurve);
@@ -214,6 +242,11 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     public static Color[] CloneColorArray(Color[] source)
     {
         return source != null ? (Color[])source.Clone() : null;
+    }
+
+    public static int[] CloneIntArray(int[] source)
+    {
+        return source != null ? (int[])source.Clone() : null;
     }
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
@@ -262,6 +295,12 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.beatLightDelayFactor  = beatLightDelayFactor;
         behaviour.beatGroupDelayCurve   = beatGroupDelayCurve;
         behaviour.beatLightDelayCurve   = beatLightDelayCurve;
+        behaviour.useAudioAnalyzerBrightness = useAudioAnalyzerBrightness;
+        behaviour.audioBeatLightInterval = audioBeatLightInterval;
+        behaviour.audioBeatIndices = audioBeatIndices;
+        behaviour.audioBrightnessOffset = audioBrightnessOffset;
+        behaviour.audioBrightnessMultiplier = audioBrightnessMultiplier;
+        behaviour.audioBrightnessLerp = audioBrightnessLerp;
         behaviour.globalColor           = globalColor;
 
         return playable;

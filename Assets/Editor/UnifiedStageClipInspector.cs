@@ -163,6 +163,12 @@ public class UnifiedStageClipInspector : Editor
         template.beatLightDelayFactor = clip.beatLightDelayFactor;
         template.beatGroupDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatGroupDelayCurve);
         template.beatLightDelayCurve = UnifiedStageClip.CloneAnimationCurve(clip.beatLightDelayCurve);
+        template.useAudioAnalyzerBrightness = clip.useAudioAnalyzerBrightness;
+        template.audioBeatLightInterval = clip.audioBeatLightInterval;
+        template.audioBeatIndices = UnifiedStageClip.CloneIntArray(clip.audioBeatIndices);
+        template.audioBrightnessOffset = clip.audioBrightnessOffset;
+        template.audioBrightnessMultiplier = clip.audioBrightnessMultiplier;
+        template.audioBrightnessLerp = clip.audioBrightnessLerp;
         template.globalColor = clip.globalColor;
         template.freezeUseClipGradient = clip.freezeUseClipGradient;
         template.rotationMode = clip.rotationMode;

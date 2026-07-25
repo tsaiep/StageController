@@ -66,6 +66,13 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     public AnimationCurve beatGroupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
     [Tooltip("跟隨節拍組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）")]
     public AnimationCurve beatLightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [Header("Audio Analyzer Brightness")]
+    public bool useAudioAnalyzerBrightness = false;
+    public int audioBeatLightInterval = 1;
+    public int[] audioBeatIndices = new int[] { 0 };
+    public float audioBrightnessOffset = 1f;
+    public float audioBrightnessMultiplier = 1f;
+    public float audioBrightnessLerp = 0f;
     [Tooltip("全域顏色乘算（HDR）")] public Color globalColor = Color.white;
 
     [Header("分散效果設定")]
