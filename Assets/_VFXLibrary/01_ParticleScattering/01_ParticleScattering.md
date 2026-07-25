@@ -21,6 +21,14 @@ https://www.notion.so/01_ParticleScattering-3958a373d31780e6b0f9ffa615f8ed12?sou
 
 1. 建議使用 Animation Track 或 Assets\_FeelCue\Script\VFXPropertiesControl.cs 控制 Spawn Control 參數，達成控制粒子生成
 
+Audio Visualizer 串接
+
+1. 設有四個接口，分別對應隨機各半的粒子的尺寸與亮度，使用`Assets\_FeelCue\Script\AudioAnalyzerVFXController.cs`接收來`Assets\Feel\MMTools\Core\MMAudio\AudioAnalyzer\MMAudioAnalyzer.cs` 的資訊
+2. 透過設定`AudioAnalyzerVFXController.cs` **上的參數，決定聽取音樂的模式以及處裡接收的數值，主要需要設定的有**
+    1. `audioAnalyzerMultiplier`  數值的強度倍率
+    2. `audioAnalyzerOffset` 數值的中心點，亮度與尺寸的Offset應為1
+    3. `audioAnalyzerLerp`  數值的平滑度，越高越平滑，可設得很高
+
 ### V_ParticleScattering_UnlitQuad 不吃光的粒子散佈
 
 設定靜態的基本參數
@@ -33,19 +41,27 @@ https://www.notion.so/01_ParticleScattering-3958a373d31780e6b0f9ffa615f8ed12?sou
 
 1. 建議使用 Animation Track 或 Assets\_FeelCue\Script\VFXPropertiesControl.cs 控制 Spawn Control 參數，達成控制粒子生成
 
+Audio Visualizer 串接
+
+1. 設有四個接口，分別對應隨機各半的粒子的尺寸與亮度，使用`Assets\_FeelCue\Script\AudioAnalyzerVFXController.cs`接收來`Assets\Feel\MMTools\Core\MMAudio\AudioAnalyzer\MMAudioAnalyzer.cs` 的資訊
+2. 透過設定`AudioAnalyzerVFXController.cs` **上的參數，決定聽取音樂的模式以及處裡接收的數值，主要需要設定的有**
+    1. `audioAnalyzerMultiplier`  數值的強度倍率
+    2. `audioAnalyzerOffset` 數值的中心點，亮度與尺寸的Offset應為1
+    3. `audioAnalyzerLerp`  數值的平滑度，越高越平滑，可設得很高
+
 ---
 
 ## 參數解釋
 
 ### V_ParticleScattering_LitMesh 吃光的模型散佈
 
-**Control**
+Control
 
-Spawn Control - 生成控制項，生成動畫建議由此控制
+**Spawn Control** - 生成控制項，生成動畫建議由此控制
 
-Fade Out by Spawn Control - 是否於 Spawn Control 數值遞減時粒子同步淡出，若不勾選當 Spawn Control 為0時，既存的粒子會持續存在直到生命結束
+**Fade Out by Spawn Control** - 是否於 Spawn Control 數值遞減時粒子同步淡出，若不勾選當 Spawn Control 為0時，既存的粒子會持續存在直到生命結束
 
-**Spawn**
+Spawn
 
 Spawn Rate - 每秒生成數量
 
@@ -67,13 +83,13 @@ Smoothness - 模型光滑度
 
 Metallic - 材質是否為金屬
 
-**Lifetime Animation**
+Lifetime Animation
 
 Size Over Lifetime - 模型生命期間尺寸變化
 
 Color Over Lifetime - 模型生命期間顏色變化，含Alpha
 
-**Force**
+Force
 
 Initial Velocity - 粒子生成時的初始速度
 
@@ -89,15 +105,25 @@ Vortex Strength - 粒子的螺旋運動強度
 
 Drag - 粒子受到的阻力，配合其他力相關參數做出夠聚集、黏稠的動態
 
+Audio Visualizer
+
+Size Beat 0 - 串接 Audio Visualizer 腳本使用的數值，控制其中一半既存粒子的尺寸變化
+
+Size Beat 1 - 同上，但控制另一半粒子
+
+Color Beat 0 -  串接 Audio Visualizer 腳本使用的數值，控制其中一半既存粒子的顏色強度變化
+
+Color Beat 1 - 同上，但控制另一半粒子
+
 ### V_ParticleScattering_UnlitQuad 不吃光的粒子散佈
 
-**Control**
+Control
 
 **Spawn Control** - 生成控制項，生成動畫建議由此控制
 
 **Fade Out by Spawn Control** - 是否於 Spawn Control 數值遞減時粒子同步淡出，若不勾選當 Spawn Control 為0時，既存的粒子會持續存在直到生命結束
 
-**Spawn**
+Spawn
 
 Spawn Rate - 每秒生成數量
 
@@ -113,7 +139,7 @@ Color 1 - 粒子顏色之一，Alpha為透明度，最終結果在與 Color 2 �
 
 Color 2 - 粒子顏色之二，Alpha為透明度，最終結果在與 Color 1 之間隨機
 
-**Lifetime Animation**
+Lifetime Animation
 
 Size Over Lifetime - 模型生命期間尺寸變化
 
@@ -121,7 +147,7 @@ Color Over Lifetime - 模型生命期間顏色變化，含Alpha
 
 Sparkling Speed - 粒子每秒閃爍的次數，0為不閃爍
 
-**Force**
+Force
 
 Initial Velocity - 粒子生成時的初始速度
 
@@ -138,3 +164,13 @@ Gravity - 地心引力強度
 Vortex Strength - 粒子的螺旋運動強度
 
 Drag - 粒子受到的阻力，配合其他力相關參數做出夠聚集、黏稠的動態
+
+Audio Visualizer
+
+Size Beat 0 - 串接 Audio Visualizer 腳本使用的數值，控制其中一半既存粒子的尺寸變化
+
+Size Beat 1 - 同上，但控制另一半粒子
+
+Color Beat 0 -  串接 Audio Visualizer 腳本使用的數值，控制其中一半既存粒子的顏色強度變化
+
+Color Beat 1 - 同上，但控制另一半粒子

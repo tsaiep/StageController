@@ -1,7 +1,9 @@
 # 08_EnvironmentSpline
 
 這是沿著一組 Transform 控制點生成的環境線條特效，可以製作漂浮光帶、魔法緞帶、金色絲線等空間路徑效果。Prefab 內建 VFX Property Binder，會把 `Lighting_P0` 到 `Lighting_P7` 的位置寫入 VFX Graph 的 `PositionMap` 與 `PositionCount`，用這些點決定線條形狀。
+
 Notion 版本：https://www.notion.so/08_EnvironmentSpline-0f4016d70d794776b7be6bace8a897f5?source=copy_link
+
 ---
 
 ## 使用方式
@@ -19,6 +21,15 @@ Notion 版本：https://www.notion.so/08_EnvironmentSpline-0f4016d70d794776b7be6
 
 1. 建議使用 Animation Track 或 `Assets\_FeelCue\Script\VFXPropertiesControl.cs` 控制 `Control` 參數，達成整體淡入淡出
 2. 可使用 Timeline 或 Animation 直接控制 Knot 的位置，改變光帶路徑
+
+Audio Visualizer 串接
+
+1. Band Width 設定下面兩個控制項交錯的頻率
+2. 設有兩接口，交錯控制光帶的Y軸高度變化，使用`Assets\_FeelCue\Script\AudioAnalyzerVFXController.cs`接收來`Assets\Feel\MMTools\Core\MMAudio\AudioAnalyzer\MMAudioAnalyzer.cs` 的資訊
+3. 透過設定`AudioAnalyzerVFXController.cs` **上的參數，決定聽取音樂的模式以及處裡接收的數值，主要需要設定的有**
+    1. `audioAnalyzerMultiplier`  數值的強度倍率
+    2. `audioAnalyzerOffset` 數值的中心點，亮度與尺寸的Offset應為1
+    3. `audioAnalyzerLerp`  數值的平滑度，越高越平滑，可設得很高
 
 ### 兩版本差異
 
@@ -99,6 +110,14 @@ Binding
 PositionMap - 控制點位置貼圖，由 VFX Property Binder 自動寫入，不用手動指定
 
 PositionCount - 控制點數量，自動寫入，不用手動指定
+
+Audio Visualizer
+
+Band Width - 以光帶的節為單位，使下面兩個接口交錯控制光帶局部
+
+Beat 0 - 串接 Audio Visualizer 腳本使用的數值，控制光帶局部的Y軸高度
+
+Beat 1 - 串接 Audio Visualizer 腳本使用的數值，控制光帶局部的Y軸高度
 
 ---
 
