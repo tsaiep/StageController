@@ -851,52 +851,6 @@ MonoBehaviour:
   currentSourceValue: 0
   currentValue: 0
   currentValueNormalized: 0
---- !u!28 &167963090
-Texture2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: P_EnvironmentSpline_GoldenString_PositionMap
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 3
-  m_Width: 8
-  m_Height: 1
-  m_CompleteImageSize: 128
-  m_MipsStripped: 0
-  m_TextureFormat: 20
-  m_MipCount: 1
-  m_IsReadable: 1
-  m_IsPreProcessed: 0
-  m_IgnoreMipmapLimit: 1
-  m_MipmapLimitGroupName: 
-  m_StreamingMipmaps: 0
-  m_StreamingMipmapsPriority: 0
-  m_VTOnly: 0
-  m_AlphaIsTransparency: 0
-  m_ImageCount: 1
-  m_TextureDimension: 2
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_LightmapFormat: 0
-  m_ColorSpace: 1
-  m_PlatformBlob: 
-  image data: 128
-  _typelessdata: 7c1472c1b81e9d4085eb0dc10000803fea3f62c1b81e9d40f4d05dbf0000803fdd34dac0b81e9d40336814400000803fc4d9c63fb81e9d409676cf3f0000803fbdaf9240b81e9d404edcb7c00000803f829f7940b81e9d40e1425fc10000803ff20460c0b81e9d40a43689c10000803f60b23fc1b81e9d40c8bd81c10000803f
-  m_StreamData:
-    serializedVersion: 2
-    offset: 0
-    size: 0
-    path: 
 --- !u!1 &187654504
 GameObject:
   m_ObjectHideFlags: 0
@@ -2145,13 +2099,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 577487313}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.01, z: -0.2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.0647454, y: -15.212325, z: 29.14112}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1003571720}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 867289784}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &605017289
 GameObject:
@@ -3042,7 +2996,7 @@ PrefabInstance:
     - target: {fileID: 2769943654249631683, guid: 40227edb2d96bea449372a33870bc4c9, type: 3}
       propertyPath: m_PropertySheet.m_NamedObject.m_Array.Array.data[0].m_Value
       value: 
-      objectReference: {fileID: 167963090}
+      objectReference: {fileID: 1627264798}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3821,7 +3775,8 @@ Transform:
   m_LocalPosition: {x: -6.0647454, y: 15.222325, z: -29.341122}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 577487316}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &875934364 stripped
@@ -7117,6 +7072,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621900112}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!28 &1627264798
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: P_EnvironmentSpline_GoldenString_PositionMap
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_Width: 8
+  m_Height: 1
+  m_CompleteImageSize: 128
+  m_MipsStripped: 0
+  m_TextureFormat: 20
+  m_MipCount: 1
+  m_IsReadable: 1
+  m_IsPreProcessed: 0
+  m_IgnoreMipmapLimit: 1
+  m_MipmapLimitGroupName: 
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_LightmapFormat: 0
+  m_ColorSpace: 1
+  m_PlatformBlob: 
+  image data: 128
+  _typelessdata: 7c1472c1b81e9d4085eb0dc10000803fea3f62c1b81e9d40f4d05dbf0000803fdd34dac0b81e9d40336814400000803fc4d9c63fb81e9d409676cf3f0000803fbdaf9240b81e9d404edcb7c00000803f829f7940b81e9d40e1425fc10000803ff20460c0b81e9d40a43689c10000803f60b23fc1b81e9d40c8bd81c10000803f
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
 --- !u!1 &1644185911
 GameObject:
   m_ObjectHideFlags: 0
@@ -9552,10 +9553,9 @@ SceneRoots:
   - {fileID: 373798546}
   - {fileID: 830406775}
   - {fileID: 605017290}
+  - {fileID: 1398240187}
   - {fileID: 337618830}
   - {fileID: 2002859732}
   - {fileID: 211224579}
-  - {fileID: 1398240187}
   - {fileID: 1490233203}
   - {fileID: 867289784}
-  - {fileID: 577487316}
