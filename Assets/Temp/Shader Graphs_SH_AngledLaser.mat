@@ -38,15 +38,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Angle: 14.1
+    - _Angle: 90
     - _Edge_Hardness: 0
     - _Edge_Intensity: 0
-    - _Edge_Width: 0.01
-    - _Float: 0.73
+    - _Edge_Width: 0.094
+    - _Float: 0
     - _Power: 16.03
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Width_Bias: 1.43
+    - _Width_Bias: 0.15
+    - _len: 10
+    - _test: 1
+    - _test_1: 50.8
+    - _test_2: 332.6
     m_Colors:
     - _Color: {r: 0, g: 1, b: 0.14930898, a: 0.96862745}
   m_BuildTextureStacks: []
