@@ -82,6 +82,11 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Tooltip("依所屬燈組內 Index 取樣的 Spread Angle 倍率曲線（indexInGroup/(groupSize-1)，再乘到 SpreadTilt.x）")]
     public AnimationCurve spreadAngleCurveByIndex;
     [Tooltip("展開旋轉曲線（Sample 旋轉動作循環，0~1 → 0~360° 附加到 SpreadPan.y）")] public AnimationCurve spreadPanCurve;
+    [Header("Fanned Laser Settings")]
+    [Range(0f, 180f), Tooltip("Maximum fanned laser spread angle in degrees.")]
+    public float fannedAngle = 0f;
+    [Tooltip("Samples one motion cycle. Multiplied by Fanned Angle and sent to _Range.")]
+    public AnimationCurve fannedAngleCurve = AnimationCurve.Constant(0, 1, 1);
 
 
     /// <summary>

@@ -544,3 +544,30 @@ Point Light 是全方向發光，同樣 intensity 會比其他更容易過亮。
     2. Spread Pan Curve 0-1設為統一的數值，一來確保不會旋轉，並且數值展開的方向（0為水平；0.25為垂直）
     3. Spread Angle Curve By Index 透過控制燈組內燈具ID的 SpearTilt 係數，做出扇形展開的效果
 4. 由於分散雷射燈本質是將一個燈組重疊，因此可以運用組內燈光的延遲參數組合出不同的效果[@08_EvironmentSpline.md](file:///D:/UnityProject/StageController/Assets/_VFXLibrary/08_EnvironmentSpline/08_EvironmentSpline.md)
+
+---
+
+## Fanned Laser Light Mode
+
+`Fanned Laser` 是 renderer-only light mode，行為接近 `Laser Mesh`：
+
+- 選擇 `Fanned Laser` 時會關閉 `Light` 與 `VLB.VolumetricLightBeamHD`。
+- `SLMUnit.fannedLaserRenderers` 指定的 renderer 會開啟。
+- `SLMUnit.laserMeshRenderers` 會關閉。
+- 選擇其他 light mode 時，`fannedLaserRenderers` 會關閉。
+
+Clip 會透過 `MaterialPropertyBlock` 傳給 Fanned Laser renderer：
+
+| Shader Property | 來源 |
+| --- | --- |
+| `_BaseColor` | Clip color/gradient 混合後的顏色 |
+| `_Softness` | Clip `softness` 混合值 |
+| `_Range` | Clip `lightRange` 混合值 |
+| `_Angle` | `Fanned Angle * Fanned Angle Curve`，範圍限制在 0 到 180 |
+
+Fanned Laser 專用 Clip 參數：
+
+| 欄位 | 說明 |
+| --- | --- |
+| `Fanned Angle` | 0 到 180 度，控制扇形展開最大角度 |
+| `Fanned Angle Curve` | 依一個 motion cycle 取樣，作為 `Fanned Angle` 的係數 |

@@ -65,6 +65,8 @@ public struct ActiveClipInfo
     public AnimationCurve spreadAngleCurve; // 0~1 乘以 spreadAngle → SpreadTilt.x
     public AnimationCurve spreadAngleCurveByIndex; // indexInGroup/(groupSize-1) 乘到 SpreadTilt.x
     public AnimationCurve spreadPanCurve;   // 0~1 → 0~360°，附加到 SpreadPan.y
+    public float fannedAngle;
+    public AnimationCurve fannedAngleCurve;
     public bool useAudioAnalyzerBrightness;
     public int audioBeatLightInterval;
     public int[] audioBeatIndices;

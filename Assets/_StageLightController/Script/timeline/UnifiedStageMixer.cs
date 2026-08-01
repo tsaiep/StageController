@@ -174,6 +174,8 @@ public class UnifiedStageMixer : PlayableBehaviour
                 spreadAngleCurve    = b.spreadAngleCurve,
                 spreadAngleCurveByIndex = b.spreadAngleCurveByIndex,
                 spreadPanCurve      = b.spreadPanCurve,
+                fannedAngle         = b.fannedAngle,
+                fannedAngleCurve    = b.fannedAngleCurve,
             });
         }
 

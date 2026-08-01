@@ -73,6 +73,15 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     public AnimationCurve spreadAngleCurveByIndex = AnimationCurve.Constant(0, 1, 1);
     [Tooltip("展開旋轉曲線（Sample 旋轉動作循環，0~1 → 0~360° 附加到 SpreadPan.y）")] public AnimationCurve spreadPanCurve = AnimationCurve.Constant(0, 1, 0);
 
+    [Header("扇形光束設定")]
+    [Range(0f, 180f), Tooltip("Maximum fanned laser spread angle in degrees.")]
+    public float fannedAngle = 30f;
+    [Tooltip("Samples one motion cycle. Multiplied by Fanned Angle and sent to _Range.")]
+    public AnimationCurve fannedAngleCurve = AnimationCurve.Constant(0, 1, 1);
+    [HideInInspector]
+    [Tooltip("Disabled. Retained only for legacy serialized data.")]
+    public AnimationCurve fannedRollCurve = AnimationCurve.Constant(0, 1, 0);
+
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
 
@@ -129,6 +138,9 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         for (int i = 0; i < audioBeatIndices.Length; i++)
             audioBeatIndices[i] = Mathf.Max(0, audioBeatIndices[i]);
         audioBrightnessLerp = Mathf.Max(0f, audioBrightnessLerp);
+        fannedAngle = Mathf.Clamp(fannedAngle, 0f, 180f);
+        if (fannedAngleCurve == null)
+            fannedAngleCurve = AnimationCurve.Constant(0, 1, 1);
 
         if (!mutableDataDetached)
         {
@@ -190,6 +202,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             spreadAngleCurve       = CloneAnimationCurve(template.spreadAngleCurve);
             spreadAngleCurveByIndex = CloneAnimationCurve(template.spreadAngleCurveByIndex);
             spreadPanCurve         = CloneAnimationCurve(template.spreadPanCurve);
+            fannedAngle            = template.fannedAngle;
+            fannedAngleCurve       = CloneAnimationCurve(template.fannedAngleCurve);
         }
 
         if (applyTemplateFixtureSettings)
@@ -220,6 +234,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         spreadAngleCurve = CloneAnimationCurve(spreadAngleCurve);
         spreadAngleCurveByIndex = CloneAnimationCurve(spreadAngleCurveByIndex);
         spreadPanCurve   = CloneAnimationCurve(spreadPanCurve);
+        fannedAngleCurve = CloneAnimationCurve(fannedAngleCurve);
     }
 
     public static Gradient CloneGradient(Gradient source)
@@ -284,6 +299,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.spreadAngleCurve      = spreadAngleCurve;
         behaviour.spreadAngleCurveByIndex = spreadAngleCurveByIndex;
         behaviour.spreadPanCurve        = spreadPanCurve;
+        behaviour.fannedAngle           = fannedAngle;
+        behaviour.fannedAngleCurve      = fannedAngleCurve;
 
         behaviour.colorSampleMode       = colorSampleMode;
         behaviour.bpm                   = bpm;

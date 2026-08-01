@@ -707,6 +707,7 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
     private const float PreviewUnitSpacing = 1.5f;
     private static readonly int BaseColorShaderId = Shader.PropertyToID("_BaseColor");
     private static readonly int SoftnessShaderId = Shader.PropertyToID("_Softness");
+    private static readonly int RangeShaderId = Shader.PropertyToID("_Range");
     private static readonly Vector3 PreviewCameraTarget = new Vector3(0f, 0.8f, 0f);
 
     private PreviewRenderUtility _preview;
@@ -1268,14 +1269,10 @@ internal sealed class UnifiedStageTemplatePreviewRenderer : IDisposable
             if (!renderer.enabled)
                 renderer.enabled = true;
 
-            Transform rendererTransform = renderer.transform;
-            Vector3 scale = rendererTransform.localScale;
-            scale.y = Mathf.Max(0f, lightRange);
-            rendererTransform.localScale = scale;
-
             renderer.GetPropertyBlock(_propertyBlock);
             _propertyBlock.SetColor(BaseColorShaderId, color);
             _propertyBlock.SetFloat(SoftnessShaderId, softness);
+            _propertyBlock.SetFloat(RangeShaderId, Mathf.Max(0f, lightRange));
             renderer.SetPropertyBlock(_propertyBlock);
         }
     }

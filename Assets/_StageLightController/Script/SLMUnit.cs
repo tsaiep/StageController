@@ -20,6 +20,10 @@ public class SLMUnit : MonoBehaviour
     [FormerlySerializedAs("previewColorRenderers")]
     public MeshRenderer[] laserMeshRenderers;
 
+    [Header("Fanned Laser")]
+    [Tooltip("Mesh renderers used by Fanned Laser mode.")]
+    public MeshRenderer[] fannedLaserRenderers;
+
     [Header("單元演出設定")]
     public bool invertPan = false;
     public bool invertTilt = false;

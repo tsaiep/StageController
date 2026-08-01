@@ -10,6 +10,7 @@ public class UnifiedStageController : MonoBehaviour
     private static readonly int LaserMeshBaseColorShaderId = Shader.PropertyToID("_BaseColor");
     private static readonly int LaserMeshSoftnessShaderId = Shader.PropertyToID("_Softness");
     private static readonly int LaserMeshRangeShaderId = Shader.PropertyToID("_Range");
+    private static readonly int FannedLaserAngleShaderId = Shader.PropertyToID("_Angle");
     private MaterialPropertyBlock _laserMeshPropertyBlock;
 
     public struct WeightedGradientContribution
@@ -45,7 +46,8 @@ public class UnifiedStageController : MonoBehaviour
         [InspectorName("Volumetric Spot Light")] VolumetricSpot,
         [InspectorName("Spot Light")] Spot,
         [InspectorName("Point Light")] Point,
-        [InspectorName("Laser Mesh")] LaserMesh
+        [InspectorName("Laser Mesh")] LaserMesh,
+        [InspectorName("Fanned Laser")] FannedLaser
     }
 
     public enum BeatTimeReference
@@ -182,6 +184,7 @@ public class UnifiedStageController : MonoBehaviour
             gradientContributions.Clear();
             float totalPan = 0f, totalTilt = 0f;
             float totalSpreadPan = 0f, totalSpreadTilt = 0f;
+            float totalFannedAngle = 0f;
             float targetModeWeight = 0f;
 
             // --- FreezeFrame Rising Edge: 快取此 unit 的現在狀態 ---
@@ -376,6 +379,15 @@ public class UnifiedStageController : MonoBehaviour
                     totalSpreadTilt += clipSpreadTilt * clip.weight;
                     totalSpreadPan  += clipSpreadPan  * clip.weight;
                 }
+
+                if (activeLightMode == StageLightMode.FannedLaser)
+                {
+                    float cycleT = CalculateMotionCycleT(clip, unitEt);
+                    float angleCurve = (clip.fannedAngleCurve != null) ? clip.fannedAngleCurve.Evaluate(cycleT) : 1f;
+                    float clipFannedAngle = Mathf.Clamp(clip.fannedAngle * angleCurve, 0f, 180f);
+
+                    totalFannedAngle += clipFannedAngle * clip.weight;
+                }
             }
 
             // ===== 物理更新 =====
@@ -439,20 +451,22 @@ public class UnifiedStageController : MonoBehaviour
             }
 
             // ===== 燈光 =====
-            if (activeLightMode == StageLightMode.LaserMesh)
+            bool activeRendererLightMode = activeLightMode == StageLightMode.LaserMesh ||
+                                           activeLightMode == StageLightMode.FannedLaser;
+            if (activeRendererLightMode)
             {
-                bool laserMeshIsTimelineBlending = gradientContributions.Count > 1;
-                Gradient laserMeshBuildTarget = (isTimeJump || laserMeshIsTimelineBlending) ? unit.currentGradient : unit.targetGradient;
+                bool rendererLightIsTimelineBlending = gradientContributions.Count > 1;
+                Gradient rendererLightBuildTarget = (isTimeJump || rendererLightIsTimelineBlending) ? unit.currentGradient : unit.targetGradient;
 
                 BuildWeightedFinalGradient(
                     unit,
                     gradientContributions,
-                    laserMeshBuildTarget,
+                    rendererLightBuildTarget,
                     unit.gradientKeyTimes,
                     ref unit.gradientColorKeys,
                     ref unit.gradientAlphaKeys);
 
-                if (!isTimeJump && !laserMeshIsTimelineBlending)
+                if (!isTimeJump && !rendererLightIsTimelineBlending)
                 {
                     LerpGradientInto(
                         unit.currentGradient,
@@ -464,20 +478,25 @@ public class UnifiedStageController : MonoBehaviour
                         ref unit.gradientAlphaKeys);
                 }
 
-                Color laserMeshFinalColor = unit.currentGradient != null
+                Color rendererLightFinalColor = unit.currentGradient != null
                     ? UnifiedStageGradientUtility.ForceOpaque(unit.currentGradient.Evaluate(0f))
                     : Color.black;
 
-                ApplyLaserMeshRenderers(unit, true, laserMeshFinalColor, mixedSoftness, mixedLightRange);
+                bool useLaserMesh = activeLightMode == StageLightMode.LaserMesh;
+                bool useFannedLaser = activeLightMode == StageLightMode.FannedLaser;
+
+                ApplyLaserMeshRenderers(unit, useLaserMesh, rendererLightFinalColor, mixedSoftness, mixedLightRange);
+                ApplyFannedLaserRenderers(unit, useFannedLaser, rendererLightFinalColor, mixedSoftness, mixedLightRange, totalFannedAngle);
             }
             else
             {
                 ApplyLaserMeshRenderers(unit, false, Color.black, mixedSoftness, mixedLightRange);
+                ApplyFannedLaserRenderers(unit, false, Color.black, mixedSoftness, 0f, 0f);
             }
 
             if (unit.targetLight != null)
             {
-                if (activeLightMode == StageLightMode.LaserMesh)
+                if (activeLightMode == StageLightMode.LaserMesh || activeLightMode == StageLightMode.FannedLaser)
                 {
                     var laserMeshVlb = unit.targetLight.GetComponent<VLB.VolumetricLightBeamHD>();
                     ApplyLightMode(unit, laserMeshVlb, activeLightMode);
@@ -543,7 +562,7 @@ public class UnifiedStageController : MonoBehaviour
                 }
 
                 var cookie = unit.targetLight.GetComponent<VLB.VolumetricCookieHD>();
-                if (cookie != null) cookie.enabled = activeScatter && activeLightMode != StageLightMode.LaserMesh;
+                if (cookie != null) cookie.enabled = activeScatter && activeLightMode != StageLightMode.LaserMesh && activeLightMode != StageLightMode.FannedLaser;
             }
         }
     }
@@ -575,6 +594,38 @@ public class UnifiedStageController : MonoBehaviour
             _laserMeshPropertyBlock.SetColor(LaserMeshBaseColorShaderId, color);
             _laserMeshPropertyBlock.SetFloat(LaserMeshSoftnessShaderId, softness);
             _laserMeshPropertyBlock.SetFloat(LaserMeshRangeShaderId, Mathf.Max(0f, lightRange));
+            renderer.SetPropertyBlock(_laserMeshPropertyBlock);
+        }
+    }
+
+    private void ApplyFannedLaserRenderers(SLMUnit unit, bool active, Color color, float softness, float lightRange, float angle)
+    {
+        if (unit == null || unit.fannedLaserRenderers == null)
+            return;
+
+        for (int i = 0; i < unit.fannedLaserRenderers.Length; i++)
+        {
+            MeshRenderer renderer = unit.fannedLaserRenderers[i];
+            if (renderer == null)
+                continue;
+
+            if (renderer.gameObject.activeSelf != active)
+                renderer.gameObject.SetActive(active);
+
+            if (renderer.enabled != active)
+                renderer.enabled = active;
+
+            if (!active)
+                continue;
+
+            if (_laserMeshPropertyBlock == null)
+                _laserMeshPropertyBlock = new MaterialPropertyBlock();
+
+            renderer.GetPropertyBlock(_laserMeshPropertyBlock);
+            _laserMeshPropertyBlock.SetColor(LaserMeshBaseColorShaderId, color);
+            _laserMeshPropertyBlock.SetFloat(LaserMeshSoftnessShaderId, softness);
+            _laserMeshPropertyBlock.SetFloat(LaserMeshRangeShaderId, Mathf.Max(0f, lightRange));
+            _laserMeshPropertyBlock.SetFloat(FannedLaserAngleShaderId, Mathf.Clamp(angle, 0f, 180f));
             renderer.SetPropertyBlock(_laserMeshPropertyBlock);
         }
     }
@@ -1038,6 +1089,7 @@ public class UnifiedStageController : MonoBehaviour
                 break;
 
             case StageLightMode.LaserMesh:
+            case StageLightMode.FannedLaser:
                 if (!unit.lightDisabledByLaserMesh)
                 {
                     unit.lightEnabledBeforeLaserMesh = unit.targetLight.enabled;
@@ -1072,6 +1124,18 @@ public class UnifiedStageController : MonoBehaviour
     {
         float t = Mathf.Clamp01(softness / 100f);
         return Mathf.Clamp(outerSpotAngle * (1f - t), 0f, outerSpotAngle);
+    }
+
+    private static float CalculateMotionCycleT(ActiveClipInfo clip, float unitEt)
+    {
+        float cyclePeriod = UnifiedStageBehaviour.GetMotionCyclePeriod(clip.mode, clip.speed);
+        if (cyclePeriod > 0.0001f)
+        {
+            float raw = unitEt / cyclePeriod;
+            return raw - Mathf.Floor(raw);
+        }
+
+        return clip.normalizedClipTime;
     }
 
     // ==========================================
