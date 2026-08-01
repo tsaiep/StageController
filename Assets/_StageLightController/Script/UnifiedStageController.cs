@@ -9,6 +9,7 @@ public class UnifiedStageController : MonoBehaviour
     private const float MaxVlbSideSoftness = 10f;
     private static readonly int LaserMeshBaseColorShaderId = Shader.PropertyToID("_BaseColor");
     private static readonly int LaserMeshSoftnessShaderId = Shader.PropertyToID("_Softness");
+    private static readonly int LaserMeshRangeShaderId = Shader.PropertyToID("_Range");
     private MaterialPropertyBlock _laserMeshPropertyBlock;
 
     public struct WeightedGradientContribution
@@ -567,17 +568,13 @@ public class UnifiedStageController : MonoBehaviour
             if (!active)
                 continue;
 
-            Transform rendererTransform = renderer.transform;
-            Vector3 scale = rendererTransform.localScale;
-            scale.y = Mathf.Max(0f, lightRange);
-            rendererTransform.localScale = scale;
-
             if (_laserMeshPropertyBlock == null)
                 _laserMeshPropertyBlock = new MaterialPropertyBlock();
 
             renderer.GetPropertyBlock(_laserMeshPropertyBlock);
             _laserMeshPropertyBlock.SetColor(LaserMeshBaseColorShaderId, color);
             _laserMeshPropertyBlock.SetFloat(LaserMeshSoftnessShaderId, softness);
+            _laserMeshPropertyBlock.SetFloat(LaserMeshRangeShaderId, Mathf.Max(0f, lightRange));
             renderer.SetPropertyBlock(_laserMeshPropertyBlock);
         }
     }

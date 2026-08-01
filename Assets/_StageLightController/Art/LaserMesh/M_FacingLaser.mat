@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_SH_ScreenSpaceLine
+  m_Name: M_FacingLaser
   m_Shader: {fileID: -6465566751694194690, guid: 2ac84dc3fac1dbc45ae6f80c76a0409f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -54,10 +54,10 @@ Material:
     - _Float: -1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Range: 11.33
+    - _Range: 30
     - _Softness: 100
-    - _Width: 0.192
-    - _Width_Correction: 0.118
+    - _Width: 0.306
+    - _Width_Correction: 0.1
     - _Width_Correction_Weight: 0.75
     m_Colors:
     - _BaseColor: {r: 4.9245777, g: 4.9245777, b: 4.9245777, a: 1}

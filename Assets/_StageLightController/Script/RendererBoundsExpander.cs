@@ -9,6 +9,10 @@ public class RendererBoundsExpander : MonoBehaviour
     [SerializeField]
     private Vector3 boundsExpansion = Vector3.zero;
 
+    [Tooltip("Offset applied to the Renderer local bounds center.")]
+    [SerializeField]
+    private Vector3 boundsCenterOffset = Vector3.zero;
+
     [SerializeField]
     private bool drawGizmo = true;
 
@@ -47,6 +51,7 @@ public class RendererBoundsExpander : MonoBehaviour
         targetRenderer.ResetLocalBounds();
 
         Bounds bounds = targetRenderer.localBounds;
+        bounds.center += boundsCenterOffset;
         bounds.size += boundsExpansion;
 
         targetRenderer.localBounds = bounds;
