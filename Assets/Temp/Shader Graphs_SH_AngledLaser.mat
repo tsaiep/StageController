@@ -40,16 +40,17 @@ Material:
     m_Floats:
     - _Angle: 45
     - _Edge_Hardness: 0
-    - _Edge_Intensity: 0
-    - _Edge_Width: 0.05
-    - _Edge_Width_Correction: 0.05
-    - _Edge_Width_Correction_Weight: 0.6
+    - _Edge_Intensity: 3
+    - _Edge_Width: 0.1
+    - _Edge_Width_Correction: 0.1
+    - _Edge_Width_Correction_Weight: 0.75
     - _Float: 0
     - _Power: 16.03
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Range: 160.85
-    - _Width_Bias: 0.1
+    - _Range: 30
+    - _Softness: 50
+    - _Width_Bias: 0.02
     - _len: 10
     - _test: 1
     - _test_1: 50.8
