@@ -388,7 +388,7 @@ Color Sample Mode
 
 | 欄位 | 說明 |
 | --- | --- |
-| `lightMode` | 決定使用 `VolumetricSpot`、`Spot` 或 `Point` |
+| `lightMode` | 決定使用 Volumetric Spot Light、Spot Light 、 Point Light、Laser Mesh、Fanned Laser |
 | `lightRange` | 設定光的範圍 |
 | `beamAngle` | Spot/VLB 的光束角度 |
 | `softness` | 調整光束的邊緣硬度。Spot 模式對應 inner spot angle；VLB 模式對應 side softness |
@@ -396,11 +396,15 @@ Color Sample Mode
 
 Light Mode 細節
 
-- `VolumetricSpot`：使用 Unity Spot Light，並啟用 VLB HD。
-- `Spot`：只使用 Unity Spot Light，關閉 VLB。
-- `Point`：使用 Unity Point Light，關閉 VLB。
+- **Volumetric Spot Light**：使用 Unity Spot Light，並啟用 VLB HD。關閉扇形雷射模型、直線雷射模型
+- **Spot Light**：只使用 Unity Spot Light，關閉 VLB。關閉扇形雷射模型、直線雷射模型
+- **Point Light**：使用 Unity Point Light，關閉 VLB。關閉扇形雷射模型、直線雷射模型
+- **Laser Mesh** ：關閉 Light Object 和扇形雷射模型，開啟直線雷射模型
+- **Fanned Laser** ：關閉Light Object 和直線雷射模型，開啟扇形雷射模型
 
 Point Light 是全方向發光，同樣 intensity 會比其他更容易過亮。目前在 `Point` 模式套用 0.15 倍亮度校正。
+
+Laser Mesh、Fanned Laser 使用自發光模型模擬光束，無法對應光束頭尾顏色`Beam Length Gradient`、光束角度`beamAngle`
 
 ### 6. 旋轉模式
 
@@ -438,7 +442,26 @@ Point Light 是全方向發光，同樣 intensity 會比其他更容易過亮。
 | Spread Angle Curve By Index | 依 indexInGroup 正規化後取樣的 `Spread Angle` 強度係數，可用於水平/垂直的分散燈。 |
 | Spread Pan Curve | 每次旋轉動作循環MovingBeamLight_SpreadPan的變化曲線，數值最終和Spread Arc Range參數的影響相加。若0-1統一控制可作為設定水平/垂直的分散燈 |
 
-### 9. Group / Light 偏移（舊版分類為延遲）
+### 9. 扇形光束設定
+
+此區為 Fanned Laser 的專用參數
+
+| 欄位 | 說明 |
+| --- | --- |
+| Fanned Angle | 0 到 180 度，控制扇形展開最大角度 |
+| Fanned Angle Curve | 依一個動作循環取樣，作為 `Fanned Angle` 的係數，做出扇形開合的動畫效果 |
+| Fanned Roll | 光束展開方向的調整 |
+
+Fanned Laser 特別之處在於它是目前唯一非軸向對稱的 Light Mode，其展開的方向會有Roll的動畫需求，這個需求能夠透過 **8. 分散效果設定** 之下的控制項達成
+
+在Fanned Laser 模式的情境下這些參數被賦予新的意義，以下：
+
+| 欄位 | 說明 |
+| --- | --- |
+| Spread Arc Range | 燈組內每一個扇形光束的Roll角度偏差，角度根據index遞增，若設為0，每一個光束的Roll相同；若設為360，最後一盞燈會剛好轉一圈，和第一盞角度相同 |
+| Spread Pan Curve | 每個動作循環的扇形光束Roll的動畫曲線，0為不動；1為360度 |
+
+### 10. Group / Light 偏移（舊版分類為延遲）
 
 讓同一個動畫控制的燈具根據分組ID、組內ID產生不同變化。
 
@@ -451,7 +474,7 @@ Point Light 是全方向發光，同樣 intensity 會比其他更容易過亮。
 | Light Delay Factor | group 內燈具延遲倍率 |
 | Light Rotation Range Curve | 依 indexInGroup 正規化後取樣的`rotationRange`強度係數，~~可用於分散雷射燈~~ |
 
-### 10. 凍結前幀
+### 11. 凍結前幀
 
 此`rotationMode`比較特殊，它可以維持前一個Clip的姿態以及顏色數值
 
@@ -546,28 +569,67 @@ Point Light 是全方向發光，同樣 intensity 會比其他更容易過亮。
 4. 由於分散雷射燈本質是將一個燈組重疊，因此可以運用組內燈光的延遲參數組合出不同的效果[@08_EvironmentSpline.md](file:///D:/UnityProject/StageController/Assets/_VFXLibrary/08_EnvironmentSpline/08_EvironmentSpline.md)
 
 ---
+## 十一、自發光模型材質參數設定
 
-## Fanned Laser Light Mode
+Laser Mesh 與 Fanned Mesh 使用了各自的自訂義材質與模型，其中有一些外觀參數可以在材質上統一調整。若不同的燈組需要不同的表現方式，可以複製新的Light Prefab 將裡面的 Laser Mesh 與 Fanned Mesh 套用調整後的新材質
 
-`Fanned Laser` 是 renderer-only light mode，行為接近 `Laser Mesh`：
+!image.png
 
-- 選擇 `Fanned Laser` 時會關閉 `Light` 與 `VLB.VolumetricLightBeamHD`。
-- `SLMUnit.fannedLaserRenderers` 指定的 renderer 會開啟。
-- `SLMUnit.laserMeshRenderers` 會關閉。
-- 選擇其他 light mode 時，`fannedLaserRenderers` 會關閉。
+### 1. Laser Mesh - Facing Laser
 
-Clip 會透過 `MaterialPropertyBlock` 傳給 Fanned Laser renderer：
+!image.png
 
-| Shader Property | 來源 |
-| --- | --- |
-| `_BaseColor` | Clip color/gradient 混合後的顏色 |
-| `_Softness` | Clip `softness` 混合值 |
-| `_Range` | Clip `lightRange` 混合值 |
-| `_Angle` | `Fanned Angle * Fanned Angle Curve`，範圍限制在 0 到 180 |
-
-Fanned Laser 專用 Clip 參數：
+Width Shape 分類之下的三個參數可以依需求調整
 
 | 欄位 | 說明 |
 | --- | --- |
-| `Fanned Angle` | 0 到 180 度，控制扇形展開最大角度 |
-| `Fanned Angle Curve` | 依一個 motion cycle 取樣，作為 `Fanned Angle` 的係數 |
+| Width | 光束的基本寬度，指受正常透視影響的寬度 |
+| Width Correction | 光束的矯正寬度，指距離補償後顯示在畫面上的寬度(遠近在螢幕上一樣寬) |
+| Width Correction Weight | Width 與 Width Correction 的權重關係，越高寬度越不受距離影響 |
+
+Facing Laser 使用的模型是一個Quad，其長度會根據Clip傳送的Light Range改變，並且會寬度朝向攝影機方向
+
+!image.png
+
+!image.png
+
+### 2. Laser Mesh - Tube Laser
+
+這是 Legacy 的自發光模型，材質上沒有可調項目，外觀變化全由Clip控制，若要調整光束粗度，可經由 Light Prefab 當中Laser Mesh 的 Transform Scale XZ 軸調整
+
+!image.png
+
+目前使用Laser Mesh - Tube Laser的Light Prefab 位於
+`Assets\_StageLightController\Prefab\P_MovingBeamLight_SplitLight_TubeLaser.prefab`
+
+### 3. Fanned Laser
+
+!image.png
+
+Edge 分類之下的五個參數可以依需求調整
+
+| 欄位 | 說明 |
+| --- | --- |
+| Edge Intersity | 兩側光束與扇形面的亮度關係。例如設定為3，兩側光束的亮度為扇形面的3倍 |
+| Width Bias | 扇形光束根部的寬度 |
+| Edge Width | 兩側光束的基本寬度，指受正常透視影響的寬度 |
+| Edge Width Correction | 兩側光束的矯正寬度，指距離補償後顯示在畫面上的寬度(遠近在螢幕上一樣寬) |
+| Edge Width Correction Weight | Edge Width 與 Edge Width Correction 的權重關係，越高寬度越不受距離影響 |
+
+
+---
+
+## 十二、自發光模型Bounding
+
+自發光模型接收 Light Range 的方式是Shader當中的頂點位移，因此範圍會遠超原本的Mesh Bounding，會導致渲染時錯判模型是否在鏡頭內。
+
+Light Prefab 當中的自發光模型掛載修正此問題的腳本，範圍應設定為光束的最長/最寬尺寸
+`Assets\_StageLightController\Script\RendererBoundsExpander.cs`
+
+其中：
+
+Bounds Expansion - Render Bounds 的擴展
+
+Bounds Center Offset - Bounds 的中心點
+
+Draw Gizmo - Editor中顯示調整後的 Bounds
