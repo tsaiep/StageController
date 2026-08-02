@@ -22,9 +22,6 @@
             "m_Id": "3c17723f40354cd9be995331858d3db9"
         },
         {
-            "m_Id": "496c95ea204842f3b95e33d2fb0685b4"
-        },
-        {
             "m_Id": "8f085ba3ea1d49f9b02ae8da4b03f001"
         },
         {
@@ -6599,14 +6596,7 @@
     "m_Type": "UnityEditor.ShaderGraph.CategoryData",
     "m_ObjectId": "3422727428874a4687350118f5477683",
     "m_Name": "",
-    "m_ChildObjectList": [
-        {
-            "m_Id": "496c95ea204842f3b95e33d2fb0685b4"
-        },
-        {
-            "m_Id": "0edeab29cbc146c3add26ed99eaac1ae"
-        }
-    ]
+    "m_ChildObjectList": []
 }
 
 {
@@ -7833,34 +7823,6 @@
 }
 
 {
-    "m_SGVersion": 1,
-    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
-    "m_ObjectId": "496c95ea204842f3b95e33d2fb0685b4",
-    "m_Guid": {
-        "m_GuidSerialized": "595844a0-7947-4d8d-94a9-e9640080b9b2"
-    },
-    "m_Name": "Power",
-    "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Power",
-    "m_DefaultReferenceName": "_Power",
-    "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
-    "m_UseCustomSlotLabel": false,
-    "m_CustomSlotLabel": "",
-    "m_DismissedVersion": 0,
-    "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
-    "m_Hidden": false,
-    "m_Value": 1.0,
-    "m_FloatType": 0,
-    "m_RangeValues": {
-        "x": 0.0,
-        "y": 1.0
-    }
-}
-
-{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "49dd88b9510c4e1e8d62fc91b82ac9cd",
@@ -8290,7 +8252,7 @@
     "m_Title": "Length",
     "m_Position": {
         "x": -1077.5999755859375,
-        "y": -288.8000183105469
+        "y": -288.800048828125
     }
 }
 
@@ -8393,6 +8355,9 @@
     "m_ObjectId": "53577e0036384afb9893f5e4ba41d4be",
     "m_Name": "Edge",
     "m_ChildObjectList": [
+        {
+            "m_Id": "0edeab29cbc146c3add26ed99eaac1ae"
+        },
         {
             "m_Id": "994dec345d984a0e87e35a71480ef403"
         },
@@ -9307,7 +9272,7 @@
     "m_Title": "Width Bias",
     "m_Position": {
         "x": -1855.199951171875,
-        "y": 1948.0003662109375
+        "y": 1948.000244140625
     }
 }
 
@@ -11957,7 +11922,7 @@
     "m_Title": "Edge Axis Roll",
     "m_Position": {
         "x": -2350.39990234375,
-        "y": 1159.199951171875
+        "y": 1159.2000732421875
     }
 }
 
@@ -14060,7 +14025,7 @@
     "m_Title": "Width Correction",
     "m_Position": {
         "x": -4342.39990234375,
-        "y": 261.5999755859375
+        "y": 261.60009765625
     }
 }
 
@@ -14576,7 +14541,7 @@
     "m_Title": "Fragment Color",
     "m_Position": {
         "x": 354.400146484375,
-        "y": 1320.800048828125
+        "y": 1320.7998046875
     }
 }
 
