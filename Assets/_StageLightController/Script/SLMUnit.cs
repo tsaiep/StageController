@@ -38,6 +38,7 @@ public class SLMUnit : MonoBehaviour
     [HideInInspector] public float curPan, curTilt, velPan, velTilt;
     [HideInInspector] public float curSpreadPan, velSpreadPan;
     [HideInInspector] public float curSpreadTilt, velSpreadTilt;
+    [HideInInspector] public float curFannedRoll;
     [HideInInspector] public float frozenPan, frozenTilt;
     [HideInInspector] public Color frozenColor;
     [System.NonSerialized] public Gradient frozenGradient;

@@ -185,6 +185,7 @@ public class UnifiedStageController : MonoBehaviour
             float totalPan = 0f, totalTilt = 0f;
             float totalSpreadPan = 0f, totalSpreadTilt = 0f;
             float totalFannedAngle = 0f;
+            float totalFannedRoll = 0f;
             float targetModeWeight = 0f;
 
             // --- FreezeFrame Rising Edge: 快取此 unit 的現在狀態 ---
@@ -385,8 +386,10 @@ public class UnifiedStageController : MonoBehaviour
                     float cycleT = CalculateMotionCycleT(clip, unitEt);
                     float angleCurve = (clip.fannedAngleCurve != null) ? clip.fannedAngleCurve.Evaluate(cycleT) : 1f;
                     float clipFannedAngle = Mathf.Clamp(clip.fannedAngle * angleCurve, 0f, 180f);
+                    float clipFannedRoll = unit.curFannedRoll + Mathf.DeltaAngle(unit.curFannedRoll, clip.fannedRoll);
 
                     totalFannedAngle += clipFannedAngle * clip.weight;
+                    totalFannedRoll  += clipFannedRoll  * clip.weight;
                 }
             }
 
@@ -484,14 +487,17 @@ public class UnifiedStageController : MonoBehaviour
 
                 bool useLaserMesh = activeLightMode == StageLightMode.LaserMesh;
                 bool useFannedLaser = activeLightMode == StageLightMode.FannedLaser;
+                float fannedLaserRoll = SLMUnit.NormalizeAngle(totalFannedRoll);
+                if (useFannedLaser)
+                    unit.curFannedRoll = fannedLaserRoll;
 
                 ApplyLaserMeshRenderers(unit, useLaserMesh, rendererLightFinalColor, mixedSoftness, mixedLightRange);
-                ApplyFannedLaserRenderers(unit, useFannedLaser, rendererLightFinalColor, mixedSoftness, mixedLightRange, totalFannedAngle);
+                ApplyFannedLaserRenderers(unit, useFannedLaser, rendererLightFinalColor, mixedSoftness, mixedLightRange, totalFannedAngle, fannedLaserRoll);
             }
             else
             {
                 ApplyLaserMeshRenderers(unit, false, Color.black, mixedSoftness, mixedLightRange);
-                ApplyFannedLaserRenderers(unit, false, Color.black, mixedSoftness, 0f, 0f);
+                ApplyFannedLaserRenderers(unit, false, Color.black, mixedSoftness, 0f, 0f, 0f);
             }
 
             if (unit.targetLight != null)
@@ -598,7 +604,7 @@ public class UnifiedStageController : MonoBehaviour
         }
     }
 
-    private void ApplyFannedLaserRenderers(SLMUnit unit, bool active, Color color, float softness, float lightRange, float angle)
+    private void ApplyFannedLaserRenderers(SLMUnit unit, bool active, Color color, float softness, float lightRange, float angle, float roll)
     {
         if (unit == null || unit.fannedLaserRenderers == null)
             return;
@@ -617,6 +623,11 @@ public class UnifiedStageController : MonoBehaviour
 
             if (!active)
                 continue;
+
+            Transform rendererTransform = renderer.transform;
+            Vector3 localEulerAngles = rendererTransform.localEulerAngles;
+            localEulerAngles.y = Mathf.Repeat(roll, 360f);
+            rendererTransform.localEulerAngles = localEulerAngles;
 
             if (_laserMeshPropertyBlock == null)
                 _laserMeshPropertyBlock = new MaterialPropertyBlock();

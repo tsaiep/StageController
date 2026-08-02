@@ -190,6 +190,7 @@ public class UnifiedStageClipInspector : Editor
         template.spreadAngleCurveByIndex = UnifiedStageClip.CloneAnimationCurve(clip.spreadAngleCurveByIndex);
         template.spreadPanCurve = UnifiedStageClip.CloneAnimationCurve(clip.spreadPanCurve);
         template.fannedAngle = clip.fannedAngle;
+        template.fannedRoll = clip.fannedRoll;
         template.fannedAngleCurve = UnifiedStageClip.CloneAnimationCurve(clip.fannedAngleCurve);
     }
 

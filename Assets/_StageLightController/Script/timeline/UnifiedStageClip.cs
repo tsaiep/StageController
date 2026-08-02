@@ -76,8 +76,10 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Header("扇形光束設定")]
     [Range(0f, 180f), Tooltip("Maximum fanned laser spread angle in degrees.")]
     public float fannedAngle = 30f;
-    [Tooltip("Samples one motion cycle. Multiplied by Fanned Angle and sent to _Range.")]
+    [Tooltip("Samples one motion cycle. Multiplied by Fanned Angle and sent to _Angle.")]
     public AnimationCurve fannedAngleCurve = AnimationCurve.Constant(0, 1, 1);
+    [Range(0f, 360f), Tooltip("Local Y rotation applied to Fanned Laser renderers.")]
+    public float fannedRoll = 0f;
     [HideInInspector]
     [Tooltip("Disabled. Retained only for legacy serialized data.")]
     public AnimationCurve fannedRollCurve = AnimationCurve.Constant(0, 1, 0);
@@ -139,6 +141,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             audioBeatIndices[i] = Mathf.Max(0, audioBeatIndices[i]);
         audioBrightnessLerp = Mathf.Max(0f, audioBrightnessLerp);
         fannedAngle = Mathf.Clamp(fannedAngle, 0f, 180f);
+        fannedRoll = Mathf.Clamp(fannedRoll, 0f, 360f);
         if (fannedAngleCurve == null)
             fannedAngleCurve = AnimationCurve.Constant(0, 1, 1);
 
@@ -203,6 +206,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             spreadAngleCurveByIndex = CloneAnimationCurve(template.spreadAngleCurveByIndex);
             spreadPanCurve         = CloneAnimationCurve(template.spreadPanCurve);
             fannedAngle            = template.fannedAngle;
+            fannedRoll             = template.fannedRoll;
             fannedAngleCurve       = CloneAnimationCurve(template.fannedAngleCurve);
         }
 
@@ -300,6 +304,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.spreadAngleCurveByIndex = spreadAngleCurveByIndex;
         behaviour.spreadPanCurve        = spreadPanCurve;
         behaviour.fannedAngle           = fannedAngle;
+        behaviour.fannedRoll            = fannedRoll;
         behaviour.fannedAngleCurve      = fannedAngleCurve;
 
         behaviour.colorSampleMode       = colorSampleMode;

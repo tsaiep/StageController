@@ -85,7 +85,9 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Header("Fanned Laser Settings")]
     [Range(0f, 180f), Tooltip("Maximum fanned laser spread angle in degrees.")]
     public float fannedAngle = 0f;
-    [Tooltip("Samples one motion cycle. Multiplied by Fanned Angle and sent to _Range.")]
+    [Range(0f, 360f), Tooltip("Local Y rotation applied to Fanned Laser renderers.")]
+    public float fannedRoll = 0f;
+    [Tooltip("Samples one motion cycle. Multiplied by Fanned Angle and sent to _Angle.")]
     public AnimationCurve fannedAngleCurve = AnimationCurve.Constant(0, 1, 1);
 
 
