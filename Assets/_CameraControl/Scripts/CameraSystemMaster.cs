@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Unity.Cinemachine;
 
 namespace Runtime.CameraSystem
@@ -6,18 +6,18 @@ namespace Runtime.CameraSystem
     public class CameraSystemMaster : MonoBehaviour
     {
         [Header("--- General Cameras ---")]
-        [Tooltip("General ¹BÃè¨Ï¥Îªº A Camera¡C")]
+        [Tooltip("General é‹é¡ä½¿ç”¨çš„ A Cameraã€‚")]
         public CinemachineCamera generalCamera;
 
-        [Tooltip("General ¹BÃè¨Ï¥Îªº B Camera¡C½Ğ½Æ»s General A ªº Cinemachine ²Õ¥ó³]©w¡C")]
+        [Tooltip("General é‹é¡ä½¿ç”¨çš„ B Cameraã€‚è«‹è¤‡è£½ General A çš„ Cinemachine çµ„ä»¶è¨­å®šã€‚")]
         public CinemachineCamera generalCameraB;
 
         [Header("--- Tracking Camera ---")]
-        [Tooltip("Tracking ¹BÃè¨Ï¥Îªº Camera¡C")]
+        [Tooltip("Tracking é‹é¡ä½¿ç”¨çš„ Cameraã€‚")]
         public CinemachineCamera trackingCamera;
 
         [Header("--- Dolly Camera ---")]
-        [Tooltip("Dolly ¹BÃè¨Ï¥Îªº Camera¡C")]
+        [Tooltip("Dolly é‹é¡ä½¿ç”¨çš„ Cameraã€‚")]
         public CinemachineCamera dollyCamera;
 
         [Header("--- Priority Settings ---")]
@@ -29,7 +29,7 @@ namespace Runtime.CameraSystem
             if (generalCamera == null && trackingCamera == null && dollyCamera == null)
             {
                 Debug.LogError(
-                    $"[{nameof(CameraSystemMaster)}] ¨S¦³«ü©w¥ô¦ó Cinemachine Camera¡ACamera Profile ¨t²ÎµLªk¹B§@¡C",
+                    $"[{nameof(CameraSystemMaster)}] æ²’æœ‰æŒ‡å®šä»»ä½• Cinemachine Cameraï¼ŒCamera Profile ç³»çµ±ç„¡æ³•é‹ä½œã€‚",
                     this
                 );
             }
@@ -37,7 +37,7 @@ namespace Runtime.CameraSystem
             if (generalCamera != null && generalCameraB == null)
             {
                 Debug.LogWarning(
-                    $"[{nameof(CameraSystemMaster)}] General Camera B ©|¥¼«ü©w¡CGeneral ¡÷ General ³sÄò Clip ·|°h¦^³æ¥x General Camera¡A¥i¯à¤´·|¬İ¨ì±ÛÂà´İ¯d¡C",
+                    $"[{nameof(CameraSystemMaster)}] General Camera B å°šæœªæŒ‡å®šã€‚General â†’ General é€£çºŒ Clip æœƒé€€å›å–®å° General Cameraï¼Œå¯èƒ½ä»æœƒçœ‹åˆ°æ—‹è½‰æ®˜ç•™ã€‚",
                     this
                 );
             }

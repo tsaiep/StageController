@@ -181,7 +181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SplineSettings:
     Spline: {fileID: 641602957}
-    Position: 0.6927298
+    Position: 0.6736229
     Units: 1
   SplineOffset: {x: 0, y: 0, z: 0}
   CameraRotation: 0
@@ -252,8 +252,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 137539693}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000033492062, y: 0.99796766, z: 0.0637209, w: -0.00052453944}
-  m_LocalPosition: {x: 0.008198256, y: 0, z: 7.7988434}
+  m_LocalRotation: {x: 0.0004039928, y: 0.9979302, z: 0.063996024, w: -0.006299712}
+  m_LocalPosition: {x: 0.09803037, y: 0, z: 7.76413}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -462,6 +462,7 @@ PlayableDirector:
     - 63b9e51ff5396e643b35d46e74b21e86: {fileID: 641602957}
     - 2c7baa73396acdf41b9573ddf20d43c0: {fileID: 1384938084}
     - 9055135755dcb124da7afe4cbc283d9c: {fileID: 1384938084}
+    - 25d1caeb799f97d438ef57a111ac8a2a: {fileID: 1384938084}
     - 6d63bf4522ada684e893f74b911287d9: {fileID: 641602957}
 --- !u!4 &370369808
 Transform:
@@ -539,7 +540,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 60.000004
+  field of view: 63.181477
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -565,8 +566,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 517901564}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.034209687, y: 0.9383757, z: -0.097317584, w: -0.32986364}
-  m_LocalPosition: {x: 0.8994826, y: 1.470152, z: 1.1213003}
+  m_LocalRotation: {x: -0.044883665, y: 0.8922421, z: -0.09101473, w: -0.44000673}
+  m_LocalPosition: {x: 5.444412, y: 2.8078353, z: 3.7401693}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1048,7 +1049,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 60.000004
+    FieldOfView: 63.181477
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -1075,8 +1076,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1568393653}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.03420018, y: 0.9383785, z: -0.09729057, w: -0.32986462}
-  m_LocalPosition: {x: 0.8994826, y: 1.470152, z: 1.1213003}
+  m_LocalRotation: {x: -0.044883665, y: 0.8922421, z: -0.09101473, w: -0.44000673}
+  m_LocalPosition: {x: 5.444412, y: 2.8078353, z: 3.7401693}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1104,7 +1105,7 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 0.54, z: -3}
+  TargetOffset: {x: -0.378596, y: 0.83, z: -3}
   Damping: {x: 1, y: 1}
   Lookahead:
     Enabled: 0
@@ -1123,7 +1124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886251e9a18ece04ea8e61686c173e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraDistance: 1.46875
+  CameraDistance: 8.181478
   DeadZoneDepth: 0
   Composition:
     ScreenPosition: {x: 0, y: 0}
@@ -1135,7 +1136,7 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 1.16875, z: 0}
+  TargetOffset: {x: 0, y: 1.1558925, z: -1.4586408}
   Damping: {x: 1, y: 1, z: 1}
   Lookahead:
     Enabled: 0
@@ -1212,8 +1213,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1821753625}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000014658619, y: 0.99812466, z: 0.06121408, w: -0.0000000063741856}
-  m_LocalPosition: {x: 0, y: -1, z: 4.5}
+  m_LocalRotation: {x: 0.010808636, y: 0.97688884, z: 0.050932612, w: -0.20730992}
+  m_LocalPosition: {x: 2, y: -1, z: 4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1266,7 +1267,7 @@ MonoBehaviour:
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 0, y: -1, z: 4.5}
+  FollowOffset: {x: 2, y: -1, z: 4.5}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

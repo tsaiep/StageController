@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+ï»¿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +11,34 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _cameraProfileProp;
     private SerializedProperty _trackingTargetProp;
     private SerializedProperty _splineContainerProp;
+    private SerializedProperty _posDistanceBiasProp;
+    private SerializedProperty _posTargetOffsetXBiasProp;
+    private SerializedProperty _posTargetOffsetYBiasProp;
+    private SerializedProperty _posTargetOffsetZBiasProp;
+    private SerializedProperty _followOffsetXBiasProp;
+    private SerializedProperty _followOffsetYBiasProp;
+    private SerializedProperty _followOffsetZBiasProp;
+    private SerializedProperty _splinePositionBiasProp;
+    private SerializedProperty _rotTargetOffsetXBiasProp;
+    private SerializedProperty _rotTargetOffsetYBiasProp;
+    private SerializedProperty _rotTargetOffsetZBiasProp;
 
     private void OnEnable()
     {
         _cameraProfileProp = serializedObject.FindProperty("cameraProfile");
         _trackingTargetProp = serializedObject.FindProperty("trackingTarget");
         _splineContainerProp = serializedObject.FindProperty("splineContainer");
+        _posDistanceBiasProp = serializedObject.FindProperty("posDistanceBias");
+        _posTargetOffsetXBiasProp = serializedObject.FindProperty("posTargetOffsetXBias");
+        _posTargetOffsetYBiasProp = serializedObject.FindProperty("posTargetOffsetYBias");
+        _posTargetOffsetZBiasProp = serializedObject.FindProperty("posTargetOffsetZBias");
+        _followOffsetXBiasProp = serializedObject.FindProperty("followOffsetXBias");
+        _followOffsetYBiasProp = serializedObject.FindProperty("followOffsetYBias");
+        _followOffsetZBiasProp = serializedObject.FindProperty("followOffsetZBias");
+        _splinePositionBiasProp = serializedObject.FindProperty("splinePositionBias");
+        _rotTargetOffsetXBiasProp = serializedObject.FindProperty("rotTargetOffsetXBias");
+        _rotTargetOffsetYBiasProp = serializedObject.FindProperty("rotTargetOffsetYBias");
+        _rotTargetOffsetZBiasProp = serializedObject.FindProperty("rotTargetOffsetZBias");
     }
 
     public override void OnInspectorGUI()
@@ -43,7 +65,118 @@ public class CameraProfileAssetEditor : Editor
             EditorGUILayout.PropertyField(_splineContainerProp);
         }
 
+        if (currentProfile is GeneralProfileSO)
+        {
+            DrawGeneralBiasSettings();
+        }
+        else if (currentProfile is TrackingProfileSO)
+        {
+            DrawTrackingBiasSettings();
+        }
+        else if (currentProfile is DollyProfileSO)
+        {
+            DrawDollyBiasSettings();
+        }
+
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private void DrawGeneralBiasSettings()
+    {
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("General Bias", EditorStyles.boldLabel);
+
+        EditorGUI.indentLevel++;
+
+        EditorGUILayout.PropertyField(
+            _posDistanceBiasProp,
+            new GUIContent("Pos Distance Bias")
+        );
+
+        EditorGUILayout.Space(2);
+        EditorGUILayout.LabelField("Position Composer Target Offset", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.PropertyField(
+            _posTargetOffsetXBiasProp,
+            new GUIContent("Pos Target Offset X Bias")
+        );
+        EditorGUILayout.PropertyField(
+            _posTargetOffsetYBiasProp,
+            new GUIContent("Pos Target Offset Y Bias")
+        );
+        EditorGUILayout.PropertyField(
+            _posTargetOffsetZBiasProp,
+            new GUIContent("Pos Target Offset Z Bias")
+        );
+
+        EditorGUILayout.Space(2);
+        DrawRotationTargetOffsetBiasFields();
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawTrackingBiasSettings()
+    {
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Tracking Bias", EditorStyles.boldLabel);
+
+        EditorGUI.indentLevel++;
+
+        EditorGUILayout.LabelField("Cinemachine Follow Offset", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.PropertyField(
+            _followOffsetXBiasProp,
+            new GUIContent("Follow Offset X Bias")
+        );
+        EditorGUILayout.PropertyField(
+            _followOffsetYBiasProp,
+            new GUIContent("Follow Offset Y Bias")
+        );
+        EditorGUILayout.PropertyField(
+            _followOffsetZBiasProp,
+            new GUIContent("Follow Offset Z Bias")
+        );
+
+        EditorGUILayout.Space(2);
+        DrawRotationTargetOffsetBiasFields();
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawDollyBiasSettings()
+    {
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Dolly Bias", EditorStyles.boldLabel);
+
+        EditorGUI.indentLevel++;
+
+        EditorGUILayout.PropertyField(
+            _splinePositionBiasProp,
+            new GUIContent("Spline Position Bias")
+        );
+
+        EditorGUILayout.Space(2);
+        DrawRotationTargetOffsetBiasFields();
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawRotationTargetOffsetBiasFields()
+    {
+        EditorGUILayout.LabelField("Rotation Composer Target Offset", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.PropertyField(
+            _rotTargetOffsetXBiasProp,
+            new GUIContent("Rot Target Offset X Bias")
+        );
+        EditorGUILayout.PropertyField(
+            _rotTargetOffsetYBiasProp,
+            new GUIContent("Rot Target Offset Y Bias")
+        );
+        EditorGUILayout.PropertyField(
+            _rotTargetOffsetZBiasProp,
+            new GUIContent("Rot Target Offset Z Bias")
+        );
     }
 
     private void DrawCameraProfilePicker()
@@ -51,7 +184,7 @@ public class CameraProfileAssetEditor : Editor
         if (_cameraProfileProp == null)
         {
             EditorGUILayout.HelpBox(
-                "§ä¤£¨ì cameraProfile Äæ¦ì¡C½Ğ½T»{ CameraProfileAsset.cs ¸Ì¦³ public CameraProfileSO cameraProfile¡C",
+                "æ‰¾ä¸åˆ° cameraProfile æ¬„ä½ã€‚è«‹ç¢ºèª CameraProfileAsset.cs è£¡æœ‰ public CameraProfileSO cameraProfileã€‚",
                 MessageType.Error
             );
             return;
@@ -66,7 +199,7 @@ public class CameraProfileAssetEditor : Editor
         {
             string buttonLabel = currentProfile != null
                 ? $"{currentProfile.name}  ({GetProfileTypeName(currentProfile)})"
-                : "None  (ÂIÀ»·j´M Camera Profile)";
+                : "None  (é»æ“Šæœå°‹ Camera Profile)";
 
             Rect buttonRect = EditorGUILayout.GetControlRect(
                 false,
@@ -374,7 +507,7 @@ public class CameraProfilePickerPopup : PopupWindowContent
             GUILayout.FlexibleSpace();
 
             EditorGUILayout.LabelField(
-                "Tag ±ø¥ó¡G¥æ¶°¡]¥²¶·¦P®É²Å¦X©Ò¦³¿ï¨úªº Tag¡^",
+                "Tag æ¢ä»¶ï¼šäº¤é›†ï¼ˆå¿…é ˆåŒæ™‚ç¬¦åˆæ‰€æœ‰é¸å–çš„ Tagï¼‰",
                 EditorStyles.miniLabel,
                 GUILayout.Width(260f)
             );
@@ -511,7 +644,7 @@ public class CameraProfilePickerPopup : PopupWindowContent
         if (filteredProfiles.Count == 0)
         {
             EditorGUILayout.HelpBox(
-                "¨S¦³§ä¨ì²Å¦X±ø¥óªº Camera Profile¡C",
+                "æ²’æœ‰æ‰¾åˆ°ç¬¦åˆæ¢ä»¶çš„ Camera Profileã€‚",
                 MessageType.Info
             );
         }
@@ -616,7 +749,7 @@ public class CameraProfilePickerPopup : PopupWindowContent
         {
             DrawCenteredPreviewText(
                 previewRect,
-                "¥ıÂI¿ï¤@­Ó Camera Profile ¶i¦æ¹wÄı¡C\n¦A¦¸ÂI¿ï¦P¤@­Ó Profile ·|§¹¦¨¿ï¾Ü¡C"
+                "å…ˆé»é¸ä¸€å€‹ Camera Profile é€²è¡Œé è¦½ã€‚\nå†æ¬¡é»é¸åŒä¸€å€‹ Profile æœƒå®Œæˆé¸æ“‡ã€‚"
             );
             return;
         }
@@ -650,7 +783,7 @@ public class CameraProfilePickerPopup : PopupWindowContent
         {
             DrawCenteredPreviewText(
                 actualPreviewRect,
-                "³o­Ó Profile ¨S¦³¥i¥Îªº¹wÄıµe­±¡C"
+                "é€™å€‹ Profile æ²’æœ‰å¯ç”¨çš„é è¦½ç•«é¢ã€‚"
             );
             return;
         }
@@ -664,7 +797,7 @@ public class CameraProfilePickerPopup : PopupWindowContent
             Debug.LogException(exception);
             DrawCenteredPreviewText(
                 actualPreviewRect,
-                "¹wÄı²£¥Í¿ù»~¡A½ĞÀË¬d CameraProfileSOEditor ªº Preview ³]©w¡C"
+                "é è¦½ç”¢ç”ŸéŒ¯èª¤ï¼Œè«‹æª¢æŸ¥ CameraProfileSOEditor çš„ Preview è¨­å®šã€‚"
             );
         }
     }
@@ -689,7 +822,7 @@ public class CameraProfilePickerPopup : PopupWindowContent
         {
             GUI.enabled = _selectedProfile != null;
 
-            if (GUILayout.Button("¿ï¾Ü¦¹ Profile", GUILayout.Height(28f)))
+            if (GUILayout.Button("é¸æ“‡æ­¤ Profile", GUILayout.Height(28f)))
             {
                 PickProfile(_selectedProfile);
             }
@@ -709,7 +842,7 @@ public class CameraProfilePickerPopup : PopupWindowContent
         }
 
         EditorGUILayout.HelpBox(
-            "¾Ş§@¤è¦¡¡G²Ä¤@¦¸ÂI¿ï Profile ¥u·|§ó·s¤U¤è¹wÄı¡F²Ä¤G¦¸ÂI¿ï¦P¤@­Ó Profile ·|®M¥Î¨ì Clip¡CTag ¿z¿ï±Ä¥æ¶°±ø¥ó¡C",
+            "æ“ä½œæ–¹å¼ï¼šç¬¬ä¸€æ¬¡é»é¸ Profile åªæœƒæ›´æ–°ä¸‹æ–¹é è¦½ï¼›ç¬¬äºŒæ¬¡é»é¸åŒä¸€å€‹ Profile æœƒå¥—ç”¨åˆ° Clipã€‚Tag ç¯©é¸æ¡äº¤é›†æ¢ä»¶ã€‚",
             MessageType.None
         );
     }

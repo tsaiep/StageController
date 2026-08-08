@@ -94,6 +94,7 @@ public class CameraProfileMixer : PlayableBehaviour
         CameraProfileSO currentProfile = null;
         Transform finalTarget = null;
         SplineContainer finalSpline = null;
+        CameraProfileBehaviour dominantBehaviour = null;
 
         float maxWeight = -1f;
         float normalizedTime = 0f;
@@ -125,6 +126,7 @@ public class CameraProfileMixer : PlayableBehaviour
                 maxWeight = inputWeight;
                 dominantInputIndex = i;
                 currentProfile = behaviour.profile;
+                dominantBehaviour = behaviour;
 
                 finalTarget = behaviour.targetObject != null
                     ? behaviour.targetObject.transform
@@ -222,6 +224,7 @@ public class CameraProfileMixer : PlayableBehaviour
             currentProfile,
             finalTarget,
             finalSpline,
+            dominantBehaviour,
             normalizedTime,
             forceZeroDampingForActiveGeneral
         );
@@ -346,6 +349,7 @@ public class CameraProfileMixer : PlayableBehaviour
             prewarmCamera,
             nextGeneralProfile,
             nextTarget,
+            nextBehaviour,
             0f,
             true
         );
@@ -466,6 +470,7 @@ public class CameraProfileMixer : PlayableBehaviour
         CameraProfileSO profile,
         Transform finalTarget,
         SplineContainer finalSpline,
+        CameraProfileBehaviour behaviour,
         float t,
         bool forceZeroDamping)
     {
@@ -478,6 +483,7 @@ public class CameraProfileMixer : PlayableBehaviour
                 camera,
                 generalProfile,
                 finalTarget,
+                behaviour,
                 t,
                 forceZeroDamping
             );
@@ -488,6 +494,7 @@ public class CameraProfileMixer : PlayableBehaviour
                 camera,
                 trackingProfile,
                 finalTarget,
+                behaviour,
                 t
             );
         }
@@ -498,6 +505,7 @@ public class CameraProfileMixer : PlayableBehaviour
                 dollyProfile,
                 finalTarget,
                 finalSpline,
+                behaviour,
                 t
             );
         }
@@ -507,6 +515,7 @@ public class CameraProfileMixer : PlayableBehaviour
         CinemachineCamera camera,
         GeneralProfileSO profile,
         Transform finalTarget,
+        CameraProfileBehaviour behaviour,
         float t,
         bool forceZeroDamping)
     {
@@ -527,7 +536,7 @@ public class CameraProfileMixer : PlayableBehaviour
         if (positionComposer != null)
         {
             positionComposer.CameraDistance =
-                profile.posDistanceCurve.Evaluate(t);
+                profile.posDistanceCurve.Evaluate(t) + GetPosDistanceBias(behaviour);
 
             positionComposer.Composition.ScreenPosition = new Vector2(
                 profile.posScreenXCurve.Evaluate(t),
@@ -535,9 +544,9 @@ public class CameraProfileMixer : PlayableBehaviour
             );
 
             positionComposer.TargetOffset = new Vector3(
-                profile.posTargetOffsetXCurve.Evaluate(t),
-                profile.posTargetOffsetYCurve.Evaluate(t),
-                profile.posTargetOffsetZCurve.Evaluate(t)
+                profile.posTargetOffsetXCurve.Evaluate(t) + GetPosTargetOffsetXBias(behaviour),
+                profile.posTargetOffsetYCurve.Evaluate(t) + GetPosTargetOffsetYBias(behaviour),
+                profile.posTargetOffsetZCurve.Evaluate(t) + GetPosTargetOffsetZBias(behaviour)
             );
 
             positionComposer.Damping = forceZeroDamping
@@ -560,9 +569,9 @@ public class CameraProfileMixer : PlayableBehaviour
             );
 
             rotationComposer.TargetOffset = new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t),
-                profile.rotTargetOffsetYCurve.Evaluate(t),
-                profile.rotTargetOffsetZCurve.Evaluate(t)
+                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
             );
 
             rotationComposer.Damping = forceZeroDamping
@@ -574,10 +583,66 @@ public class CameraProfileMixer : PlayableBehaviour
         }
     }
 
+    private static float GetPosDistanceBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.posDistanceBias : 0f;
+    }
+
+    private static float GetPosTargetOffsetXBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.posTargetOffsetXBias : 0f;
+    }
+
+    private static float GetPosTargetOffsetYBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.posTargetOffsetYBias : 0f;
+    }
+
+    private static float GetPosTargetOffsetZBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.posTargetOffsetZBias : 0f;
+    }
+
+    private static float GetRotTargetOffsetXBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.rotTargetOffsetXBias : 0f;
+    }
+
+    private static float GetRotTargetOffsetYBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.rotTargetOffsetYBias : 0f;
+    }
+
+    private static float GetRotTargetOffsetZBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.rotTargetOffsetZBias : 0f;
+    }
+
+    private static float GetFollowOffsetXBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.followOffsetXBias : 0f;
+    }
+
+    private static float GetFollowOffsetYBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.followOffsetYBias : 0f;
+    }
+
+    private static float GetFollowOffsetZBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.followOffsetZBias : 0f;
+    }
+
+    private static float GetSplinePositionBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.splinePositionBias : 0f;
+    }
+
     private void ApplyTrackingProfile(
         CinemachineCamera camera,
         TrackingProfileSO profile,
         Transform finalTarget,
+        CameraProfileBehaviour behaviour,
         float t)
     {
         if (camera == null)
@@ -597,9 +662,9 @@ public class CameraProfileMixer : PlayableBehaviour
         if (follow != null)
         {
             follow.FollowOffset = new Vector3(
-                profile.followOffsetXCurve.Evaluate(t),
-                profile.followOffsetYCurve.Evaluate(t),
-                profile.followOffsetZCurve.Evaluate(t)
+                profile.followOffsetXCurve.Evaluate(t) + GetFollowOffsetXBias(behaviour),
+                profile.followOffsetYCurve.Evaluate(t) + GetFollowOffsetYBias(behaviour),
+                profile.followOffsetZCurve.Evaluate(t) + GetFollowOffsetZBias(behaviour)
             );
 
             var trackerSettings = follow.TrackerSettings;
@@ -624,9 +689,9 @@ public class CameraProfileMixer : PlayableBehaviour
             );
 
             rotationComposer.TargetOffset = new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t),
-                profile.rotTargetOffsetYCurve.Evaluate(t),
-                profile.rotTargetOffsetZCurve.Evaluate(t)
+                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
             );
 
             rotationComposer.Damping = new Vector2(
@@ -641,6 +706,7 @@ public class CameraProfileMixer : PlayableBehaviour
         DollyProfileSO profile,
         Transform finalTarget,
         SplineContainer finalSpline,
+        CameraProfileBehaviour behaviour,
         float t)
     {
         if (camera == null)
@@ -667,7 +733,7 @@ public class CameraProfileMixer : PlayableBehaviour
             dolly.PositionUnits = profile.positionUnits;
 
             var settings = dolly.SplineSettings;
-            settings.Position = profile.splinePositionCurve.Evaluate(t);
+            settings.Position = GetBiasedSplinePosition(profile, behaviour, t);
             dolly.SplineSettings = settings;
         }
 
@@ -682,9 +748,9 @@ public class CameraProfileMixer : PlayableBehaviour
             );
 
             rotationComposer.TargetOffset = new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t),
-                profile.rotTargetOffsetYCurve.Evaluate(t),
-                profile.rotTargetOffsetZCurve.Evaluate(t)
+                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
             );
 
             rotationComposer.Damping = new Vector2(
@@ -692,6 +758,22 @@ public class CameraProfileMixer : PlayableBehaviour
                 profile.rotDampingY
             );
         }
+    }
+
+    private static float GetBiasedSplinePosition(
+        DollyProfileSO profile,
+        CameraProfileBehaviour behaviour,
+        float t)
+    {
+        if (profile == null)
+            return 0f;
+
+        float position = profile.splinePositionCurve.Evaluate(t) +
+            GetSplinePositionBias(behaviour);
+
+        return profile.positionUnits == PathIndexUnit.Normalized
+            ? Mathf.Clamp01(position)
+            : position;
     }
 
     private bool IsWithinGeneralZeroDampingWindow()

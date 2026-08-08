@@ -1,12 +1,12 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 // =========================================================================
-// ¤lÃş§O A¡G¤@¯ë¹BÃè¸ê²£ (¥²¶·¿W¦û GeneralProfileSO.cs ÀÉ¦W)
+// å­é¡åˆ¥ Aï¼šä¸€èˆ¬é‹é¡è³‡ç”¢ (å¿…é ˆç¨ä½” GeneralProfileSO.cs æª”å)
 // =========================================================================
 [CreateAssetMenu(fileName = "NewGeneralProfile", menuName = "Camera System/Profiles/General Profile")]
 public class GeneralProfileSO : CameraProfileSO
 {
-    [Header("--- 1. Position Composer ¦±½u®w ---")]
+    [Header("--- 1. Position Composer æ›²ç·šåº« ---")]
     public AnimationCurve posDistanceCurve = AnimationCurve.Linear(0f, 2f, 1f, 2f);
     public AnimationCurve posScreenXCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
     public AnimationCurve posScreenYCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
@@ -14,19 +14,19 @@ public class GeneralProfileSO : CameraProfileSO
     public AnimationCurve posTargetOffsetYCurve = AnimationCurve.Linear(0f, 1.2f, 1f, 1.2f);
     public AnimationCurve posTargetOffsetZCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
 
-    [Header("--- 2. Position Composer Damping ¦ì¸mªı¥§ ---")]
+    [Header("--- 2. Position Composer Damping ä½ç½®é˜»å°¼ ---")]
     [Range(0f, 10f)] public float posDampingX = 1f;
     [Range(0f, 10f)] public float posDampingY = 1f;
     [Range(0f, 10f)] public float posDampingZ = 1f;
 
-    [Header("--- 3. Rotation Composer ¦±½u®w ---")]
+    [Header("--- 3. Rotation Composer æ›²ç·šåº« ---")]
     public AnimationCurve rotScreenXCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
     public AnimationCurve rotScreenYCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
     public AnimationCurve rotTargetOffsetXCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
     public AnimationCurve rotTargetOffsetYCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
     public AnimationCurve rotTargetOffsetZCurve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
 
-    [Header("--- 4. Rotation Composer Damping ±ÛÂàªı¥§ ---")]
+    [Header("--- 4. Rotation Composer Damping æ—‹è½‰é˜»å°¼ ---")]
     [Range(0f, 10f)] public float rotDampingX = 1f;
     [Range(0f, 10f)] public float rotDampingY = 1f;
 }
