@@ -525,7 +525,7 @@ public class CameraProfileMixer : PlayableBehaviour
         SetFollowAndLookAt(camera, finalTarget);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
-            profile.fovCurve.Evaluate(t),
+            GetBiasedFov(profile, behaviour, t),
             10f,
             120f
         );
@@ -586,6 +586,22 @@ public class CameraProfileMixer : PlayableBehaviour
     private static float GetPosDistanceBias(CameraProfileBehaviour behaviour)
     {
         return behaviour != null ? behaviour.posDistanceBias : 0f;
+    }
+
+    private static float GetBiasedFov(
+        CameraProfileSO profile,
+        CameraProfileBehaviour behaviour,
+        float t)
+    {
+        if (profile == null)
+            return 60f;
+
+        return profile.fovCurve.Evaluate(t) + GetFovBias(behaviour);
+    }
+
+    private static float GetFovBias(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null ? behaviour.fovBias : 0f;
     }
 
     private static float GetPosTargetOffsetXBias(CameraProfileBehaviour behaviour)
@@ -651,7 +667,7 @@ public class CameraProfileMixer : PlayableBehaviour
         SetFollowAndLookAt(camera, finalTarget);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
-            profile.fovCurve.Evaluate(t),
+            GetBiasedFov(profile, behaviour, t),
             10f,
             120f
         );
@@ -715,7 +731,7 @@ public class CameraProfileMixer : PlayableBehaviour
         SetFollowAndLookAt(camera, finalTarget);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
-            profile.fovCurve.Evaluate(t),
+            GetBiasedFov(profile, behaviour, t),
             10f,
             120f
         );

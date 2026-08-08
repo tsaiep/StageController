@@ -14,6 +14,9 @@ public class CameraProfileAsset : PlayableAsset
     [Tooltip("當使用 Dolly Profile 時，請將場景中的 Spline Container 拖入此欄位")]
     public ExposedReference<SplineContainer> splineContainer;
 
+    [Tooltip("加到目前 Profile 的 fovCurve 取樣結果上的偏移量")]
+    public float fovBias;
+
    // [Header("--- General Profile Bias ---")]
     [Tooltip("加到 GeneralProfileSO.posDistanceCurve 取樣結果上的偏移量")]
     public float posDistanceBias;
@@ -75,6 +78,7 @@ public class CameraProfileAsset : PlayableAsset
         behaviour.profile = cameraProfile;
         behaviour.targetObject = trackingTarget.Resolve(graph.GetResolver());
         behaviour.splineContainer = splineContainer.Resolve(graph.GetResolver());
+        behaviour.fovBias = fovBias;
         behaviour.posDistanceBias = posDistanceBias;
         behaviour.posScreenXBias = posScreenXBias;
         behaviour.posScreenYBias = posScreenYBias;
@@ -101,6 +105,7 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public GameObject targetObject;
     public SplineContainer splineContainer;
 
+    public float fovBias;
     public float posDistanceBias;
     public float posScreenXBias;
     public float posScreenYBias;

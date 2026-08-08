@@ -11,6 +11,7 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _cameraProfileProp;
     private SerializedProperty _trackingTargetProp;
     private SerializedProperty _splineContainerProp;
+    private SerializedProperty _fovBiasProp;
     private SerializedProperty _posDistanceBiasProp;
     private SerializedProperty _posTargetOffsetXBiasProp;
     private SerializedProperty _posTargetOffsetYBiasProp;
@@ -28,6 +29,7 @@ public class CameraProfileAssetEditor : Editor
         _cameraProfileProp = serializedObject.FindProperty("cameraProfile");
         _trackingTargetProp = serializedObject.FindProperty("trackingTarget");
         _splineContainerProp = serializedObject.FindProperty("splineContainer");
+        _fovBiasProp = serializedObject.FindProperty("fovBias");
         _posDistanceBiasProp = serializedObject.FindProperty("posDistanceBias");
         _posTargetOffsetXBiasProp = serializedObject.FindProperty("posTargetOffsetXBias");
         _posTargetOffsetYBiasProp = serializedObject.FindProperty("posTargetOffsetYBias");
@@ -88,6 +90,9 @@ public class CameraProfileAssetEditor : Editor
 
         EditorGUI.indentLevel++;
 
+        DrawLensBiasFields();
+        EditorGUILayout.Space(2);
+
         EditorGUILayout.PropertyField(
             _posDistanceBiasProp,
             new GUIContent("Pos Distance Bias")
@@ -122,6 +127,9 @@ public class CameraProfileAssetEditor : Editor
 
         EditorGUI.indentLevel++;
 
+        DrawLensBiasFields();
+        EditorGUILayout.Space(2);
+
         EditorGUILayout.LabelField("Cinemachine Follow Offset", EditorStyles.miniBoldLabel);
 
         EditorGUILayout.PropertyField(
@@ -150,6 +158,9 @@ public class CameraProfileAssetEditor : Editor
 
         EditorGUI.indentLevel++;
 
+        DrawLensBiasFields();
+        EditorGUILayout.Space(2);
+
         EditorGUILayout.PropertyField(
             _splinePositionBiasProp,
             new GUIContent("Spline Position Bias")
@@ -159,6 +170,16 @@ public class CameraProfileAssetEditor : Editor
         DrawRotationTargetOffsetBiasFields();
 
         EditorGUI.indentLevel--;
+    }
+
+    private void DrawLensBiasFields()
+    {
+        EditorGUILayout.LabelField("Lens", EditorStyles.miniBoldLabel);
+
+        EditorGUILayout.PropertyField(
+            _fovBiasProp,
+            new GUIContent("FOV Bias")
+        );
     }
 
     private void DrawRotationTargetOffsetBiasFields()
