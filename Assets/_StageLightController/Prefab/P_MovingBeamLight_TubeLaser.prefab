@@ -100,9 +100,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sourceLight: {fileID: 2941174439148856403}
+  sourceRenderers:
+  - {fileID: 6529936632980616626}
+  - {fileID: 5746586345130374772}
   targetRenderer: {fileID: 6598799021601415016}
   emissionMultiplier: 1
   includeLightIntensity: 0
+  sourceRendererColorProperty: _BaseColor
   emissionColorProperty: _EmissionColor
 --- !u!1 &2625804012508123144
 GameObject:
