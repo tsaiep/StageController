@@ -106,6 +106,8 @@ MonoBehaviour:
   targetRenderer: {fileID: 6598799021601415016}
   emissionMultiplier: 1
   includeLightIntensity: 0
+  requireSourceLightEnabled: 1
+  requireSourceRendererEnabled: 1
   sourceRendererColorProperty: _BaseColor
   emissionColorProperty: _EmissionColor
 --- !u!1 &2625804012508123144
