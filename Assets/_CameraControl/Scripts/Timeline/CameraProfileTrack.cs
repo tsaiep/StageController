@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -49,6 +50,19 @@ public class CameraProfileMixer : PlayableBehaviour
         Dolly
     }
 
+    private struct CameraProfileInput
+    {
+        public int InputIndex;
+        public float Weight;
+        public float NormalizedTime;
+        public double LocalTime;
+        public CameraProfileKind Kind;
+        public CameraProfileSO Profile;
+        public CameraProfileBehaviour Behaviour;
+        public Transform Target;
+        public SplineContainer Spline;
+    }
+
     private TimelineClip[] _clips;
     private double _generalPrewarmTime = 0.8;
     private int _generalCutZeroDampingFrames = 2;
@@ -68,6 +82,9 @@ public class CameraProfileMixer : PlayableBehaviour
     private bool _preparedGeneralUseB;
 
     private int _generalZeroDampingUntilFrame = -1;
+    private bool _lastWasBlending;
+
+    private Transform _blendTargetProxy;
 
     public void Initialize(
         TimelineClip[] clips,
@@ -91,18 +108,12 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
         }
 
-        CameraProfileSO currentProfile = null;
-        Transform finalTarget = null;
-        SplineContainer finalSpline = null;
-        CameraProfileBehaviour dominantBehaviour = null;
-
-        float maxWeight = -1f;
-        float normalizedTime = 0f;
-        double dominantLocalTime = 0.0;
-        int dominantInputIndex = -1;
-        int activeClipCount = 0;
-
         int inputCount = playable.GetInputCount();
+        List<CameraProfileInput> activeInputs =
+            new List<CameraProfileInput>(inputCount);
+
+        CameraProfileInput dominantInput = default;
+        bool hasDominantInput = false;
 
         for (int i = 0; i < inputCount; i++)
         {
@@ -110,8 +121,6 @@ public class CameraProfileMixer : PlayableBehaviour
 
             if (inputWeight <= 0f)
                 continue;
-
-            activeClipCount++;
 
             ScriptPlayable<CameraProfileBehaviour> inputPlayable =
                 (ScriptPlayable<CameraProfileBehaviour>)playable.GetInput(i);
@@ -121,29 +130,62 @@ public class CameraProfileMixer : PlayableBehaviour
             if (behaviour == null || behaviour.profile == null)
                 continue;
 
-            if (inputWeight > maxWeight)
+            double duration = inputPlayable.GetDuration();
+            double currentTime = inputPlayable.GetTime();
+
+            CameraProfileInput input = new CameraProfileInput
             {
-                maxWeight = inputWeight;
-                dominantInputIndex = i;
-                currentProfile = behaviour.profile;
-                dominantBehaviour = behaviour;
-
-                finalTarget = behaviour.targetObject != null
-                    ? behaviour.targetObject.transform
-                    : null;
-
-                finalSpline = behaviour.splineContainer;
-
-                double duration = inputPlayable.GetDuration();
-                double currentTime = inputPlayable.GetTime();
-
-                dominantLocalTime = currentTime;
-
-                normalizedTime = duration > 0 && !double.IsInfinity(duration)
+                InputIndex = i,
+                Weight = inputWeight,
+                NormalizedTime = duration > 0 && !double.IsInfinity(duration)
                     ? Mathf.Clamp01((float)(currentTime / duration))
-                    : 0f;
+                    : 0f,
+                LocalTime = currentTime,
+                Kind = GetProfileKind(behaviour.profile),
+                Profile = behaviour.profile,
+                Behaviour = behaviour,
+                Target = behaviour.targetObject != null
+                    ? behaviour.targetObject.transform
+                    : null,
+                Spline = behaviour.splineContainer
+            };
+
+            activeInputs.Add(input);
+
+            if (!hasDominantInput || input.Weight > dominantInput.Weight)
+            {
+                dominantInput = input;
+                hasDominantInput = true;
             }
         }
+
+        CameraProfileSO currentProfile = hasDominantInput
+            ? dominantInput.Profile
+            : null;
+
+        Transform finalTarget = hasDominantInput
+            ? dominantInput.Target
+            : null;
+
+        SplineContainer finalSpline = hasDominantInput
+            ? dominantInput.Spline
+            : null;
+
+        CameraProfileBehaviour dominantBehaviour = hasDominantInput
+            ? dominantInput.Behaviour
+            : null;
+
+        int dominantInputIndex = hasDominantInput
+            ? dominantInput.InputIndex
+            : -1;
+
+        float normalizedTime = hasDominantInput
+            ? dominantInput.NormalizedTime
+            : 0f;
+
+        double dominantLocalTime = hasDominantInput
+            ? dominantInput.LocalTime
+            : 0.0;
 
         double currentTimelineTime = GetCurrentTimelineTime(
             playable,
@@ -151,7 +193,7 @@ public class CameraProfileMixer : PlayableBehaviour
             dominantLocalTime
         );
 
-        if (maxWeight <= 0f || currentProfile == null)
+        if (!hasDominantInput || currentProfile == null)
         {
             // 空白 gap：不清掉 A/B 狀態，並且仍然可以提前預熱下一個 General。
             PrewarmNextGeneralClipContinuously(
@@ -166,10 +208,18 @@ public class CameraProfileMixer : PlayableBehaviour
                 master.DisableAllCameras();
             }
 
+            _lastWasBlending = false;
             return;
         }
 
-        CameraProfileKind currentKind = GetProfileKind(currentProfile);
+        bool shouldBlend = CanBlendActiveInputs(
+            activeInputs,
+            out CameraProfileKind blendedKind
+        );
+
+        CameraProfileKind currentKind = shouldBlend
+            ? blendedKind
+            : dominantInput.Kind;
 
         bool isClipChanged =
             dominantInputIndex != _lastDominantInputIndex ||
@@ -178,8 +228,8 @@ public class CameraProfileMixer : PlayableBehaviour
             finalSpline != _lastSpline ||
             currentKind != _lastKind;
 
-        bool isOverlapping = activeClipCount > 1;
-        bool isHardCutFrame = !isOverlapping && isClipChanged;
+        bool isOverlapping = activeInputs.Count > 1;
+        bool isHardCutFrame = !isOverlapping && isClipChanged && !_lastWasBlending;
 
         // 有效 Clip 期間：不管目前是 General / Tracking / Dolly，
         // 都可以往後找下一個 General，並在接近時預熱 General A/B。
@@ -219,15 +269,27 @@ public class CameraProfileMixer : PlayableBehaviour
             currentKind == CameraProfileKind.General &&
             IsWithinGeneralZeroDampingWindow();
 
-        ApplyProfileToCamera(
-            activeCamera,
-            currentProfile,
-            finalTarget,
-            finalSpline,
-            dominantBehaviour,
-            normalizedTime,
-            forceZeroDampingForActiveGeneral
-        );
+        if (shouldBlend)
+        {
+            ApplyBlendedProfileToCamera(
+                activeCamera,
+                activeInputs,
+                currentKind,
+                forceZeroDampingForActiveGeneral
+            );
+        }
+        else
+        {
+            ApplyProfileToCamera(
+                activeCamera,
+                currentProfile,
+                finalTarget,
+                finalSpline,
+                dominantBehaviour,
+                normalizedTime,
+                forceZeroDampingForActiveGeneral
+            );
+        }
 
         if (isHardCutFrame && !usedPreparedCamera)
         {
@@ -255,6 +317,7 @@ public class CameraProfileMixer : PlayableBehaviour
         _lastSpline = finalSpline;
         _lastDominantInputIndex = dominantInputIndex;
         _lastKind = currentKind;
+        _lastWasBlending = shouldBlend;
     }
 
     private double GetCurrentTimelineTime(
@@ -463,6 +526,327 @@ public class CameraProfileMixer : PlayableBehaviour
             default:
                 return null;
         }
+    }
+
+    private static bool CanBlendActiveInputs(
+        List<CameraProfileInput> inputs,
+        out CameraProfileKind blendedKind)
+    {
+        blendedKind = CameraProfileKind.None;
+
+        if (inputs == null || inputs.Count <= 1)
+            return false;
+
+        blendedKind = inputs[0].Kind;
+
+        if (blendedKind != CameraProfileKind.General &&
+            blendedKind != CameraProfileKind.Tracking)
+        {
+            return false;
+        }
+
+        for (int i = 1; i < inputs.Count; i++)
+        {
+            if (inputs[i].Kind != blendedKind)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void ApplyBlendedProfileToCamera(
+        CinemachineCamera camera,
+        List<CameraProfileInput> inputs,
+        CameraProfileKind kind,
+        bool forceZeroDamping)
+    {
+        if (camera == null || inputs == null || inputs.Count == 0)
+            return;
+
+        switch (kind)
+        {
+            case CameraProfileKind.General:
+                ApplyBlendedGeneralProfile(camera, inputs, forceZeroDamping);
+                break;
+
+            case CameraProfileKind.Tracking:
+                ApplyBlendedTrackingProfile(camera, inputs);
+                break;
+        }
+    }
+
+    private void ApplyBlendedGeneralProfile(
+        CinemachineCamera camera,
+        List<CameraProfileInput> inputs,
+        bool forceZeroDamping)
+    {
+        float totalWeight = GetTotalWeight(inputs);
+
+        if (totalWeight <= 0f)
+            return;
+
+        SetFollowAndLookAt(camera, GetBlendedTarget(inputs));
+
+        float fov = 0f;
+        float cameraDistance = 0f;
+        Vector2 posScreenPosition = Vector2.zero;
+        Vector3 posTargetOffset = Vector3.zero;
+        Vector3 posDamping = Vector3.zero;
+        Vector2 rotScreenPosition = Vector2.zero;
+        Vector3 rotTargetOffset = Vector3.zero;
+        Vector2 rotDamping = Vector2.zero;
+
+        foreach (CameraProfileInput input in inputs)
+        {
+            GeneralProfileSO profile = input.Profile as GeneralProfileSO;
+
+            if (profile == null)
+                continue;
+
+            float weight = input.Weight / totalWeight;
+            float t = input.NormalizedTime;
+            CameraProfileBehaviour behaviour = input.Behaviour;
+
+            fov += GetBiasedFov(profile, behaviour, t) * weight;
+
+            cameraDistance +=
+                (profile.posDistanceCurve.Evaluate(t) + GetPosDistanceBias(behaviour)) *
+                weight;
+
+            posScreenPosition += new Vector2(
+                profile.posScreenXCurve.Evaluate(t),
+                profile.posScreenYCurve.Evaluate(t)
+            ) * weight;
+
+            posTargetOffset += new Vector3(
+                profile.posTargetOffsetXCurve.Evaluate(t) + GetPosTargetOffsetXBias(behaviour),
+                profile.posTargetOffsetYCurve.Evaluate(t) + GetPosTargetOffsetYBias(behaviour),
+                profile.posTargetOffsetZCurve.Evaluate(t) + GetPosTargetOffsetZBias(behaviour)
+            ) * weight;
+
+            posDamping += new Vector3(
+                profile.posDampingX,
+                profile.posDampingY,
+                profile.posDampingZ
+            ) * weight;
+
+            rotScreenPosition += new Vector2(
+                profile.rotScreenXCurve.Evaluate(t),
+                profile.rotScreenYCurve.Evaluate(t)
+            ) * weight;
+
+            rotTargetOffset += new Vector3(
+                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+            ) * weight;
+
+            rotDamping += new Vector2(
+                profile.rotDampingX,
+                profile.rotDampingY
+            ) * weight;
+        }
+
+        camera.Lens.FieldOfView = Mathf.Clamp(fov, 10f, 120f);
+
+        CinemachinePositionComposer positionComposer =
+            camera.GetComponent<CinemachinePositionComposer>();
+
+        if (positionComposer != null)
+        {
+            positionComposer.CameraDistance = cameraDistance;
+            positionComposer.Composition.ScreenPosition = posScreenPosition;
+            positionComposer.TargetOffset = posTargetOffset;
+            positionComposer.Damping = forceZeroDamping
+                ? Vector3.zero
+                : posDamping;
+        }
+
+        CinemachineRotationComposer rotationComposer =
+            camera.GetComponent<CinemachineRotationComposer>();
+
+        if (rotationComposer != null)
+        {
+            rotationComposer.Composition.ScreenPosition = rotScreenPosition;
+            rotationComposer.TargetOffset = rotTargetOffset;
+            rotationComposer.Damping = forceZeroDamping
+                ? Vector2.zero
+                : rotDamping;
+        }
+    }
+
+    private void ApplyBlendedTrackingProfile(
+        CinemachineCamera camera,
+        List<CameraProfileInput> inputs)
+    {
+        float totalWeight = GetTotalWeight(inputs);
+
+        if (totalWeight <= 0f)
+            return;
+
+        SetFollowAndLookAt(camera, GetBlendedTarget(inputs));
+
+        float fov = 0f;
+        Vector3 followOffset = Vector3.zero;
+        Vector3 positionDamping = Vector3.zero;
+        Vector2 rotScreenPosition = Vector2.zero;
+        Vector3 rotTargetOffset = Vector3.zero;
+        Vector2 rotDamping = Vector2.zero;
+
+        foreach (CameraProfileInput input in inputs)
+        {
+            TrackingProfileSO profile = input.Profile as TrackingProfileSO;
+
+            if (profile == null)
+                continue;
+
+            float weight = input.Weight / totalWeight;
+            float t = input.NormalizedTime;
+            CameraProfileBehaviour behaviour = input.Behaviour;
+
+            fov += GetBiasedFov(profile, behaviour, t) * weight;
+
+            followOffset += new Vector3(
+                profile.followOffsetXCurve.Evaluate(t) + GetFollowOffsetXBias(behaviour),
+                profile.followOffsetYCurve.Evaluate(t) + GetFollowOffsetYBias(behaviour),
+                profile.followOffsetZCurve.Evaluate(t) + GetFollowOffsetZBias(behaviour)
+            ) * weight;
+
+            positionDamping += new Vector3(
+                profile.dampingX,
+                profile.dampingY,
+                profile.dampingZ
+            ) * weight;
+
+            rotScreenPosition += new Vector2(
+                profile.rotScreenXCurve.Evaluate(t),
+                profile.rotScreenYCurve.Evaluate(t)
+            ) * weight;
+
+            rotTargetOffset += new Vector3(
+                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+            ) * weight;
+
+            rotDamping += new Vector2(
+                profile.rotDampingX,
+                profile.rotDampingY
+            ) * weight;
+        }
+
+        camera.Lens.FieldOfView = Mathf.Clamp(fov, 10f, 120f);
+
+        CinemachineFollow follow = camera.GetComponent<CinemachineFollow>();
+
+        if (follow != null)
+        {
+            follow.FollowOffset = followOffset;
+
+            var trackerSettings = follow.TrackerSettings;
+            trackerSettings.PositionDamping = positionDamping;
+            follow.TrackerSettings = trackerSettings;
+        }
+
+        CinemachineRotationComposer rotationComposer =
+            camera.GetComponent<CinemachineRotationComposer>();
+
+        if (rotationComposer != null)
+        {
+            rotationComposer.Composition.ScreenPosition = rotScreenPosition;
+            rotationComposer.TargetOffset = rotTargetOffset;
+            rotationComposer.Damping = rotDamping;
+        }
+    }
+
+    private static float GetTotalWeight(List<CameraProfileInput> inputs)
+    {
+        float totalWeight = 0f;
+
+        foreach (CameraProfileInput input in inputs)
+        {
+            totalWeight += input.Weight;
+        }
+
+        return totalWeight;
+    }
+
+    private Transform GetBlendedTarget(List<CameraProfileInput> inputs)
+    {
+        if (inputs == null || inputs.Count == 0)
+            return null;
+
+        float targetWeight = 0f;
+        Vector3 position = Vector3.zero;
+
+        foreach (CameraProfileInput input in inputs)
+        {
+            if (input.Target == null)
+                continue;
+
+            targetWeight += input.Weight;
+            position += input.Target.position * input.Weight;
+        }
+
+        if (targetWeight <= 0f)
+            return null;
+
+        if (inputs.Count == 1)
+            return inputs[0].Target;
+
+        Transform proxy = EnsureBlendTargetProxy();
+        proxy.position = position / targetWeight;
+        proxy.rotation = GetBlendedTargetRotation(inputs, targetWeight);
+
+        return proxy;
+    }
+
+    private Transform EnsureBlendTargetProxy()
+    {
+        if (_blendTargetProxy != null)
+            return _blendTargetProxy;
+
+        GameObject proxyObject = new GameObject("Camera Profile Blend Target Proxy");
+        proxyObject.hideFlags = HideFlags.HideAndDontSave;
+        _blendTargetProxy = proxyObject.transform;
+
+        return _blendTargetProxy;
+    }
+
+    private static Quaternion GetBlendedTargetRotation(
+        List<CameraProfileInput> inputs,
+        float targetWeight)
+    {
+        Vector3 forward = Vector3.zero;
+        Vector3 up = Vector3.zero;
+
+        foreach (CameraProfileInput input in inputs)
+        {
+            if (input.Target == null)
+                continue;
+
+            float normalizedWeight = input.Weight / targetWeight;
+            forward += input.Target.forward * normalizedWeight;
+            up += input.Target.up * normalizedWeight;
+        }
+
+        if (forward.sqrMagnitude <= 0.0001f || up.sqrMagnitude <= 0.0001f)
+            return Quaternion.identity;
+
+        Vector3 normalizedForward = forward.normalized;
+        Vector3 normalizedUp = up.normalized;
+
+        if (Vector3.Cross(normalizedForward, normalizedUp).sqrMagnitude <= 0.0001f)
+        {
+            normalizedUp = Vector3.up;
+
+            if (Vector3.Cross(normalizedForward, normalizedUp).sqrMagnitude <= 0.0001f)
+            {
+                normalizedUp = Vector3.right;
+            }
+        }
+
+        return Quaternion.LookRotation(normalizedForward, normalizedUp);
     }
 
     private void ApplyProfileToCamera(
@@ -878,10 +1262,30 @@ public class CameraProfileMixer : PlayableBehaviour
         _preparedGeneralInputIndex = -1;
         _preparedGeneralUseB = false;
         _generalZeroDampingUntilFrame = -1;
+        _lastWasBlending = false;
     }
 
     public override void OnPlayableDestroy(Playable playable)
     {
         ClearState();
+        DestroyBlendTargetProxy();
+    }
+
+    private void DestroyBlendTargetProxy()
+    {
+        if (_blendTargetProxy == null)
+            return;
+
+        GameObject proxyObject = _blendTargetProxy.gameObject;
+        _blendTargetProxy = null;
+
+        if (Application.isPlaying)
+        {
+            Object.Destroy(proxyObject);
+        }
+        else
+        {
+            Object.DestroyImmediate(proxyObject);
+        }
     }
 }
