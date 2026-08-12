@@ -1,11 +1,26 @@
 using UnityEditor;
 using UnityEngine;
+using ColorSampleMode = UnifiedStageController.ColorSampleMode;
+using RotationMode = UnifiedStageController.RotationMode;
+using StageLightMode = UnifiedStageController.StageLightMode;
 
 [CustomEditor(typeof(UnifiedStageClip))]
 public class UnifiedStageClipInspector : Editor
 {
+    private const float FoldoutIndent = 12f;
+
     private string _feedbackMessage = "";
     private double _feedbackTime;
+    private bool _showFixtureAdvanced;
+    private bool _showColorAdvanced;
+    private bool _showBeatAdvanced;
+    private bool _showBeatOffset;
+    private bool _showClipProgressOffset;
+    private bool _showAudioBrightnessAdvanced;
+    private bool _showMotionAdvanced;
+    private bool _showMotionOffset;
+    private bool _showSpreadAdvanced;
+    private bool _showFannedLaserAdvanced;
 
     public override void OnInspectorGUI()
     {
@@ -99,16 +114,311 @@ public class UnifiedStageClipInspector : Editor
 
     private void DrawClipProperties()
     {
-        DrawPropertiesExcluding(
-            serializedObject,
-            "m_Script",
-            "applyTemplate",
-            "selectedTemplate",
-            "applyTemplateColorSettings",
-            "applyTemplateRotationSettings",
-            "applyTemplateFixtureSettings",
-            "clipDisplayName"
-        );
+        DrawFixtureSection();
+        EditorGUILayout.Space(6f);
+        DrawColorSection();
+        EditorGUILayout.Space(6f);
+        DrawMotionSection();
+        EditorGUILayout.Space(6f);
+        DrawSpreadSection();
+    }
+
+    private void DrawFixtureSection()
+    {
+        SerializedProperty lightModeProp = serializedObject.FindProperty("lightMode");
+        StageLightMode lightMode = (StageLightMode)lightModeProp.enumValueIndex;
+
+        EditorGUILayout.LabelField("Fixture", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.PropertyField(lightModeProp);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("lightRange"));
+
+        if (lightMode == StageLightMode.VolumetricSpot || lightMode == StageLightMode.Spot)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("beamAngle"));
+        }
+
+        _showFixtureAdvanced = DrawIndentedFoldout(_showFixtureAdvanced, "Advanced");
+        if (_showFixtureAdvanced)
+        {
+            using (new EditorGUI.IndentLevelScope())
+            {
+                if (lightMode != StageLightMode.Point)
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("softness"));
+
+                if (lightMode == StageLightMode.VolumetricSpot || lightMode == StageLightMode.Spot)
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("enableScatterMode"));
+
+            }
+        }
+
+        if (lightMode == StageLightMode.FannedLaser)
+        {
+            _showFannedLaserAdvanced = DrawIndentedFoldout(_showFannedLaserAdvanced, "Fanned Laser");
+            if (_showFannedLaserAdvanced)
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("fannedAngle"));
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("fannedRoll"));
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("fannedAngleCurve"));
+                }
+            }
+        }
+
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawColorSection()
+    {
+        SerializedProperty colorModeProp = serializedObject.FindProperty("colorSampleMode");
+        ColorSampleMode colorMode = (ColorSampleMode)colorModeProp.enumValueIndex;
+        RotationMode rotationMode = (RotationMode)serializedObject.FindProperty("rotationMode").enumValueIndex;
+
+        EditorGUILayout.LabelField("Color", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("globalColor"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("lightGradient"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("intensityMultiplier"));
+        EditorGUILayout.PropertyField(colorModeProp);
+
+        switch (colorMode)
+        {
+            case ColorSampleMode.AlongAudioSource:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("sensitivity"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("smoothness"));
+                break;
+
+            case ColorSampleMode.BeatGradient:
+                DrawBeatTimingFields();
+                break;
+
+            case ColorSampleMode.BeatSnap:
+                DrawBeatTimingFields();
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("beatSnapColors"), true);
+                }
+                break;
+        }
+
+        _showColorAdvanced = DrawIndentedFoldout(_showColorAdvanced, "Color Advanced");
+        if (_showColorAdvanced)
+        {
+            using (new EditorGUI.IndentLevelScope())
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("beamLengthGradient"));
+            }
+        }
+
+        bool hasAdvancedColor = colorMode == ColorSampleMode.BeatGradient ||
+                                colorMode == ColorSampleMode.BeatSnap;
+
+        if (hasAdvancedColor)
+        {
+            _showBeatAdvanced = DrawIndentedFoldout(_showBeatAdvanced, "Beat Advanced");
+            if (_showBeatAdvanced)
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("beatPhaseOffset"));
+                    if (colorMode == ColorSampleMode.BeatSnap)
+                        EditorGUILayout.PropertyField(serializedObject.FindProperty("beatSnapTransitionTime"));
+                }
+            }
+
+            _showBeatOffset = DrawIndentedFoldout(_showBeatOffset, "Beat Group / Light Offset");
+            if (_showBeatOffset)
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    DrawBeatOffsetFields();
+                }
+            }
+        }
+
+        bool showClipProgressDelay = colorMode == ColorSampleMode.ClipProgress &&
+                                     !HasMotionCycle(rotationMode) &&
+                                     rotationMode != RotationMode.FreezeFrame;
+        if (showClipProgressDelay)
+        {
+            _showClipProgressOffset = DrawIndentedFoldout(_showClipProgressOffset, "Clip Progress Group / Light Offset");
+            if (_showClipProgressOffset)
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    DrawPerUnitMotionDelayFields();
+                }
+            }
+        }
+
+        DrawAudioBrightnessSection();
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawBeatTimingFields()
+    {
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("bpm"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("beatTimeRef"));
+    }
+
+    private void DrawAudioBrightnessSection()
+    {
+        SerializedProperty useAudioProp = serializedObject.FindProperty("useAudioAnalyzerBrightness");
+
+        EditorGUILayout.PropertyField(useAudioProp);
+        if (!useAudioProp.boolValue)
+            return;
+
+        _showAudioBrightnessAdvanced = DrawIndentedFoldout(_showAudioBrightnessAdvanced, "Audio Analyzer Brightness");
+        if (!_showAudioBrightnessAdvanced)
+            return;
+
+        using (new EditorGUI.IndentLevelScope())
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("audioBeatLightInterval"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("audioBeatIndices"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("audioBrightnessOffset"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("audioBrightnessMultiplier"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("audioBrightnessLerp"));
+        }
+    }
+
+    private void DrawMotionSection()
+    {
+        SerializedProperty rotationModeProp = serializedObject.FindProperty("rotationMode");
+        RotationMode rotationMode = (RotationMode)rotationModeProp.enumValueIndex;
+        bool hasMotionCycle = HasMotionCycle(rotationMode);
+
+        EditorGUILayout.LabelField("Motion", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.PropertyField(rotationModeProp);
+
+        switch (rotationMode)
+        {
+            case RotationMode.Static:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("staticAngleOffset"));
+                break;
+
+            case RotationMode.Target:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("trackingTarget"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("staticAngleOffset"));
+                break;
+
+            case RotationMode.FreezeFrame:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("freezeUseClipGradient"));
+                break;
+
+            default:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("rotationSpeed"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("rotationRange"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("staticAngleOffset"));
+                break;
+        }
+
+        if (hasMotionCycle && rotationMode != RotationMode.Random)
+        {
+            _showMotionOffset = DrawIndentedFoldout(_showMotionOffset, "Group / Light Offset");
+            if (_showMotionOffset)
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    DrawPerUnitMotionOffsetFields();
+                }
+            }
+        }
+
+        if (hasMotionCycle)
+        {
+            _showMotionAdvanced = DrawIndentedFoldout(_showMotionAdvanced, "Advanced");
+            if (_showMotionAdvanced)
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("cyclePauseTime"));
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("animationOffset"));
+                }
+            }
+        }
+
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawSpreadSection()
+    {
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        _showSpreadAdvanced = DrawIndentedFoldout(_showSpreadAdvanced, "Spread Advanced");
+        if (!_showSpreadAdvanced)
+        {
+            EditorGUILayout.EndVertical();
+            return;
+        }
+
+        using (new EditorGUI.IndentLevelScope())
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngle"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadArcRange"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngleCurve"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngleCurveByIndex"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadPanCurve"));
+        }
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawPerUnitMotionDelayFields()
+    {
+        EditorGUILayout.LabelField("分組偏移", EditorStyles.miniBoldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("groupDelayCurve"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("groupDelayFactor"));
+
+        EditorGUILayout.Space(2f);
+        EditorGUILayout.LabelField("組內偏移", EditorStyles.miniBoldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("lightDelayCurve"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("lightDelayFactor"));
+    }
+
+    private void DrawPerUnitMotionOffsetFields()
+    {
+        EditorGUILayout.LabelField("分組偏移", EditorStyles.miniBoldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("groupDelayCurve"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("groupDelayFactor"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("groupRotationRangeCurve"));
+
+        EditorGUILayout.Space(2f);
+        EditorGUILayout.LabelField("組內偏移", EditorStyles.miniBoldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("lightDelayCurve"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("lightDelayFactor"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("lightRotationRangeCurve"));
+    }
+
+    private void DrawBeatOffsetFields()
+    {
+        EditorGUILayout.LabelField("分組偏移", EditorStyles.miniBoldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("beatGroupDelayCurve"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("beatGroupDelayFactor"));
+
+        EditorGUILayout.Space(2f);
+        EditorGUILayout.LabelField("組內偏移", EditorStyles.miniBoldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("beatLightDelayCurve"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("beatLightDelayFactor"));
+    }
+
+    private static bool DrawIndentedFoldout(bool expanded, string label)
+    {
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            GUILayout.Space(FoldoutIndent);
+            return EditorGUILayout.Foldout(expanded, label, true);
+        }
+    }
+
+    private static bool HasMotionCycle(RotationMode rotationMode)
+    {
+        return rotationMode == RotationMode.Scan ||
+               rotationMode == RotationMode.Circle ||
+               rotationMode == RotationMode.VerticalSwing ||
+               rotationMode == RotationMode.Random ||
+               rotationMode == RotationMode.Cross;
     }
 
     private void DrawExportSection(UnifiedStageClip clip)
