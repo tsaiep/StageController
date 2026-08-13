@@ -87,7 +87,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Header("目標追蹤設定")]
     [Tooltip("追蹤目標")] public ExposedReference<Transform> trackingTarget;
 
-    [Header("分組偏移")]
+    //[Header("分組偏移")]
     [Tooltip("分組延遲曲線（以 groupIndex/(groupCount-1) 取樣）\n" +
              "group 延遲 = groupDelayCurve(t) × groupDelayFactor × groupCount")]
     public AnimationCurve groupDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
@@ -99,7 +99,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
              "數値 × rotationRange = 該組的實際旋轉幅度，1 表示不改變")]
     public AnimationCurve groupRotationRangeCurve = AnimationCurve.Constant(0, 1, 1);
 
-    [Header("組內偏移")]
+    //[Header("組內偏移")]
     [Tooltip("組內延遲曲線（以 indexInGroup/(groupSize-1) 取樣）\n" +
              "light 延遲 = lightDelayCurve(t) × lightDelayFactor × groupSize")]
     public AnimationCurve lightDelayCurve = AnimationCurve.Linear(0, 0, 1, 1);
