@@ -19,7 +19,6 @@ public class UnifiedStageClipInspector : Editor
     private bool _showAudioBrightnessAdvanced;
     private bool _showMotionAdvanced;
     private bool _showMotionOffset;
-    private bool _showSpreadAdvanced;
     private bool _showFannedLaserAdvanced;
 
     public override void OnInspectorGUI()
@@ -346,22 +345,13 @@ public class UnifiedStageClipInspector : Editor
 
     private void DrawSpreadSection()
     {
+        EditorGUILayout.LabelField("Spread", EditorStyles.boldLabel);
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        _showSpreadAdvanced = DrawIndentedFoldout(_showSpreadAdvanced, "Spread Advanced");
-        if (!_showSpreadAdvanced)
-        {
-            EditorGUILayout.EndVertical();
-            return;
-        }
-
-        using (new EditorGUI.IndentLevelScope())
-        {
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngle"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadArcRange"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngleCurve"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngleCurveByIndex"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadPanCurve"));
-        }
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngle"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadArcRange"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngleCurve"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadAngleCurveByIndex"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("spreadPanCurve"));
         EditorGUILayout.EndVertical();
     }
 
