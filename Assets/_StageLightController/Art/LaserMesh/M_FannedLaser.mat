@@ -24,6 +24,22 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _SampleTexture2D_07cc419ae007407f84db6cf53807cc2a_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 74b736e419e8d4a4ea5ee8bb6244a317, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_3e63e65825934b86a84a83fae8f2c4a0_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 74b736e419e8d4a4ea5ee8bb6244a317, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_ab4841967ac14bdbbe269c79c692e521_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 74b736e419e8d4a4ea5ee8bb6244a317, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_e4d42cd58c854f959a928483525182a4_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 74b736e419e8d4a4ea5ee8bb6244a317, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -43,8 +59,11 @@ Material:
     - _Edge_Intensity: 3
     - _Edge_Width: 0.1
     - _Edge_Width_Correction: 0.1
-    - _Edge_Width_Correction_Weight: 0.75
+    - _Edge_Width_Correction_Weight: 1
     - _Float: 0
+    - _Noise_Scale: 0.35
+    - _Noise_Speed: 0.2
+    - _Noise_Strength: 1
     - _Power: 16.03
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -58,6 +77,7 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0, g: 1, b: 0.14930898, a: 0.96862745}
+    - _Noise_Scrolling_Direction: {r: 0.5, g: 0.5, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &4467657266485668680
