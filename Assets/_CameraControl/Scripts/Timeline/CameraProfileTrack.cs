@@ -137,9 +137,11 @@ public class CameraProfileMixer : PlayableBehaviour
             {
                 InputIndex = i,
                 Weight = inputWeight,
-                NormalizedTime = duration > 0 && !double.IsInfinity(duration)
-                    ? Mathf.Clamp01((float)(currentTime / duration))
-                    : 0f,
+                NormalizedTime = GetProfileNormalizedTime(
+                    duration,
+                    currentTime,
+                    behaviour
+                ),
                 LocalTime = currentTime,
                 Kind = GetProfileKind(behaviour.profile),
                 Profile = behaviour.profile,
@@ -336,6 +338,65 @@ public class CameraProfileMixer : PlayableBehaviour
         return playable.GetTime();
     }
 
+    private static float GetProfileNormalizedTime(
+        double duration,
+        double currentTime,
+        CameraProfileBehaviour behaviour)
+    {
+        float normalizedTime = duration > 0 && !double.IsInfinity(duration)
+            ? Mathf.Clamp01((float)(currentTime / duration))
+            : 0f;
+
+        return IsReversePlayback(behaviour)
+            ? 1f - normalizedTime
+            : normalizedTime;
+    }
+
+    private static float GetStartSampleTime(CameraProfileBehaviour behaviour)
+    {
+        return IsReversePlayback(behaviour) ? 1f : 0f;
+    }
+
+    private static bool IsReversePlayback(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null && behaviour.reversePlayback;
+    }
+
+    private static Vector3 ApplyMirror(
+        Vector3 value,
+        CameraProfileBehaviour behaviour)
+    {
+        if (behaviour == null)
+            return value;
+
+        if (behaviour.mirrorX)
+            value.x = -value.x;
+
+        if (behaviour.mirrorY)
+            value.y = -value.y;
+
+        if (behaviour.mirrorZ)
+            value.z = -value.z;
+
+        return value;
+    }
+
+    private static Vector2 ApplyScreenMirror(
+        Vector2 value,
+        CameraProfileBehaviour behaviour)
+    {
+        if (behaviour == null)
+            return value;
+
+        if (behaviour.mirrorX)
+            value.x = -value.x;
+
+        if (behaviour.mirrorY)
+            value.y = -value.y;
+
+        return value;
+    }
+
     private void PrewarmNextGeneralClipContinuously(
         Playable playable,
         CameraSystemMaster master,
@@ -413,7 +474,7 @@ public class CameraProfileMixer : PlayableBehaviour
             nextGeneralProfile,
             nextTarget,
             nextBehaviour,
-            0f,
+            GetStartSampleTime(nextBehaviour),
             true
         );
 
@@ -613,15 +674,21 @@ public class CameraProfileMixer : PlayableBehaviour
                 (profile.posDistanceCurve.Evaluate(t) + GetPosDistanceBias(behaviour)) *
                 weight;
 
-            posScreenPosition += new Vector2(
-                profile.posScreenXCurve.Evaluate(t),
-                profile.posScreenYCurve.Evaluate(t)
+            posScreenPosition += ApplyScreenMirror(
+                new Vector2(
+                    profile.posScreenXCurve.Evaluate(t),
+                    profile.posScreenYCurve.Evaluate(t)
+                ),
+                behaviour
             ) * weight;
 
-            posTargetOffset += new Vector3(
-                profile.posTargetOffsetXCurve.Evaluate(t) + GetPosTargetOffsetXBias(behaviour),
-                profile.posTargetOffsetYCurve.Evaluate(t) + GetPosTargetOffsetYBias(behaviour),
-                profile.posTargetOffsetZCurve.Evaluate(t) + GetPosTargetOffsetZBias(behaviour)
+            posTargetOffset += ApplyMirror(
+                new Vector3(
+                    profile.posTargetOffsetXCurve.Evaluate(t) + GetPosTargetOffsetXBias(behaviour),
+                    profile.posTargetOffsetYCurve.Evaluate(t) + GetPosTargetOffsetYBias(behaviour),
+                    profile.posTargetOffsetZCurve.Evaluate(t) + GetPosTargetOffsetZBias(behaviour)
+                ),
+                behaviour
             ) * weight;
 
             posDamping += new Vector3(
@@ -630,15 +697,21 @@ public class CameraProfileMixer : PlayableBehaviour
                 profile.posDampingZ
             ) * weight;
 
-            rotScreenPosition += new Vector2(
-                profile.rotScreenXCurve.Evaluate(t),
-                profile.rotScreenYCurve.Evaluate(t)
+            rotScreenPosition += ApplyScreenMirror(
+                new Vector2(
+                    profile.rotScreenXCurve.Evaluate(t),
+                    profile.rotScreenYCurve.Evaluate(t)
+                ),
+                behaviour
             ) * weight;
 
-            rotTargetOffset += new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
-                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
-                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+            rotTargetOffset += ApplyMirror(
+                new Vector3(
+                    profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                    profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                    profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+                ),
+                behaviour
             ) * weight;
 
             rotDamping += new Vector2(
@@ -706,10 +779,13 @@ public class CameraProfileMixer : PlayableBehaviour
 
             fov += GetBiasedFov(profile, behaviour, t) * weight;
 
-            followOffset += new Vector3(
-                profile.followOffsetXCurve.Evaluate(t) + GetFollowOffsetXBias(behaviour),
-                profile.followOffsetYCurve.Evaluate(t) + GetFollowOffsetYBias(behaviour),
-                profile.followOffsetZCurve.Evaluate(t) + GetFollowOffsetZBias(behaviour)
+            followOffset += ApplyMirror(
+                new Vector3(
+                    profile.followOffsetXCurve.Evaluate(t) + GetFollowOffsetXBias(behaviour),
+                    profile.followOffsetYCurve.Evaluate(t) + GetFollowOffsetYBias(behaviour),
+                    profile.followOffsetZCurve.Evaluate(t) + GetFollowOffsetZBias(behaviour)
+                ),
+                behaviour
             ) * weight;
 
             positionDamping += new Vector3(
@@ -718,15 +794,21 @@ public class CameraProfileMixer : PlayableBehaviour
                 profile.dampingZ
             ) * weight;
 
-            rotScreenPosition += new Vector2(
-                profile.rotScreenXCurve.Evaluate(t),
-                profile.rotScreenYCurve.Evaluate(t)
+            rotScreenPosition += ApplyScreenMirror(
+                new Vector2(
+                    profile.rotScreenXCurve.Evaluate(t),
+                    profile.rotScreenYCurve.Evaluate(t)
+                ),
+                behaviour
             ) * weight;
 
-            rotTargetOffset += new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
-                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
-                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+            rotTargetOffset += ApplyMirror(
+                new Vector3(
+                    profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                    profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                    profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+                ),
+                behaviour
             ) * weight;
 
             rotDamping += new Vector2(
@@ -922,15 +1004,21 @@ public class CameraProfileMixer : PlayableBehaviour
             positionComposer.CameraDistance =
                 profile.posDistanceCurve.Evaluate(t) + GetPosDistanceBias(behaviour);
 
-            positionComposer.Composition.ScreenPosition = new Vector2(
-                profile.posScreenXCurve.Evaluate(t),
-                profile.posScreenYCurve.Evaluate(t)
+            positionComposer.Composition.ScreenPosition = ApplyScreenMirror(
+                new Vector2(
+                    profile.posScreenXCurve.Evaluate(t),
+                    profile.posScreenYCurve.Evaluate(t)
+                ),
+                behaviour
             );
 
-            positionComposer.TargetOffset = new Vector3(
-                profile.posTargetOffsetXCurve.Evaluate(t) + GetPosTargetOffsetXBias(behaviour),
-                profile.posTargetOffsetYCurve.Evaluate(t) + GetPosTargetOffsetYBias(behaviour),
-                profile.posTargetOffsetZCurve.Evaluate(t) + GetPosTargetOffsetZBias(behaviour)
+            positionComposer.TargetOffset = ApplyMirror(
+                new Vector3(
+                    profile.posTargetOffsetXCurve.Evaluate(t) + GetPosTargetOffsetXBias(behaviour),
+                    profile.posTargetOffsetYCurve.Evaluate(t) + GetPosTargetOffsetYBias(behaviour),
+                    profile.posTargetOffsetZCurve.Evaluate(t) + GetPosTargetOffsetZBias(behaviour)
+                ),
+                behaviour
             );
 
             positionComposer.Damping = forceZeroDamping
@@ -947,15 +1035,21 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (rotationComposer != null)
         {
-            rotationComposer.Composition.ScreenPosition = new Vector2(
-                profile.rotScreenXCurve.Evaluate(t),
-                profile.rotScreenYCurve.Evaluate(t)
+            rotationComposer.Composition.ScreenPosition = ApplyScreenMirror(
+                new Vector2(
+                    profile.rotScreenXCurve.Evaluate(t),
+                    profile.rotScreenYCurve.Evaluate(t)
+                ),
+                behaviour
             );
 
-            rotationComposer.TargetOffset = new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
-                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
-                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+            rotationComposer.TargetOffset = ApplyMirror(
+                new Vector3(
+                    profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                    profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                    profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+                ),
+                behaviour
             );
 
             rotationComposer.Damping = forceZeroDamping
@@ -1061,10 +1155,13 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (follow != null)
         {
-            follow.FollowOffset = new Vector3(
-                profile.followOffsetXCurve.Evaluate(t) + GetFollowOffsetXBias(behaviour),
-                profile.followOffsetYCurve.Evaluate(t) + GetFollowOffsetYBias(behaviour),
-                profile.followOffsetZCurve.Evaluate(t) + GetFollowOffsetZBias(behaviour)
+            follow.FollowOffset = ApplyMirror(
+                new Vector3(
+                    profile.followOffsetXCurve.Evaluate(t) + GetFollowOffsetXBias(behaviour),
+                    profile.followOffsetYCurve.Evaluate(t) + GetFollowOffsetYBias(behaviour),
+                    profile.followOffsetZCurve.Evaluate(t) + GetFollowOffsetZBias(behaviour)
+                ),
+                behaviour
             );
 
             var trackerSettings = follow.TrackerSettings;
@@ -1083,15 +1180,21 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (rotationComposer != null)
         {
-            rotationComposer.Composition.ScreenPosition = new Vector2(
-                profile.rotScreenXCurve.Evaluate(t),
-                profile.rotScreenYCurve.Evaluate(t)
+            rotationComposer.Composition.ScreenPosition = ApplyScreenMirror(
+                new Vector2(
+                    profile.rotScreenXCurve.Evaluate(t),
+                    profile.rotScreenYCurve.Evaluate(t)
+                ),
+                behaviour
             );
 
-            rotationComposer.TargetOffset = new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
-                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
-                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+            rotationComposer.TargetOffset = ApplyMirror(
+                new Vector3(
+                    profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                    profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                    profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+                ),
+                behaviour
             );
 
             rotationComposer.Damping = new Vector2(
@@ -1142,15 +1245,21 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (rotationComposer != null)
         {
-            rotationComposer.Composition.ScreenPosition = new Vector2(
-                profile.rotScreenXCurve.Evaluate(t),
-                profile.rotScreenYCurve.Evaluate(t)
+            rotationComposer.Composition.ScreenPosition = ApplyScreenMirror(
+                new Vector2(
+                    profile.rotScreenXCurve.Evaluate(t),
+                    profile.rotScreenYCurve.Evaluate(t)
+                ),
+                behaviour
             );
 
-            rotationComposer.TargetOffset = new Vector3(
-                profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
-                profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
-                profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+            rotationComposer.TargetOffset = ApplyMirror(
+                new Vector3(
+                    profile.rotTargetOffsetXCurve.Evaluate(t) + GetRotTargetOffsetXBias(behaviour),
+                    profile.rotTargetOffsetYCurve.Evaluate(t) + GetRotTargetOffsetYBias(behaviour),
+                    profile.rotTargetOffsetZCurve.Evaluate(t) + GetRotTargetOffsetZBias(behaviour)
+                ),
+                behaviour
             );
 
             rotationComposer.Damping = new Vector2(

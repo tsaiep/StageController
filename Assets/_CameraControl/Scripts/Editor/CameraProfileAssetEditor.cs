@@ -11,6 +11,10 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _cameraProfileProp;
     private SerializedProperty _trackingTargetProp;
     private SerializedProperty _splineContainerProp;
+    private SerializedProperty _reversePlaybackProp;
+    private SerializedProperty _mirrorXProp;
+    private SerializedProperty _mirrorYProp;
+    private SerializedProperty _mirrorZProp;
     private SerializedProperty _fovBiasProp;
     private SerializedProperty _posDistanceBiasProp;
     private SerializedProperty _posTargetOffsetXBiasProp;
@@ -29,6 +33,10 @@ public class CameraProfileAssetEditor : Editor
         _cameraProfileProp = serializedObject.FindProperty("cameraProfile");
         _trackingTargetProp = serializedObject.FindProperty("trackingTarget");
         _splineContainerProp = serializedObject.FindProperty("splineContainer");
+        _reversePlaybackProp = serializedObject.FindProperty("reversePlayback");
+        _mirrorXProp = serializedObject.FindProperty("mirrorX");
+        _mirrorYProp = serializedObject.FindProperty("mirrorY");
+        _mirrorZProp = serializedObject.FindProperty("mirrorZ");
         _fovBiasProp = serializedObject.FindProperty("fovBias");
         _posDistanceBiasProp = serializedObject.FindProperty("posDistanceBias");
         _posTargetOffsetXBiasProp = serializedObject.FindProperty("posTargetOffsetXBias");
@@ -55,6 +63,8 @@ public class CameraProfileAssetEditor : Editor
         {
             EditorGUILayout.PropertyField(_trackingTargetProp);
         }
+
+        DrawPlaybackSettings();
 
         CameraProfileSO currentProfile = _cameraProfileProp != null
             ? _cameraProfileProp.objectReferenceValue as CameraProfileSO
@@ -118,6 +128,66 @@ public class CameraProfileAssetEditor : Editor
         DrawRotationTargetOffsetBiasFields();
 
         EditorGUI.indentLevel--;
+    }
+
+    private void DrawPlaybackSettings()
+    {
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Playback Options", EditorStyles.boldLabel);
+
+        EditorGUI.indentLevel++;
+
+        if (_reversePlaybackProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _reversePlaybackProp,
+                new GUIContent("Reverse Playback")
+            );
+        }
+
+        EditorGUILayout.LabelField("Dynamic Mirror", EditorStyles.miniBoldLabel);
+
+        DrawMirrorToggleRow();
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawMirrorToggleRow()
+    {
+        Rect rowRect = EditorGUILayout.GetControlRect(
+            false,
+            EditorGUIUtility.singleLineHeight
+        );
+
+        rowRect = EditorGUI.IndentedRect(rowRect);
+
+        const float toggleWidth = 32f;
+        const float toggleGap = 4f;
+
+        rowRect.width = toggleWidth;
+        DrawMirrorToggle(rowRect, _mirrorXProp, "X");
+
+        rowRect.x += toggleWidth + toggleGap;
+        DrawMirrorToggle(rowRect, _mirrorYProp, "Y");
+
+        rowRect.x += toggleWidth + toggleGap;
+        DrawMirrorToggle(rowRect, _mirrorZProp, "Z");
+    }
+
+    private static void DrawMirrorToggle(
+        Rect rect,
+        SerializedProperty property,
+        string label)
+    {
+        if (property == null)
+            return;
+
+        property.boolValue = GUI.Toggle(
+            rect,
+            property.boolValue,
+            label,
+            EditorStyles.miniButton
+        );
     }
 
     private void DrawTrackingBiasSettings()

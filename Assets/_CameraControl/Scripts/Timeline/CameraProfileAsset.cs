@@ -14,6 +14,19 @@ public class CameraProfileAsset : PlayableAsset
     [Tooltip("當使用 Dolly Profile 時，請將場景中的 Spline Container 拖入此欄位")]
     public ExposedReference<SplineContainer> splineContainer;
 
+    [Header("--- Playback Options ---")]
+    [Tooltip("勾選後會以 1 - normalizedTime 取樣 Profile 曲線，等同將此 Clip 的運鏡倒轉播放。")]
+    public bool reversePlayback;
+
+    [Tooltip("動態鏡像 X 軸相關偏移量，不會修改原始 CameraProfileSO。")]
+    public bool mirrorX;
+
+    [Tooltip("動態鏡像 Y 軸相關偏移量，不會修改原始 CameraProfileSO。")]
+    public bool mirrorY;
+
+    [Tooltip("動態鏡像 Z 軸相關偏移量，不會修改原始 CameraProfileSO。")]
+    public bool mirrorZ;
+
     [Tooltip("加到目前 Profile 的 fovCurve 取樣結果上的偏移量")]
     public float fovBias;
 
@@ -78,6 +91,10 @@ public class CameraProfileAsset : PlayableAsset
         behaviour.profile = cameraProfile;
         behaviour.targetObject = trackingTarget.Resolve(graph.GetResolver());
         behaviour.splineContainer = splineContainer.Resolve(graph.GetResolver());
+        behaviour.reversePlayback = reversePlayback;
+        behaviour.mirrorX = mirrorX;
+        behaviour.mirrorY = mirrorY;
+        behaviour.mirrorZ = mirrorZ;
         behaviour.fovBias = fovBias;
         behaviour.posDistanceBias = posDistanceBias;
         behaviour.posScreenXBias = posScreenXBias;
@@ -104,6 +121,11 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public CameraProfileSO profile;
     public GameObject targetObject;
     public SplineContainer splineContainer;
+
+    public bool reversePlayback;
+    public bool mirrorX;
+    public bool mirrorY;
+    public bool mirrorZ;
 
     public float fovBias;
     public float posDistanceBias;
