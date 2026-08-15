@@ -315,7 +315,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority:
     Enabled: 1
-    m_Value: 0
+    m_Value: 100
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -325,7 +325,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 70
+    FieldOfView: 60
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Composition:
-    ScreenPosition: {x: 0, y: 0}
+    ScreenPosition: {x: -0, y: 0}
     DeadZone:
       Enabled: 0
       Size: {x: 0.2, y: 0.2}
@@ -366,8 +366,8 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: -2.96, y: 0.83, z: -3}
-  Damping: {x: 0, y: 0}
+  TargetOffset: {x: 1.77, y: 0.83, z: -3}
+  Damping: {x: 1, y: 1}
   Lookahead:
     Enabled: 0
     Time: 0
@@ -385,10 +385,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886251e9a18ece04ea8e61686c173e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraDistance: 16.94
+  CameraDistance: 6.94
   DeadZoneDepth: 0
   Composition:
-    ScreenPosition: {x: 0, y: 0}
+    ScreenPosition: {x: -0, y: 0}
     DeadZone:
       Enabled: 0
       Size: {x: 0.2, y: 0.2}
@@ -397,8 +397,8 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: -1.12, y: 1.49, z: -1.37}
-  Damping: {x: 0, y: 0, z: 0}
+  TargetOffset: {x: 1.12, y: 1, z: -1.5}
+  Damping: {x: 1, y: 1, z: 1}
   Lookahead:
     Enabled: 0
     Time: 0
@@ -412,8 +412,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 225466475}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.089759976, y: -0.71807384, z: 0.09427482, w: 0.6836851}
-  m_LocalPosition: {x: 19.155333, y: 7.7926836, z: 0.59467876}
+  m_LocalRotation: {x: -0.0068979706, y: 0.98977625, z: -0.05138339, w: -0.13287266}
+  m_LocalPosition: {x: 6.295546, y: 3.6486313, z: 4.9474216}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -458,6 +458,7 @@ PlayableDirector:
     - fe885432df2cf2e4ab623019a39b87aa: {fileID: 1384938084}
     - 81ed3423404c7914b8ed270b808e96cb: {fileID: 641602957}
     - 8f5700883c10e414eb255f1850b1d091: {fileID: 1384938084}
+    - bb00bfd1057bdd34abdf350dc52ae7ba: {fileID: 1384938084}
     - 6f59a96836c72c14ead753b8228ec181: {fileID: 1384938084}
     - 5f878a5be2ff70340b5ffd552efabff5: {fileID: 1384938084}
     - 0205cecea5ee21d46894551a78e99162: {fileID: 1384938084}
@@ -467,6 +468,7 @@ PlayableDirector:
     - 21636489156eb1a4cb4f430cbe254a63: {fileID: 641602957}
     - 25d1caeb799f97d438ef57a111ac8a2a: {fileID: 1384938084}
     - 013888b7d29af5d4da8a74051770ae1f: {fileID: 1384938084}
+    - b96dc79e6ac73c542b54579e62dc681b: {fileID: 641602957}
     - 6d63bf4522ada684e893f74b911287d9: {fileID: 641602957}
     - 49f030f5d6df7284cb1cd0ff5d996537: {fileID: 641602957}
 --- !u!4 &370369808
@@ -517,7 +519,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority:
     Enabled: 1
-    m_Value: 100
+    m_Value: 0
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -602,7 +604,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 427531477}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.007721213, y: 0.9756435, z: -0.03480385, w: -0.2164459}
+  m_LocalRotation: {x: -0.007721212, y: 0.9756436, z: -0.034803852, w: -0.21644591}
   m_LocalPosition: {x: 14.13, y: 3.55, z: 20.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -670,7 +672,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 10
+  field of view: 60
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -696,8 +698,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 517901564}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0077212118, y: 0.9756435, z: -0.03480385, w: -0.2164459}
-  m_LocalPosition: {x: 14.13, y: 3.55, z: 20.71}
+  m_LocalRotation: {x: -0.0068979706, y: 0.98977625, z: -0.051383395, w: -0.13287266}
+  m_LocalPosition: {x: 6.295546, y: 3.6486313, z: 4.9474216}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1320,7 +1322,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 69.93242
+    FieldOfView: 70
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -1352,7 +1354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Composition:
-    ScreenPosition: {x: 0, y: 0}
+    ScreenPosition: {x: -0, y: 0}
     DeadZone:
       Enabled: 0
       Size: {x: 0.2, y: 0.2}
@@ -1361,8 +1363,8 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: -2.9519577, y: 0.83, z: -3}
-  Damping: {x: 1, y: 1}
+  TargetOffset: {x: 2.96, y: 0.83, z: -3}
+  Damping: {x: 0, y: 0}
   Lookahead:
     Enabled: 0
     Time: 0
@@ -1380,10 +1382,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886251e9a18ece04ea8e61686c173e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraDistance: 16.872417
+  CameraDistance: 16.94
   DeadZoneDepth: 0
   Composition:
-    ScreenPosition: {x: 0, y: 0}
+    ScreenPosition: {x: -0, y: 0}
     DeadZone:
       Enabled: 0
       Size: {x: 0.2, y: 0.2}
@@ -1392,8 +1394,8 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: -1.12, y: 1.4866884, z: -1.3708786}
-  Damping: {x: 1, y: 1, z: 1}
+  TargetOffset: {x: 1.12, y: 1.49, z: -1.37}
+  Damping: {x: 0, y: 0, z: 0}
   Lookahead:
     Enabled: 0
     Time: 0
@@ -1407,8 +1409,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1410884998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.08968455, y: -0.719045, z: 0.0944664, w: 0.6826472}
-  m_LocalPosition: {x: 19.086449, y: 7.774783, z: 0.63742507}
+  m_LocalRotation: {x: 0.011021284, y: 0.9878778, z: -0.13040411, w: 0.08349186}
+  m_LocalPosition: {x: 1.8106731, y: 7.8157096, z: 14.518214}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

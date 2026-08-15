@@ -4,8 +4,10 @@ using UnityEngine.Timeline;
 using UnityEngine.Splines;
 
 [System.Serializable]
-public class CameraProfileAsset : PlayableAsset
+public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
 {
+    private const float MinFixedPlaybackSpeed = 0.001f;
+
     public CameraProfileSO cameraProfile;
 
     [Tooltip("將各專案當前場景的追蹤目標，例如主角、BOSS，拖入此欄位")]
@@ -14,7 +16,7 @@ public class CameraProfileAsset : PlayableAsset
     [Tooltip("當使用 Dolly Profile 時，請將場景中的 Spline Container 拖入此欄位")]
     public ExposedReference<SplineContainer> splineContainer;
 
-    [Header("--- Playback Options ---")]
+    //[Header("--- Playback Options ---")]
     [Tooltip("勾選後會以 1 - normalizedTime 取樣 Profile 曲線，等同將此 Clip 的運鏡倒轉播放。")]
     public bool reversePlayback;
 
@@ -26,6 +28,13 @@ public class CameraProfileAsset : PlayableAsset
 
     [Tooltip("動態鏡像 Z 軸相關偏移量，不會修改原始 CameraProfileSO。")]
     public bool mirrorZ;
+
+    [Tooltip("關閉時維持原本行為：Clip 長度會把 Profile 重新映射到 0~1。開啟時改用固定速度播放，Clip 拉長會在超出 Profile 範圍後 Hold。")]
+    public bool useFixedPlaybackSpeed;
+
+    [Min(MinFixedPlaybackSpeed)]
+    [Tooltip("固定速度模式下，Profile normalized time 每秒前進多少。1 = 完整 Profile 用 1 秒播完。")]
+    public float fixedPlaybackSpeed = 1f;
 
     [Tooltip("加到目前 Profile 的 fovCurve 取樣結果上的偏移量")]
     public float fovBias;
@@ -95,6 +104,8 @@ public class CameraProfileAsset : PlayableAsset
         behaviour.mirrorX = mirrorX;
         behaviour.mirrorY = mirrorY;
         behaviour.mirrorZ = mirrorZ;
+        behaviour.useFixedPlaybackSpeed = useFixedPlaybackSpeed;
+        behaviour.fixedPlaybackSpeed = GetSafeFixedPlaybackSpeed();
         behaviour.fovBias = fovBias;
         behaviour.posDistanceBias = posDistanceBias;
         behaviour.posScreenXBias = posScreenXBias;
@@ -114,6 +125,31 @@ public class CameraProfileAsset : PlayableAsset
 
         return playable;
     }
+
+    public override double duration
+    {
+        get
+        {
+            return useFixedPlaybackSpeed
+                ? 1.0 / GetSafeFixedPlaybackSpeed()
+                : base.duration;
+        }
+    }
+
+    public ClipCaps clipCaps
+    {
+        get
+        {
+            return useFixedPlaybackSpeed
+                ? ClipCaps.Blending | ClipCaps.Extrapolation
+                : ClipCaps.Blending;
+        }
+    }
+
+    private float GetSafeFixedPlaybackSpeed()
+    {
+        return Mathf.Max(MinFixedPlaybackSpeed, fixedPlaybackSpeed);
+    }
 }
 
 public class CameraProfileBehaviour : PlayableBehaviour
@@ -126,6 +162,8 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public bool mirrorX;
     public bool mirrorY;
     public bool mirrorZ;
+    public bool useFixedPlaybackSpeed;
+    public float fixedPlaybackSpeed = 1f;
 
     public float fovBias;
     public float posDistanceBias;

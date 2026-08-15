@@ -15,6 +15,8 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _mirrorXProp;
     private SerializedProperty _mirrorYProp;
     private SerializedProperty _mirrorZProp;
+    private SerializedProperty _useFixedPlaybackSpeedProp;
+    private SerializedProperty _fixedPlaybackSpeedProp;
     private SerializedProperty _fovBiasProp;
     private SerializedProperty _posDistanceBiasProp;
     private SerializedProperty _posTargetOffsetXBiasProp;
@@ -37,6 +39,8 @@ public class CameraProfileAssetEditor : Editor
         _mirrorXProp = serializedObject.FindProperty("mirrorX");
         _mirrorYProp = serializedObject.FindProperty("mirrorY");
         _mirrorZProp = serializedObject.FindProperty("mirrorZ");
+        _useFixedPlaybackSpeedProp = serializedObject.FindProperty("useFixedPlaybackSpeed");
+        _fixedPlaybackSpeedProp = serializedObject.FindProperty("fixedPlaybackSpeed");
         _fovBiasProp = serializedObject.FindProperty("fovBias");
         _posDistanceBiasProp = serializedObject.FindProperty("posDistanceBias");
         _posTargetOffsetXBiasProp = serializedObject.FindProperty("posTargetOffsetXBias");
@@ -145,9 +149,40 @@ public class CameraProfileAssetEditor : Editor
             );
         }
 
+        DrawFixedPlaybackSpeedSettings();
+
+        EditorGUILayout.Space(2);
         EditorGUILayout.LabelField("Dynamic Mirror", EditorStyles.miniBoldLabel);
 
         DrawMirrorToggleRow();
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawFixedPlaybackSpeedSettings()
+    {
+        if (_useFixedPlaybackSpeedProp == null)
+            return;
+
+        EditorGUILayout.PropertyField(
+            _useFixedPlaybackSpeedProp,
+            new GUIContent("Use Fixed Playback Speed")
+        );
+
+        if (!_useFixedPlaybackSpeedProp.boolValue || _fixedPlaybackSpeedProp == null)
+            return;
+
+        EditorGUI.indentLevel++;
+
+        EditorGUILayout.PropertyField(
+            _fixedPlaybackSpeedProp,
+            new GUIContent("Playback Speed")
+        );
+
+        if (_fixedPlaybackSpeedProp.floatValue < 0.001f)
+        {
+            _fixedPlaybackSpeedProp.floatValue = 0.001f;
+        }
 
         EditorGUI.indentLevel--;
     }

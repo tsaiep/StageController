@@ -343,9 +343,20 @@ public class CameraProfileMixer : PlayableBehaviour
         double currentTime,
         CameraProfileBehaviour behaviour)
     {
-        float normalizedTime = duration > 0 && !double.IsInfinity(duration)
-            ? Mathf.Clamp01((float)(currentTime / duration))
-            : 0f;
+        float normalizedTime;
+
+        if (UseFixedPlaybackSpeed(behaviour))
+        {
+            normalizedTime = Mathf.Clamp01(
+                (float)currentTime * GetFixedPlaybackSpeed(behaviour)
+            );
+        }
+        else
+        {
+            normalizedTime = duration > 0 && !double.IsInfinity(duration)
+                ? Mathf.Clamp01((float)(currentTime / duration))
+                : 0f;
+        }
 
         return IsReversePlayback(behaviour)
             ? 1f - normalizedTime
@@ -360,6 +371,18 @@ public class CameraProfileMixer : PlayableBehaviour
     private static bool IsReversePlayback(CameraProfileBehaviour behaviour)
     {
         return behaviour != null && behaviour.reversePlayback;
+    }
+
+    private static bool UseFixedPlaybackSpeed(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null && behaviour.useFixedPlaybackSpeed;
+    }
+
+    private static float GetFixedPlaybackSpeed(CameraProfileBehaviour behaviour)
+    {
+        return behaviour != null
+            ? Mathf.Max(0.001f, behaviour.fixedPlaybackSpeed)
+            : 1f;
     }
 
     private static Vector3 ApplyMirror(
