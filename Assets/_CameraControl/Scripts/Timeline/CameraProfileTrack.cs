@@ -50,6 +50,13 @@ public class CameraProfileMixer : PlayableBehaviour
         Dolly
     }
 
+    private enum CrossFadeHandoffPhase
+    {
+        None,
+        RootSwitchCovered,
+        HandoffRevealed
+    }
+
     private struct CameraProfileInput
     {
         public int InputIndex;
@@ -61,6 +68,19 @@ public class CameraProfileMixer : PlayableBehaviour
         public CameraProfileBehaviour Behaviour;
         public Transform Target;
         public SplineContainer Spline;
+    }
+
+    private struct StoryboardCrossFadeContext
+    {
+        public bool Active;
+        public int IncomingInputIndex;
+        public CameraProfileKind IncomingKind;
+        public CinemachineCamera BaseCamera;
+        public CinemachineCamera RenderTextureCamera;
+        public CinemachineCamera HandoffCamera;
+        public bool HandoffGeneralUseB;
+        public CrossFadeHandoffPhase HandoffPhase;
+        public int HandoffPhaseFrame;
     }
 
     private TimelineClip[] _clips;
@@ -85,6 +105,8 @@ public class CameraProfileMixer : PlayableBehaviour
     private bool _lastWasBlending;
 
     private Transform _blendTargetProxy;
+    private StoryboardCrossFadeContext _storyboardCrossFadeContext;
+    private CameraSystemMaster _activeMaster;
 
     public void Initialize(
         TimelineClip[] clips,
@@ -104,9 +126,21 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (master == null)
         {
+            if (_activeMaster != null)
+            {
+                ClearStoryboardCrossFade(_activeMaster);
+            }
+
             ClearState();
             return;
         }
+
+        if (_activeMaster != null && _activeMaster != master)
+        {
+            ClearStoryboardCrossFade(_activeMaster);
+        }
+
+        _activeMaster = master;
 
         int inputCount = playable.GetInputCount();
         List<CameraProfileInput> activeInputs =
@@ -197,6 +231,10 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (!hasDominantInput || currentProfile == null)
         {
+            // Crossfade 被 gap / seek 中斷時，先停止離屏渲染與 Storyboard，
+            // 再讓一般的 gap prewarm 接手，避免預熱改到仍在交接中的 camera。
+            ClearStoryboardCrossFade(master);
+
             // 空白 gap：不清掉 A/B 狀態，並且仍然可以提前預熱下一個 General。
             PrewarmNextGeneralClipContinuously(
                 playable,
@@ -233,8 +271,41 @@ public class CameraProfileMixer : PlayableBehaviour
         bool isOverlapping = activeInputs.Count > 1;
         bool isHardCutFrame = !isOverlapping && isClipChanged && !_lastWasBlending;
 
+        if (Application.isPlaying &&
+            TryGetStoryboardCrossFadePair(
+                activeInputs,
+                out CameraProfileInput outgoingCrossFadeInput,
+                out CameraProfileInput incomingCrossFadeInput))
+        {
+            if (!TryApplyStoryboardRenderTextureCrossFade(
+                master,
+                outgoingCrossFadeInput,
+                incomingCrossFadeInput,
+                info.deltaTime))
+            {
+                ApplyStoryboardCrossFadeHardCutFallback(
+                    master,
+                    outgoingCrossFadeInput
+                );
+            }
+
+            return;
+        }
+
+        if (TryCompleteStoryboardCrossFadeHandoff(
+            master,
+            activeInputs,
+            dominantInput,
+            info.deltaTime))
+        {
+            return;
+        }
+
+        ClearStoryboardCrossFade(master);
+
         // 有效 Clip 期間：不管目前是 General / Tracking / Dolly，
         // 都可以往後找下一個 General，並在接近時預熱 General A/B。
+        // Storyboard crossfade 會在上方早退，避免 prewarm 改寫交接中的 camera。
         PrewarmNextGeneralClipContinuously(
             playable,
             master,
@@ -255,6 +326,7 @@ public class CameraProfileMixer : PlayableBehaviour
         if (activeCamera == null)
         {
             master.DisableAllCameras();
+            ClearStoryboardCrossFade(master);
             ClearState();
             return;
         }
@@ -610,6 +682,477 @@ public class CameraProfileMixer : PlayableBehaviour
             default:
                 return null;
         }
+    }
+
+    private bool TryApplyStoryboardRenderTextureCrossFade(
+        CameraSystemMaster master,
+        CameraProfileInput outgoingInput,
+        CameraProfileInput incomingInput,
+        float deltaTime)
+    {
+        if (!TryGetCrossFadeRenderCamera(
+            master,
+            incomingInput.Kind,
+            out CinemachineCamera renderTextureCamera))
+        {
+            master.ReportCrossFadeSetupFailure(
+                $"找不到 {incomingInput.Kind} 對應的離屏 transition camera。"
+            );
+            return false;
+        }
+
+        bool ignoredPreparedCamera;
+        CinemachineCamera baseCamera = GetCameraForProfile(
+            master,
+            outgoingInput.Kind,
+            outgoingInput.InputIndex,
+            false,
+            out ignoredPreparedCamera
+        );
+
+        if (baseCamera == null)
+        {
+            master.ReportCrossFadeSetupFailure(
+                $"找不到 {outgoingInput.Kind} 對應的 outgoing camera。"
+            );
+            return false;
+        }
+
+        CinemachineCamera handoffCamera;
+        bool handoffGeneralUseB;
+
+        bool canReuseHandoff =
+            _storyboardCrossFadeContext.Active &&
+            _storyboardCrossFadeContext.HandoffPhase ==
+                CrossFadeHandoffPhase.None &&
+            _storyboardCrossFadeContext.IncomingInputIndex ==
+                incomingInput.InputIndex &&
+            _storyboardCrossFadeContext.RenderTextureCamera ==
+                renderTextureCamera &&
+            _storyboardCrossFadeContext.BaseCamera == baseCamera;
+
+        if (_storyboardCrossFadeContext.Active && !canReuseHandoff)
+        {
+            ClearStoryboardCrossFade(master);
+        }
+
+        if (canReuseHandoff)
+        {
+            handoffCamera = _storyboardCrossFadeContext.HandoffCamera;
+            handoffGeneralUseB =
+                _storyboardCrossFadeContext.HandoffGeneralUseB;
+        }
+        else
+        {
+            handoffCamera = GetCrossFadeHandoffCamera(
+                master,
+                incomingInput.Kind,
+                baseCamera,
+                out handoffGeneralUseB
+            );
+        }
+
+        if (handoffCamera == null)
+        {
+            master.ReportCrossFadeSetupFailure(
+                $"找不到 {incomingInput.Kind} 對應的主畫面 handoff camera。"
+            );
+            return false;
+        }
+
+        float totalWeight = outgoingInput.Weight + incomingInput.Weight;
+        float alpha = totalWeight > 0f
+            ? Mathf.Clamp01(incomingInput.Weight / totalWeight)
+            : Mathf.Clamp01(incomingInput.Weight);
+
+        ApplyProfileToCamera(
+            baseCamera,
+            outgoingInput.Profile,
+            outgoingInput.Target,
+            outgoingInput.Spline,
+            outgoingInput.Behaviour,
+            outgoingInput.NormalizedTime,
+            false
+        );
+
+        ApplyProfileToCamera(
+            renderTextureCamera,
+            incomingInput.Profile,
+            incomingInput.Target,
+            incomingInput.Spline,
+            incomingInput.Behaviour,
+            incomingInput.NormalizedTime,
+            false
+        );
+
+        master.SetOnlyThisCameraLive(baseCamera);
+
+        if (!master.TrySetStoryboardCrossFade(
+            baseCamera,
+            renderTextureCamera,
+            alpha,
+            deltaTime))
+        {
+            return false;
+        }
+
+        _storyboardCrossFadeContext = new StoryboardCrossFadeContext
+        {
+            Active = true,
+            IncomingInputIndex = incomingInput.InputIndex,
+            IncomingKind = incomingInput.Kind,
+            BaseCamera = baseCamera,
+            RenderTextureCamera = renderTextureCamera,
+            HandoffCamera = handoffCamera,
+            HandoffGeneralUseB = handoffGeneralUseB
+        };
+
+        if (outgoingInput.Kind == CameraProfileKind.General ||
+            incomingInput.Kind == CameraProfileKind.General)
+        {
+            _hasUsedGeneralCamera = true;
+        }
+
+        _hasEverAppliedCamera = true;
+        _lastProfile = outgoingInput.Profile;
+        _lastTarget = outgoingInput.Target;
+        _lastSpline = outgoingInput.Spline;
+        _lastDominantInputIndex = outgoingInput.InputIndex;
+        _lastKind = outgoingInput.Kind;
+        _lastWasBlending = true;
+
+        return true;
+    }
+
+    private void ApplyStoryboardCrossFadeHardCutFallback(
+        CameraSystemMaster master,
+        CameraProfileInput outgoingInput)
+    {
+        ClearStoryboardCrossFade(master);
+
+        bool ignoredPreparedCamera;
+        CinemachineCamera outgoingCamera = GetCameraForProfile(
+            master,
+            outgoingInput.Kind,
+            outgoingInput.InputIndex,
+            false,
+            out ignoredPreparedCamera
+        );
+
+        if (outgoingCamera == null)
+        {
+            master.DisableAllCameras();
+            ClearState();
+            return;
+        }
+
+        ApplyProfileToCamera(
+            outgoingCamera,
+            outgoingInput.Profile,
+            outgoingInput.Target,
+            outgoingInput.Spline,
+            outgoingInput.Behaviour,
+            outgoingInput.NormalizedTime,
+            false
+        );
+
+        master.SetOnlyThisCameraLive(outgoingCamera);
+
+        if (outgoingInput.Kind == CameraProfileKind.General)
+        {
+            _hasUsedGeneralCamera = true;
+        }
+
+        _hasEverAppliedCamera = true;
+        _lastProfile = outgoingInput.Profile;
+        _lastTarget = outgoingInput.Target;
+        _lastSpline = outgoingInput.Spline;
+        _lastDominantInputIndex = outgoingInput.InputIndex;
+        _lastKind = outgoingInput.Kind;
+        _lastWasBlending = false;
+    }
+
+    private bool TryCompleteStoryboardCrossFadeHandoff(
+        CameraSystemMaster master,
+        List<CameraProfileInput> activeInputs,
+        CameraProfileInput incomingInput,
+        float deltaTime)
+    {
+        if (!_storyboardCrossFadeContext.Active ||
+            activeInputs == null ||
+            activeInputs.Count != 1 ||
+            incomingInput.InputIndex !=
+                _storyboardCrossFadeContext.IncomingInputIndex ||
+            incomingInput.Kind != _storyboardCrossFadeContext.IncomingKind)
+        {
+            return false;
+        }
+
+        CinemachineCamera renderTextureCamera =
+            _storyboardCrossFadeContext.RenderTextureCamera;
+        CinemachineCamera handoffCamera =
+            _storyboardCrossFadeContext.HandoffCamera;
+        if (renderTextureCamera == null || handoffCamera == null)
+            return false;
+
+        // 這個物件在 phase None 還是 RT camera；升格後則是同一個主 camera。
+        // 全程只驅動這一套 pipeline，避免兩台 camera 的 damping 狀態分岔。
+        ApplyProfileToCamera(
+            renderTextureCamera,
+            incomingInput.Profile,
+            incomingInput.Target,
+            incomingInput.Spline,
+            incomingInput.Behaviour,
+            incomingInput.NormalizedTime,
+            false
+        );
+
+        bool handoffGeneralUseB =
+            _storyboardCrossFadeContext.HandoffGeneralUseB;
+
+        switch (_storyboardCrossFadeContext.HandoffPhase)
+        {
+            case CrossFadeHandoffPhase.None:
+                // 不再把 RT camera 的最終座標複製到另一台 camera。
+                // 直接把已由 offscreen Brain 評估整段 Clip2 的同一台 vcam
+                // 升格到主輸出，才能保留 Composer / Follow / Dolly 的內部狀態。
+                if (!master.TryPromoteCrossFadeCamera(
+                    renderTextureCamera,
+                    handoffCamera,
+                    out CinemachineCamera promotedCamera))
+                {
+                    return false;
+                }
+
+                _storyboardCrossFadeContext.HandoffCamera = promotedCamera;
+
+                // RT 已凍結；先以不透明 Storyboard 遮住 root camera 角色交換。
+                if (!master.TrySetStoryboardOverlayOverride(
+                    promotedCamera,
+                    1f,
+                    deltaTime))
+                {
+                    return false;
+                }
+
+                _storyboardCrossFadeContext.HandoffPhase =
+                    CrossFadeHandoffPhase.RootSwitchCovered;
+                _storyboardCrossFadeContext.HandoffPhaseFrame =
+                    Time.frameCount;
+                return true;
+
+            case CrossFadeHandoffPhase.RootSwitchCovered:
+                if (Time.frameCount <=
+                    _storyboardCrossFadeContext.HandoffPhaseFrame)
+                {
+                    return master.TrySetStoryboardOverlayOverride(
+                        handoffCamera,
+                        1f,
+                        deltaTime
+                    );
+                }
+
+                // Camera override 的 A 已經是同步完成的 handoff camera。
+                // 權重直接切到 0，不執行第二段 dissolve。
+                if (!master.TrySetStoryboardOverlayOverride(
+                    handoffCamera,
+                    0f,
+                    deltaTime))
+                {
+                    return false;
+                }
+
+                _storyboardCrossFadeContext.HandoffPhase =
+                    CrossFadeHandoffPhase.HandoffRevealed;
+                _storyboardCrossFadeContext.HandoffPhaseFrame =
+                    Time.frameCount;
+                return true;
+
+            case CrossFadeHandoffPhase.HandoffRevealed:
+                if (Time.frameCount <=
+                    _storyboardCrossFadeContext.HandoffPhaseFrame)
+                {
+                    return master.TrySetStoryboardOverlayOverride(
+                        handoffCamera,
+                        0f,
+                        deltaTime
+                    );
+                }
+
+                ClearStoryboardCrossFade(master);
+                CommitStoryboardCrossFadeHandoff(
+                    incomingInput,
+                    handoffGeneralUseB
+                );
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    private void CommitStoryboardCrossFadeHandoff(
+        CameraProfileInput incomingInput,
+        bool handoffGeneralUseB)
+    {
+        if (incomingInput.Kind == CameraProfileKind.General)
+        {
+            _currentGeneralUseB = handoffGeneralUseB;
+            _hasUsedGeneralCamera = true;
+            _preparedGeneralInputIndex = -1;
+        }
+
+        _hasEverAppliedCamera = true;
+        _lastProfile = incomingInput.Profile;
+        _lastTarget = incomingInput.Target;
+        _lastSpline = incomingInput.Spline;
+        _lastDominantInputIndex = incomingInput.InputIndex;
+        _lastKind = incomingInput.Kind;
+        _lastWasBlending = false;
+        _generalZeroDampingUntilFrame = -1;
+    }
+
+    private CinemachineCamera GetCrossFadeHandoffCamera(
+        CameraSystemMaster master,
+        CameraProfileKind incomingKind,
+        CinemachineCamera baseCamera,
+        out bool generalUseB)
+    {
+        generalUseB = false;
+
+        if (master == null)
+            return null;
+
+        switch (incomingKind)
+        {
+            case CameraProfileKind.General:
+                if (baseCamera == master.generalCamera &&
+                    master.generalCameraB != null)
+                {
+                    generalUseB = true;
+                    return master.generalCameraB;
+                }
+
+                if (baseCamera == master.generalCameraB &&
+                    master.generalCamera != null)
+                {
+                    generalUseB = false;
+                    return master.generalCamera;
+                }
+
+                CinemachineCamera preferredGeneral =
+                    master.GetGeneralCamera(_currentGeneralUseB);
+
+                if (preferredGeneral != null && preferredGeneral != baseCamera)
+                {
+                    generalUseB = preferredGeneral == master.generalCameraB;
+                    return preferredGeneral;
+                }
+
+                if (master.generalCamera != null)
+                {
+                    generalUseB = false;
+                    return master.generalCamera;
+                }
+
+                generalUseB = master.generalCameraB != null;
+                return master.generalCameraB;
+
+            case CameraProfileKind.Tracking:
+                return master.trackingCamera;
+
+            case CameraProfileKind.Dolly:
+                return master.dollyCamera;
+
+            default:
+                return null;
+        }
+    }
+
+    private bool TryGetStoryboardCrossFadePair(
+        List<CameraProfileInput> activeInputs,
+        out CameraProfileInput outgoingInput,
+        out CameraProfileInput incomingInput)
+    {
+        outgoingInput = default;
+        incomingInput = default;
+
+        if (activeInputs == null || activeInputs.Count != 2)
+            return false;
+
+        CameraProfileInput first = activeInputs[0];
+        CameraProfileInput second = activeInputs[1];
+
+        double firstStart = GetClipStart(first.InputIndex);
+        double secondStart = GetClipStart(second.InputIndex);
+
+        if (secondStart > firstStart ||
+            (Mathf.Approximately((float)secondStart, (float)firstStart) &&
+                second.InputIndex > first.InputIndex))
+        {
+            outgoingInput = first;
+            incomingInput = second;
+        }
+        else
+        {
+            outgoingInput = second;
+            incomingInput = first;
+        }
+
+        return incomingInput.Behaviour != null &&
+            incomingInput.Behaviour.blendMode ==
+                CameraProfileBlendMode.StoryboardRenderTextureCrossFade;
+    }
+
+    private double GetClipStart(int inputIndex)
+    {
+        if (_clips == null ||
+            inputIndex < 0 ||
+            inputIndex >= _clips.Length ||
+            _clips[inputIndex] == null)
+        {
+            return 0.0;
+        }
+
+        return _clips[inputIndex].start;
+    }
+
+    private static bool TryGetCrossFadeRenderCamera(
+        CameraSystemMaster master,
+        CameraProfileKind kind,
+        out CinemachineCamera camera)
+    {
+        camera = null;
+
+        if (master == null)
+            return false;
+
+        switch (kind)
+        {
+            case CameraProfileKind.General:
+                camera = master.GetCrossFadeGeneralCamera();
+                break;
+
+            case CameraProfileKind.Tracking:
+                camera = master.GetCrossFadeTrackingCamera();
+                break;
+
+            case CameraProfileKind.Dolly:
+                camera = master.GetCrossFadeDollyCamera();
+                break;
+        }
+
+        return camera != null;
+    }
+
+    private void ClearStoryboardCrossFade(CameraSystemMaster master)
+    {
+        if (master != null)
+        {
+            master.ClearStoryboardCrossFade();
+        }
+
+        _storyboardCrossFadeContext = default;
     }
 
     private static bool CanBlendActiveInputs(
@@ -1395,11 +1938,18 @@ public class CameraProfileMixer : PlayableBehaviour
         _preparedGeneralUseB = false;
         _generalZeroDampingUntilFrame = -1;
         _lastWasBlending = false;
+        _storyboardCrossFadeContext = default;
     }
 
     public override void OnPlayableDestroy(Playable playable)
     {
+        if (_activeMaster != null)
+        {
+            ClearStoryboardCrossFade(_activeMaster);
+        }
+
         ClearState();
+        _activeMaster = null;
         DestroyBlendTargetProxy();
     }
 

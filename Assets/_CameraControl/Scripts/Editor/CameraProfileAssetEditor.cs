@@ -11,6 +11,7 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _cameraProfileProp;
     private SerializedProperty _trackingTargetProp;
     private SerializedProperty _splineContainerProp;
+    private SerializedProperty _blendModeProp;
     private SerializedProperty _reversePlaybackProp;
     private SerializedProperty _mirrorXProp;
     private SerializedProperty _mirrorYProp;
@@ -35,6 +36,7 @@ public class CameraProfileAssetEditor : Editor
         _cameraProfileProp = serializedObject.FindProperty("cameraProfile");
         _trackingTargetProp = serializedObject.FindProperty("trackingTarget");
         _splineContainerProp = serializedObject.FindProperty("splineContainer");
+        _blendModeProp = serializedObject.FindProperty("blendMode");
         _reversePlaybackProp = serializedObject.FindProperty("reversePlayback");
         _mirrorXProp = serializedObject.FindProperty("mirrorX");
         _mirrorYProp = serializedObject.FindProperty("mirrorY");
@@ -66,6 +68,15 @@ public class CameraProfileAssetEditor : Editor
         if (_trackingTargetProp != null)
         {
             EditorGUILayout.PropertyField(_trackingTargetProp);
+        }
+
+        if (_blendModeProp != null)
+        {
+            EditorGUILayout.Space(6);
+            EditorGUILayout.PropertyField(
+                _blendModeProp,
+                new GUIContent("Blend Mode")
+            );
         }
 
         DrawPlaybackSettings();

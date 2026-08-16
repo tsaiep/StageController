@@ -3,6 +3,12 @@ using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Splines;
 
+public enum CameraProfileBlendMode
+{
+    ParameterBlend,
+    StoryboardRenderTextureCrossFade
+}
+
 [System.Serializable]
 public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
 {
@@ -15,6 +21,9 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
 
     [Tooltip("當使用 Dolly Profile 時，請將場景中的 Spline Container 拖入此欄位")]
     public ExposedReference<SplineContainer> splineContainer;
+
+    [Tooltip("Overlap 時的混合方式。Parameter Blend 會混合 Profile 參數；Storyboard RT Cross Fade 會用 RenderTexture 疊圖淡入。")]
+    public CameraProfileBlendMode blendMode = CameraProfileBlendMode.ParameterBlend;
 
     //[Header("--- Playback Options ---")]
     [Tooltip("勾選後會以 1 - normalizedTime 取樣 Profile 曲線，等同將此 Clip 的運鏡倒轉播放。")]
@@ -100,6 +109,7 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
         behaviour.profile = cameraProfile;
         behaviour.targetObject = trackingTarget.Resolve(graph.GetResolver());
         behaviour.splineContainer = splineContainer.Resolve(graph.GetResolver());
+        behaviour.blendMode = blendMode;
         behaviour.reversePlayback = reversePlayback;
         behaviour.mirrorX = mirrorX;
         behaviour.mirrorY = mirrorY;
@@ -157,6 +167,7 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public CameraProfileSO profile;
     public GameObject targetObject;
     public SplineContainer splineContainer;
+    public CameraProfileBlendMode blendMode;
 
     public bool reversePlayback;
     public bool mirrorX;
