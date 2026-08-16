@@ -126,6 +126,48 @@ MonoBehaviour:
   rotTargetOffsetXBias: -1.77
   rotTargetOffsetYBias: 0
   rotTargetOffsetZBias: 0
+--- !u!114 &-2871877468039174864
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60258a76665044948956a5873731ccb6, type: 3}
+  m_Name: CameraProfileAsset(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)
+  m_EditorClassIdentifier: 
+  cameraProfile: {fileID: 11400000, guid: 5d46a7e764fcf2a479c013f9d8120088, type: 2}
+  trackingTarget:
+    exposedName: aa8fa5bb7e6d4894db1a6e0eb959c60f
+    defaultValue: {fileID: 0}
+  splineContainer:
+    exposedName: 8d82a438e9da66c458919727a4059999
+    defaultValue: {fileID: 0}
+  blendMode: 1
+  reversePlayback: 1
+  mirrorX: 0
+  mirrorY: 0
+  mirrorZ: 0
+  useFixedPlaybackSpeed: 1
+  fixedPlaybackSpeed: 0.25
+  fovBias: 0
+  posDistanceBias: 1.94
+  posScreenXBias: 0
+  posScreenYBias: 0
+  posTargetOffsetXBias: -1.12
+  posTargetOffsetYBias: 0
+  posTargetOffsetZBias: 0
+  followOffsetXBias: 0
+  followOffsetYBias: 0
+  followOffsetZBias: 0
+  splinePositionBias: 0
+  rotScreenXBias: 0
+  rotScreenYBias: 0
+  rotTargetOffsetXBias: -1.77
+  rotTargetOffsetYBias: 0
+  rotTargetOffsetZBias: 0
 --- !u!114 &-2160932894434464009
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -193,48 +235,6 @@ MonoBehaviour:
   mirrorY: 0
   mirrorZ: 0
   useFixedPlaybackSpeed: 0
-  fixedPlaybackSpeed: 0.5
-  fovBias: 0
-  posDistanceBias: 1.94
-  posScreenXBias: 0
-  posScreenYBias: 0
-  posTargetOffsetXBias: -1.12
-  posTargetOffsetYBias: 0
-  posTargetOffsetZBias: 0
-  followOffsetXBias: 0
-  followOffsetYBias: 0
-  followOffsetZBias: 0
-  splinePositionBias: 0
-  rotScreenXBias: 0
-  rotScreenYBias: 0
-  rotTargetOffsetXBias: -1.77
-  rotTargetOffsetYBias: 0
-  rotTargetOffsetZBias: 0
---- !u!114 &-1786231012367642757
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60258a76665044948956a5873731ccb6, type: 3}
-  m_Name: CameraProfileAsset(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)
-  m_EditorClassIdentifier: 
-  cameraProfile: {fileID: 11400000, guid: 5d46a7e764fcf2a479c013f9d8120088, type: 2}
-  trackingTarget:
-    exposedName: 75a18b7a588347a448ac9d5de60c72a2
-    defaultValue: {fileID: 0}
-  splineContainer:
-    exposedName: 8ddda500101518d4dbf46022fa948858
-    defaultValue: {fileID: 0}
-  blendMode: 1
-  reversePlayback: 0
-  mirrorX: 1
-  mirrorY: 0
-  mirrorZ: 0
-  useFixedPlaybackSpeed: 1
   fixedPlaybackSpeed: 0.5
   fovBias: 0
   posDistanceBias: 1.94
@@ -364,25 +364,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -475,7 +457,7 @@ MonoBehaviour:
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
-    m_BlendOutDuration: 0
+    m_BlendOutDuration: 1.8166666666666629
     m_MixInCurve:
       serializedVersion: 2
       m_Curve:
@@ -502,7 +484,25 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -529,25 +529,7 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -568,7 +550,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: CameraProfileAsset
   - m_Version: 1
-    m_Start: 74.2833333333333
+    m_Start: 72.46666666666667
     m_ClipIn: 0
     m_Asset: {fileID: 7981102132173246415}
     m_Duration: 5
@@ -576,11 +558,29 @@ MonoBehaviour:
     m_ParentTrack: {fileID: 1082857967886210342}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
-    m_BlendInDuration: 0
+    m_BlendInDuration: 1.8166666666666629
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -688,7 +688,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 5.183333333333309
     m_DisplayName: CameraProfileAsset
   - m_Version: 1
-    m_Start: 47.31666666666667
+    m_Start: 49.81666666666667
     m_ClipIn: 0
     m_Asset: {fileID: -7888301747968269074}
     m_Duration: 9.450000000000003
@@ -751,49 +751,13 @@ MonoBehaviour:
     m_BlendOutDuration: 1.7833333333333314
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -808,7 +772,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: CameraProfileAsset
   - m_Version: 1
-    m_Start: 38.5
+    m_Start: 37.45
     m_ClipIn: 0
     m_Asset: {fileID: -4792537633010331994}
     m_Duration: 3.799999999999997
@@ -817,7 +781,7 @@ MonoBehaviour:
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
-    m_BlendOutDuration: 1.0499999999999972
+    m_BlendOutDuration: 1.0833333333333357
     m_MixInCurve:
       serializedVersion: 2
       m_Curve: []
@@ -859,15 +823,15 @@ MonoBehaviour:
     m_PreExtrapolationTime: 3.56666666666667
     m_DisplayName: CameraProfileAsset
   - m_Version: 1
-    m_Start: 41.25
+    m_Start: 40.166666666666664
     m_ClipIn: 0
-    m_Asset: {fileID: -1786231012367642757}
-    m_Duration: 2
+    m_Asset: {fileID: -2871877468039174864}
+    m_Duration: 4
     m_TimeScale: 1
     m_ParentTrack: {fileID: 1082857967886210342}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
-    m_BlendInDuration: 1.0499999999999972
+    m_BlendInDuration: 1.0833333333333357
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
@@ -906,8 +870,8 @@ MonoBehaviour:
     m_Recordable: 0
     m_PostExtrapolationMode: 0
     m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 2.8000000000000043
-    m_PreExtrapolationTime: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 3.56666666666667
     m_DisplayName: CameraProfileAsset
   m_Markers:
     m_Objects: []
@@ -1059,7 +1023,7 @@ MonoBehaviour:
   splineContainer:
     exposedName: 71d9636c59f42ed49a6b1f7e3a60f073
     defaultValue: {fileID: 0}
-  blendMode: 0
+  blendMode: 1
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0

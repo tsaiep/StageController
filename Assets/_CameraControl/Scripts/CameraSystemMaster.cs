@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.Rendering;
 
 #if UNITY_EDITOR
 using System;
@@ -76,6 +77,14 @@ namespace Runtime.CameraSystem
         private bool _hasLoggedInvalidCrossFadeRig;
         private CinemachineBrain _crossFadeOverrideBrain;
         private int _crossFadeCameraOverrideId = -1;
+        private bool _isEditorCrossFadePreviewActive;
+        private int _editorCrossFadePreviewFrame;
+
+        public bool IsStoryboardCrossFadeActive =>
+            _crossFadeCameraOverrideId > 0;
+
+        public bool IsEditorCrossFadePreviewActive =>
+            _isEditorCrossFadePreviewActive;
 
         private void Awake()
         {
@@ -185,6 +194,152 @@ namespace Runtime.CameraSystem
 
             return true;
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// 在非 Play Mode 中立即評估兩套 camera、更新離屏 RT，並刷新主 Brain 的
+        /// Storyboard overlay。此流程不會執行 runtime 的 camera 角色交換。
+        /// </summary>
+        public bool TrySetStoryboardCrossFadePreview(
+            CinemachineCamera baseCamera,
+            CinemachineCamera renderTextureCamera,
+            float alpha,
+            float deltaTime)
+        {
+            if (Application.isPlaying)
+            {
+                return TrySetStoryboardCrossFade(
+                    baseCamera,
+                    renderTextureCamera,
+                    alpha,
+                    deltaTime
+                );
+            }
+
+            if (!TryGetCrossFadeRuntimeComponents(
+                baseCamera,
+                renderTextureCamera,
+                out CinemachineBrain mainBrain,
+                out CinemachineStoryboard storyboard))
+            {
+                return false;
+            }
+
+            RenderTexture texture = GetOrCreateCrossFadeRenderTexture();
+
+            if (texture == null)
+                return LogInvalidCrossFadeRig("無法建立或取得 Editor preview RenderTexture。");
+
+            ConfigureCrossFadeRenderRig();
+
+            crossFadeRenderCamera.targetTexture = texture;
+            crossFadeRenderCamera.enabled = true;
+            crossFadeRenderBrain.enabled = true;
+
+            SetOnlyThisCameraLive(baseCamera);
+            SetOnlyThisCrossFadeCameraLive(renderTextureCamera);
+
+            float previewDeltaTime = deltaTime > 0f ? deltaTime : -1f;
+
+            if (previewDeltaTime < 0f)
+            {
+                baseCamera.PreviousStateIsValid = false;
+                renderTextureCamera.PreviousStateIsValid = false;
+            }
+
+            ManualUpdateBrain(crossFadeRenderBrain, previewDeltaTime);
+            RenderCrossFadePreview(texture);
+
+            ConfigureStoryboardOverlay(storyboard, texture);
+            SetStoryboardCameraOverride(
+                mainBrain,
+                baseCamera,
+                alpha,
+                previewDeltaTime
+            );
+            ManualUpdateBrain(mainBrain, previewDeltaTime);
+
+            _isEditorCrossFadePreviewActive = true;
+            _hasLoggedInvalidCrossFadeRig = false;
+            WarnIfCrossFadeChannelCanDriveMainBrain();
+            EditorApplication.QueuePlayerLoopUpdate();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Editor Timeline 離開 crossfade 後，讓主 Brain 直接輸出指定 camera，
+        /// 不沿用 overlap 期間的 root blend 或 damping history。
+        /// </summary>
+        public void RefreshEditorCameraPreview(CinemachineCamera activeCamera)
+        {
+            if (Application.isPlaying || activeCamera == null)
+                return;
+
+            SetOnlyThisCameraLive(activeCamera);
+            activeCamera.PreviousStateIsValid = false;
+
+            CinemachineBrain mainBrain = GetMainBrain();
+
+            if (mainBrain != null && mainBrain != crossFadeRenderBrain)
+            {
+                mainBrain.ResetState();
+                ManualUpdateBrain(mainBrain, -1f);
+            }
+            else
+            {
+                activeCamera.InternalUpdateCameraState(Vector3.up, -1f);
+            }
+
+            EditorApplication.QueuePlayerLoopUpdate();
+        }
+
+        private void ManualUpdateBrain(CinemachineBrain brain, float deltaTime)
+        {
+            if (brain == null)
+                return;
+
+            CinemachineBrain.UpdateMethods previousUpdateMethod =
+                brain.UpdateMethod;
+
+            try
+            {
+                brain.UpdateMethod = CinemachineBrain.UpdateMethods.ManualUpdate;
+                brain.ManualUpdate(++_editorCrossFadePreviewFrame, deltaTime);
+            }
+            finally
+            {
+                brain.UpdateMethod = previousUpdateMethod;
+            }
+        }
+
+        private void RenderCrossFadePreview(RenderTexture destination)
+        {
+            if (crossFadeRenderCamera == null || destination == null)
+                return;
+
+            if (RenderPipelineManager.currentPipeline != null)
+            {
+                RenderPipeline.StandardRequest request =
+                    new RenderPipeline.StandardRequest
+                    {
+                        destination = destination,
+                        mipLevel = 0,
+                        slice = 0,
+                        face = CubemapFace.Unknown
+                    };
+
+                RenderPipeline.SubmitRenderRequest(
+                    crossFadeRenderCamera,
+                    request
+                );
+            }
+            else
+            {
+                crossFadeRenderCamera.Render();
+            }
+        }
+#endif
 
         /// <summary>
         /// 只更新主 Brain 上的 Storyboard override，不重新啟動離屏 Camera/Brain。
@@ -310,6 +465,9 @@ namespace Runtime.CameraSystem
 
         public void ClearStoryboardCrossFade()
         {
+            bool releaseEditorPreviewTexture =
+                !Application.isPlaying && _isEditorCrossFadePreviewActive;
+
             if (_crossFadeOverrideBrain != null &&
                 _crossFadeCameraOverrideId > 0)
             {
@@ -347,6 +505,13 @@ namespace Runtime.CameraSystem
             if (crossFadeRenderBrain != null)
             {
                 crossFadeRenderBrain.enabled = false;
+            }
+
+            _isEditorCrossFadePreviewActive = false;
+
+            if (releaseEditorPreviewTexture)
+            {
+                ReleaseOwnedCrossFadeRenderTexture();
             }
         }
 
@@ -846,6 +1011,22 @@ namespace Runtime.CameraSystem
             ValidateCrossFadeSetup(issues);
 
             return issues;
+        }
+
+        internal void DebugGetCameraSetupIssueCounts(
+            out int errorCount,
+            out int warningCount)
+        {
+            errorCount = 0;
+            warningCount = 0;
+
+            foreach (DebugIssue issue in CollectCameraSetupIssues())
+            {
+                if (issue.Severity == DebugSeverity.Error)
+                    errorCount++;
+                else if (issue.Severity == DebugSeverity.Warning)
+                    warningCount++;
+            }
         }
 
         private CameraSlot[] GetCameraSlots()
@@ -1379,7 +1560,9 @@ namespace Runtime.CameraSystem
                 ));
             }
 
-            if (!Application.isPlaying && crossFadeRenderCamera.enabled)
+            if (!Application.isPlaying &&
+                !_isEditorCrossFadePreviewActive &&
+                crossFadeRenderCamera.enabled)
             {
                 issues.Add(new DebugIssue(
                     DebugSeverity.Warning,
@@ -1397,7 +1580,8 @@ namespace Runtime.CameraSystem
                 ));
             }
 
-            if (crossFadeRenderCamera.targetTexture != crossFadeRenderTexture)
+            if (!IsStoryboardCrossFadeActive &&
+                crossFadeRenderCamera.targetTexture != crossFadeRenderTexture)
             {
                 issues.Add(new DebugIssue(
                     DebugSeverity.Warning,
@@ -1425,7 +1609,9 @@ namespace Runtime.CameraSystem
             bool validChannel,
             List<DebugIssue> issues)
         {
-            if (!Application.isPlaying && crossFadeRenderBrain.enabled)
+            if (!Application.isPlaying &&
+                !_isEditorCrossFadePreviewActive &&
+                crossFadeRenderBrain.enabled)
             {
                 issues.Add(new DebugIssue(
                     DebugSeverity.Warning,
@@ -1484,7 +1670,8 @@ namespace Runtime.CameraSystem
                 ));
             }
 
-            if (camera.Priority.Value != inactivePriority)
+            if (!IsStoryboardCrossFadeActive &&
+                camera.Priority.Value != inactivePriority)
             {
                 issues.Add(new DebugIssue(
                     DebugSeverity.Warning,
@@ -1557,7 +1744,9 @@ namespace Runtime.CameraSystem
                 ));
             }
 
-            if (!Application.isPlaying && storyboard.ShowImage)
+            if (!Application.isPlaying &&
+                !_isEditorCrossFadePreviewActive &&
+                storyboard.ShowImage)
             {
                 issues.Add(new DebugIssue(
                     DebugSeverity.Warning,
@@ -2323,17 +2512,244 @@ namespace Runtime.CameraSystem
     [CustomEditor(typeof(CameraSystemMaster))]
     public class CameraSystemMasterEditor : Editor
     {
+        private SerializedProperty _generalCamera;
+        private SerializedProperty _generalCameraB;
+        private SerializedProperty _trackingCamera;
+        private SerializedProperty _dollyCamera;
+        private SerializedProperty _livePriority;
+        private SerializedProperty _inactivePriority;
+        private SerializedProperty _crossFadeRenderCamera;
+        private SerializedProperty _crossFadeRenderBrain;
+        private SerializedProperty _crossFadeRenderTexture;
+        private SerializedProperty _crossFadeOutputChannel;
+        private SerializedProperty _crossFadeGeneralCamera;
+        private SerializedProperty _crossFadeTrackingCamera;
+        private SerializedProperty _crossFadeDollyCamera;
+        private SerializedProperty _crossFadeStoryboardCamera;
+        private SerializedProperty _autoResizeCrossFadeRenderTexture;
+        private SerializedProperty _fallbackCrossFadeTextureWidth;
+        private SerializedProperty _fallbackCrossFadeTextureHeight;
+        private SerializedProperty _storyboardSortingOrder;
+
+        private bool _showGeneratedRig;
+        private bool _showRenderTextureSettings;
+        private int _setupErrorCount;
+        private int _setupWarningCount;
+        private double _nextStatusRefreshTime;
+
+        private void OnEnable()
+        {
+            _generalCamera = serializedObject.FindProperty("generalCamera");
+            _generalCameraB = serializedObject.FindProperty("generalCameraB");
+            _trackingCamera = serializedObject.FindProperty("trackingCamera");
+            _dollyCamera = serializedObject.FindProperty("dollyCamera");
+            _livePriority = serializedObject.FindProperty("livePriority");
+            _inactivePriority = serializedObject.FindProperty("inactivePriority");
+            _crossFadeRenderCamera = serializedObject.FindProperty("crossFadeRenderCamera");
+            _crossFadeRenderBrain = serializedObject.FindProperty("crossFadeRenderBrain");
+            _crossFadeRenderTexture = serializedObject.FindProperty("crossFadeRenderTexture");
+            _crossFadeOutputChannel = serializedObject.FindProperty("crossFadeOutputChannel");
+            _crossFadeGeneralCamera = serializedObject.FindProperty("crossFadeGeneralCamera");
+            _crossFadeTrackingCamera = serializedObject.FindProperty("crossFadeTrackingCamera");
+            _crossFadeDollyCamera = serializedObject.FindProperty("crossFadeDollyCamera");
+            _crossFadeStoryboardCamera = serializedObject.FindProperty("crossFadeStoryboardCamera");
+            _autoResizeCrossFadeRenderTexture = serializedObject.FindProperty("autoResizeCrossFadeRenderTexture");
+            _fallbackCrossFadeTextureWidth = serializedObject.FindProperty("fallbackCrossFadeTextureWidth");
+            _fallbackCrossFadeTextureHeight = serializedObject.FindProperty("fallbackCrossFadeTextureHeight");
+            _storyboardSortingOrder = serializedObject.FindProperty("storyboardSortingOrder");
+
+            EditorApplication.hierarchyChanged += RequestStatusRefresh;
+            Undo.undoRedoPerformed += RequestStatusRefresh;
+            RefreshSetupStatus(true);
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.hierarchyChanged -= RequestStatusRefresh;
+            Undo.undoRedoPerformed -= RequestStatusRefresh;
+        }
+
         public override void OnInspectorGUI()
         {
-            DrawDefaultInspector();
-
             CameraSystemMaster master = target as CameraSystemMaster;
 
             if (master == null)
                 return;
 
-            EditorGUILayout.Space(12f);
-            EditorGUILayout.LabelField("Camera Setup Tools", EditorStyles.boldLabel);
+            serializedObject.Update();
+            RefreshSetupStatus(false);
+
+            DrawScriptField(master);
+            DrawSetupStatus(master);
+            DrawSetupTools(master);
+
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField("主要運鏡相機", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(_generalCamera, new GUIContent("General Camera A"));
+            EditorGUILayout.PropertyField(_generalCameraB, new GUIContent("General Camera B"));
+            EditorGUILayout.PropertyField(_trackingCamera, new GUIContent("Tracking Camera"));
+            EditorGUILayout.PropertyField(_dollyCamera, new GUIContent("Dolly Camera"));
+
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField("Priority", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(_livePriority, new GUIContent("Live Priority"));
+            EditorGUILayout.PropertyField(_inactivePriority, new GUIContent("Inactive Priority"));
+
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField("Crossfade", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(
+                _crossFadeOutputChannel,
+                new GUIContent("Output Channel")
+            );
+            EditorGUILayout.PropertyField(
+                _storyboardSortingOrder,
+                new GUIContent("Storyboard Sorting Order")
+            );
+
+            _showGeneratedRig = EditorGUILayout.BeginFoldoutHeaderGroup(
+                _showGeneratedRig,
+                "生成的 Crossfade Rig 引用"
+            );
+
+            if (_showGeneratedRig)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(
+                    _crossFadeRenderCamera,
+                    new GUIContent("Render Camera")
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeRenderBrain,
+                    new GUIContent("Render Brain")
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeGeneralCamera,
+                    new GUIContent("General Transition Camera")
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeTrackingCamera,
+                    new GUIContent("Tracking Transition Camera")
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeDollyCamera,
+                    new GUIContent("Dolly Transition Camera")
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeStoryboardCamera,
+                    new GUIContent("Storyboard Camera")
+                );
+                EditorGUI.indentLevel--;
+            }
+
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            _showRenderTextureSettings = EditorGUILayout.BeginFoldoutHeaderGroup(
+                _showRenderTextureSettings,
+                "RenderTexture 與顯示設定"
+            );
+
+            if (_showRenderTextureSettings)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(
+                    _crossFadeRenderTexture,
+                    new GUIContent("Render Texture (Optional)")
+                );
+                EditorGUILayout.PropertyField(
+                    _autoResizeCrossFadeRenderTexture,
+                    new GUIContent("Auto Resize")
+                );
+
+                if (!_autoResizeCrossFadeRenderTexture.boolValue)
+                {
+                    EditorGUILayout.PropertyField(
+                        _fallbackCrossFadeTextureWidth,
+                        new GUIContent("Fallback Width")
+                    );
+                    EditorGUILayout.PropertyField(
+                        _fallbackCrossFadeTextureHeight,
+                        new GUIContent("Fallback Height")
+                    );
+                }
+
+                if (_crossFadeRenderTexture.objectReferenceValue == null)
+                {
+                    EditorGUILayout.HelpBox(
+                        "未指定 RenderTexture 時，系統會在 crossfade 開始時動態建立並在結束後釋放。",
+                        MessageType.Info
+                    );
+                }
+
+                EditorGUI.indentLevel--;
+            }
+
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            if (serializedObject.ApplyModifiedProperties())
+            {
+                RequestStatusRefresh();
+                RefreshSetupStatus(true);
+            }
+        }
+
+        private static void DrawScriptField(CameraSystemMaster master)
+        {
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUILayout.ObjectField(
+                    "Script",
+                    MonoScript.FromMonoBehaviour(master),
+                    typeof(MonoScript),
+                    false
+                );
+            }
+        }
+
+        private void DrawSetupStatus(CameraSystemMaster master)
+        {
+            EditorGUILayout.Space(6f);
+
+            if (master.IsEditorCrossFadePreviewActive)
+            {
+                EditorGUILayout.HelpBox(
+                    "Editor Timeline Crossfade 預覽中",
+                    MessageType.Info
+                );
+            }
+            else if (Application.isPlaying && master.IsStoryboardCrossFadeActive)
+            {
+                EditorGUILayout.HelpBox(
+                    "Runtime Crossfade 執行中",
+                    MessageType.Info
+                );
+            }
+
+            if (_setupErrorCount > 0)
+            {
+                EditorGUILayout.HelpBox(
+                    $"設定尚未完成：{_setupErrorCount} 個錯誤、{_setupWarningCount} 個警告。按「檢查設定」查看細節。",
+                    MessageType.Error
+                );
+            }
+            else if (_setupWarningCount > 0)
+            {
+                EditorGUILayout.HelpBox(
+                    $"基本設定可使用，但仍有 {_setupWarningCount} 個建議項目。按「檢查設定」查看細節。",
+                    MessageType.Warning
+                );
+            }
+            else
+            {
+                EditorGUILayout.HelpBox(
+                    "主 Camera 與 Storyboard RT Crossfade rig 設定正常。",
+                    MessageType.Info
+                );
+            }
+        }
+
+        private void DrawSetupTools(CameraSystemMaster master)
+        {
+            EditorGUILayout.Space(3f);
 
             if (Application.isPlaying)
             {
@@ -2345,18 +2761,45 @@ namespace Runtime.CameraSystem
 
             using (new EditorGUI.DisabledScope(Application.isPlaying))
             {
-                if (GUILayout.Button("檢查設定", GUILayout.Height(32f)))
+                using (new EditorGUILayout.HorizontalScope())
                 {
-                    master.DebugValidateCameraSetup();
-                }
+                    if (GUILayout.Button("建立 / 修復全部", GUILayout.Height(32f)))
+                    {
+                        master.DebugAutoFixCameraSetup();
+                        serializedObject.Update();
+                        RefreshSetupStatus(true);
+                    }
 
-                EditorGUILayout.Space(4f);
-
-                if (GUILayout.Button("建立與補上組件", GUILayout.Height(32f)))
-                {
-                    master.DebugAutoFixCameraSetup();
+                    if (GUILayout.Button("檢查設定", GUILayout.Height(32f)))
+                    {
+                        master.DebugValidateCameraSetup();
+                        RefreshSetupStatus(true);
+                    }
                 }
             }
+        }
+
+        private void RequestStatusRefresh()
+        {
+            _nextStatusRefreshTime = 0d;
+            Repaint();
+        }
+
+        private void RefreshSetupStatus(bool force)
+        {
+            if (!force && EditorApplication.timeSinceStartup < _nextStatusRefreshTime)
+                return;
+
+            CameraSystemMaster master = target as CameraSystemMaster;
+
+            if (master == null)
+                return;
+
+            master.DebugGetCameraSetupIssueCounts(
+                out _setupErrorCount,
+                out _setupWarningCount
+            );
+            _nextStatusRefreshTime = EditorApplication.timeSinceStartup + 1d;
         }
     }
 #endif

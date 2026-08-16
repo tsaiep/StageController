@@ -271,17 +271,24 @@ public class CameraProfileMixer : PlayableBehaviour
         bool isOverlapping = activeInputs.Count > 1;
         bool isHardCutFrame = !isOverlapping && isClipChanged && !_lastWasBlending;
 
-        if (Application.isPlaying &&
-            TryGetStoryboardCrossFadePair(
+        if (TryGetStoryboardCrossFadePair(
                 activeInputs,
                 out CameraProfileInput outgoingCrossFadeInput,
                 out CameraProfileInput incomingCrossFadeInput))
         {
-            if (!TryApplyStoryboardRenderTextureCrossFade(
-                master,
-                outgoingCrossFadeInput,
-                incomingCrossFadeInput,
-                info.deltaTime))
+            bool appliedCrossFade = Application.isPlaying
+                ? TryApplyStoryboardRenderTextureCrossFade(
+                    master,
+                    outgoingCrossFadeInput,
+                    incomingCrossFadeInput,
+                    info.deltaTime)
+                : TryApplyStoryboardRenderTextureCrossFadePreview(
+                    master,
+                    outgoingCrossFadeInput,
+                    incomingCrossFadeInput,
+                    info.deltaTime);
+
+            if (!appliedCrossFade)
             {
                 ApplyStoryboardCrossFadeHardCutFallback(
                     master,
@@ -292,7 +299,8 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
         }
 
-        if (TryCompleteStoryboardCrossFadeHandoff(
+        if (Application.isPlaying &&
+            TryCompleteStoryboardCrossFadeHandoff(
             master,
             activeInputs,
             dominantInput,
@@ -300,6 +308,9 @@ public class CameraProfileMixer : PlayableBehaviour
         {
             return;
         }
+
+        bool endedEditorCrossFadePreview =
+            !Application.isPlaying && _storyboardCrossFadeContext.Active;
 
         ClearStoryboardCrossFade(master);
 
@@ -375,7 +386,14 @@ public class CameraProfileMixer : PlayableBehaviour
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
-            activeCamera.InternalUpdateCameraState(Vector3.up, 0.016f);
+            if (endedEditorCrossFadePreview)
+            {
+                master.RefreshEditorCameraPreview(activeCamera);
+            }
+            else
+            {
+                activeCamera.InternalUpdateCameraState(Vector3.up, 0.016f);
+            }
         }
 #endif
 
@@ -684,6 +702,123 @@ public class CameraProfileMixer : PlayableBehaviour
         }
     }
 
+    private bool TryApplyStoryboardRenderTextureCrossFadePreview(
+        CameraSystemMaster master,
+        CameraProfileInput outgoingInput,
+        CameraProfileInput incomingInput,
+        float deltaTime)
+    {
+#if UNITY_EDITOR
+        if (!TryGetCrossFadeRenderCamera(
+            master,
+            incomingInput.Kind,
+            out CinemachineCamera renderTextureCamera))
+        {
+            master.ReportCrossFadeSetupFailure(
+                $"找不到 {incomingInput.Kind} 對應的離屏 transition camera。"
+            );
+            return false;
+        }
+
+        bool ignoredPreparedCamera;
+        CinemachineCamera baseCamera = GetCameraForProfile(
+            master,
+            outgoingInput.Kind,
+            outgoingInput.InputIndex,
+            false,
+            out ignoredPreparedCamera
+        );
+
+        if (baseCamera == null)
+        {
+            master.ReportCrossFadeSetupFailure(
+                $"找不到 {outgoingInput.Kind} 對應的 outgoing camera。"
+            );
+            return false;
+        }
+
+        bool startsNewEditorCrossFade =
+            !_storyboardCrossFadeContext.Active;
+
+        if (_storyboardCrossFadeContext.Active &&
+            (_storyboardCrossFadeContext.IncomingInputIndex !=
+                incomingInput.InputIndex ||
+             _storyboardCrossFadeContext.RenderTextureCamera !=
+                renderTextureCamera ||
+             _storyboardCrossFadeContext.BaseCamera != baseCamera))
+        {
+            ClearStoryboardCrossFade(master);
+            startsNewEditorCrossFade = true;
+        }
+
+        float totalWeight = outgoingInput.Weight + incomingInput.Weight;
+        float alpha = totalWeight > 0f
+            ? Mathf.Clamp01(incomingInput.Weight / totalWeight)
+            : Mathf.Clamp01(incomingInput.Weight);
+
+        ApplyProfileToCamera(
+            baseCamera,
+            outgoingInput.Profile,
+            outgoingInput.Target,
+            outgoingInput.Spline,
+            outgoingInput.Behaviour,
+            outgoingInput.NormalizedTime,
+            false
+        );
+
+        ApplyProfileToCamera(
+            renderTextureCamera,
+            incomingInput.Profile,
+            incomingInput.Target,
+            incomingInput.Spline,
+            incomingInput.Behaviour,
+            incomingInput.NormalizedTime,
+            false
+        );
+
+        if (startsNewEditorCrossFade)
+        {
+            renderTextureCamera.PreviousStateIsValid = false;
+        }
+
+        if (!master.TrySetStoryboardCrossFadePreview(
+            baseCamera,
+            renderTextureCamera,
+            alpha,
+            deltaTime))
+        {
+            return false;
+        }
+
+        _storyboardCrossFadeContext = new StoryboardCrossFadeContext
+        {
+            Active = true,
+            IncomingInputIndex = incomingInput.InputIndex,
+            IncomingKind = incomingInput.Kind,
+            BaseCamera = baseCamera,
+            RenderTextureCamera = renderTextureCamera
+        };
+
+        if (outgoingInput.Kind == CameraProfileKind.General ||
+            incomingInput.Kind == CameraProfileKind.General)
+        {
+            _hasUsedGeneralCamera = true;
+        }
+
+        _hasEverAppliedCamera = true;
+        _lastProfile = outgoingInput.Profile;
+        _lastTarget = outgoingInput.Target;
+        _lastSpline = outgoingInput.Spline;
+        _lastDominantInputIndex = outgoingInput.InputIndex;
+        _lastKind = outgoingInput.Kind;
+        _lastWasBlending = true;
+
+        return true;
+#else
+        return false;
+#endif
+    }
+
     private bool TryApplyStoryboardRenderTextureCrossFade(
         CameraSystemMaster master,
         CameraProfileInput outgoingInput,
@@ -857,6 +992,13 @@ public class CameraProfileMixer : PlayableBehaviour
         );
 
         master.SetOnlyThisCameraLive(outgoingCamera);
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            master.RefreshEditorCameraPreview(outgoingCamera);
+        }
+#endif
 
         if (outgoingInput.Kind == CameraProfileKind.General)
         {
