@@ -2,6 +2,7 @@
 using Unity.Cinemachine;
 
 #if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -746,7 +747,23 @@ namespace Runtime.CameraSystem
                 crossFadeOutputChannel = OutputChannels.Channel01;
             }
 
-            Camera mainOutputCamera = ResolveMainOutputCamera(out bool mainCameraAmbiguous);
+            GameObject mainOutputObject = ResolveMainOutputObject(
+                out bool mainCameraAmbiguous
+            );
+            Camera mainOutputCamera = null;
+
+            if (!mainCameraAmbiguous)
+            {
+                mainOutputCamera = EnsureMainOutputCamera(mainOutputObject);
+            }
+            else
+            {
+                Debug.LogError(
+                    $"[{nameof(CameraSystemMaster)}] 場景中有多個 MainCamera 或多個可能的主 CinemachineBrain。" +
+                    "已略過主攝影機建立與修復；請先保留唯一候選後再執行一次。",
+                    this
+                );
+            }
 
             if (generalCamera == null)
             {
@@ -787,7 +804,7 @@ namespace Runtime.CameraSystem
                 ? mainOutputCamera.GetComponent<CinemachineBrain>()
                 : null;
 
-            if (!mainCameraAmbiguous && mainBrain != null)
+            if (mainBrain != null)
             {
                 FixMainBrainChannelMask(mainBrain);
             }
@@ -917,26 +934,16 @@ namespace Runtime.CameraSystem
                     break;
 
                 case CameraRigKind.Dolly:
-                    CinemachineSplineDolly dolly =
-                        ValidateRequiredComponent<CinemachineSplineDolly>(
-                            slot,
-                            issues,
-                            "Spline Dolly"
-                        );
+                    ValidateRequiredComponent<CinemachineSplineDolly>(
+                        slot,
+                        issues,
+                        "Spline Dolly"
+                    );
 
                     ValidateConflictingBody<CinemachineSplineDolly>(
                         slot,
                         issues
                     );
-
-                    if (dolly != null && dolly.Spline == null)
-                    {
-                        issues.Add(new DebugIssue(
-                            DebugSeverity.Warning,
-                            $"{slot.Label} 的 Spline Dolly 尚未指定 Spline。若 Timeline clip 會動態提供 spline 可忽略，否則 Dolly camera 不會移動。",
-                            dolly
-                        ));
-                    }
                     break;
             }
         }
@@ -1010,14 +1017,6 @@ namespace Runtime.CameraSystem
                 return;
             }
 
-            if (!HasMatchingComposerSetup(generalCamera, generalCameraB))
-            {
-                issues.Add(new DebugIssue(
-                    DebugSeverity.Warning,
-                    "General Camera B 的 Position/Rotation Composer 設定與 General Camera A 不一致。建議按自動修復同步一次，避免 General A/B 交替時狀態差異。",
-                    generalCameraB
-                ));
-            }
         }
 
         private void ValidateDistinctCameraAssignments(List<DebugIssue> issues)
@@ -1188,7 +1187,7 @@ namespace Runtime.CameraSystem
                 issues
             );
 
-            Camera mainOutputCamera = ResolveMainOutputCamera(out bool ambiguous);
+            GameObject mainOutputObject = ResolveMainOutputObject(out bool ambiguous);
 
             if (ambiguous)
             {
@@ -1200,14 +1199,71 @@ namespace Runtime.CameraSystem
                 return;
             }
 
+            if (mainOutputObject == null)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    "找不到可用的 MainCamera。可按「建立與補上組件」自動建立主輸出 Camera。",
+                    this
+                ));
+                return;
+            }
+
+            if (!mainOutputObject.CompareTag("MainCamera"))
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"主輸出 Camera ({mainOutputObject.name}) 未設定 MainCamera tag，runtime 的 Camera.main 無法取得它。",
+                    mainOutputObject
+                ));
+            }
+
+            if (!mainOutputObject.activeInHierarchy)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"MainCamera ({mainOutputObject.name}) 的 GameObject 未啟用。",
+                    mainOutputObject
+                ));
+            }
+
+            Camera mainOutputCamera = mainOutputObject.GetComponent<Camera>();
+
             if (mainOutputCamera == null)
             {
                 issues.Add(new DebugIssue(
                     DebugSeverity.Error,
-                    "找不到可用的 MainCamera。請確認主輸出 Camera 已設定 MainCamera tag 並掛上 CinemachineBrain。",
-                    this
+                    $"MainCamera ({mainOutputObject.name}) 缺少 Camera component。",
+                    mainOutputObject
                 ));
                 return;
+            }
+
+            if (!mainOutputCamera.enabled)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"MainCamera ({mainOutputCamera.name}) 的 Camera component 被停用。",
+                    mainOutputCamera
+                ));
+            }
+
+            if (mainOutputCamera.targetTexture != null)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"MainCamera ({mainOutputCamera.name}) 的 Target Texture 必須為空，才能輸出到主畫面。",
+                    mainOutputCamera
+                ));
+            }
+
+            if (GetAdditionalCameraData(mainOutputCamera) == null)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"MainCamera ({mainOutputCamera.name}) 缺少 URP Universal Additional Camera Data。",
+                    mainOutputCamera
+                ));
             }
 
             CinemachineBrain mainBrain =
@@ -1221,6 +1277,15 @@ namespace Runtime.CameraSystem
                     mainOutputCamera
                 ));
                 return;
+            }
+
+            if (!mainBrain.enabled)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"MainCamera ({mainOutputCamera.name}) 的 CinemachineBrain 被停用。",
+                    mainBrain
+                ));
             }
 
             if (crossFadeRenderCamera == mainOutputCamera ||
@@ -1253,7 +1318,7 @@ namespace Runtime.CameraSystem
             }
 
             if (crossFadeRenderCamera != null &&
-                !HasMatchingRenderCameraSettings(
+                !HasMatchingStableRenderCameraSettings(
                     mainOutputCamera,
                     crossFadeRenderCamera))
             {
@@ -1502,7 +1567,7 @@ namespace Runtime.CameraSystem
             }
         }
 
-        private static bool HasMatchingRenderCameraSettings(
+        private static bool HasMatchingStableRenderCameraSettings(
             Camera source,
             Camera target)
         {
@@ -1515,9 +1580,7 @@ namespace Runtime.CameraSystem
                 source.renderingPath == target.renderingPath &&
                 source.allowHDR == target.allowHDR &&
                 source.allowMSAA == target.allowMSAA &&
-                source.useOcclusionCulling == target.useOcclusionCulling &&
-                Mathf.Approximately(source.nearClipPlane, target.nearClipPlane) &&
-                Mathf.Approximately(source.farClipPlane, target.farClipPlane);
+                source.useOcclusionCulling == target.useOcclusionCulling;
         }
 
         private static Component GetAdditionalCameraData(Camera camera)
@@ -1550,36 +1613,40 @@ namespace Runtime.CameraSystem
                 (value & (value - 1)) == 0;
         }
 
-        private Camera ResolveMainOutputCamera(out bool ambiguous)
+        private GameObject ResolveMainOutputObject(out bool ambiguous)
         {
             ambiguous = false;
 
-            Camera[] cameras = Object.FindObjectsByType<Camera>(
+            Transform[] transforms = Object.FindObjectsByType<Transform>(
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None
             );
-            List<Camera> taggedMainCameras = new List<Camera>();
+            List<GameObject> taggedMainObjects = new List<GameObject>();
 
-            foreach (Camera camera in cameras)
+            foreach (Transform candidate in transforms)
             {
-                if (camera == null)
-                    continue;
-
-                if (camera.CompareTag("MainCamera"))
+                if (candidate == null ||
+                    !candidate.gameObject.CompareTag("MainCamera"))
                 {
-                    taggedMainCameras.Add(camera);
+                    continue;
                 }
+
+                taggedMainObjects.Add(candidate.gameObject);
             }
 
-            if (taggedMainCameras.Count == 1)
-                return taggedMainCameras[0];
+            if (taggedMainObjects.Count == 1)
+                return taggedMainObjects[0];
 
-            if (taggedMainCameras.Count > 1)
+            if (taggedMainObjects.Count > 1)
             {
                 ambiguous = true;
                 return null;
             }
 
+            Camera[] cameras = Object.FindObjectsByType<Camera>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
             List<Camera> brainCameras = new List<Camera>();
 
             foreach (Camera camera in cameras)
@@ -1596,10 +1663,133 @@ namespace Runtime.CameraSystem
             }
 
             if (brainCameras.Count == 1)
-                return brainCameras[0];
+                return brainCameras[0].gameObject;
 
             ambiguous = brainCameras.Count > 1;
             return null;
+        }
+
+        private Camera ResolveMainOutputCamera(out bool ambiguous)
+        {
+            GameObject mainOutputObject = ResolveMainOutputObject(out ambiguous);
+            return mainOutputObject != null
+                ? mainOutputObject.GetComponent<Camera>()
+                : null;
+        }
+
+        private Camera EnsureMainOutputCamera(GameObject mainOutputObject)
+        {
+            bool createdObject = mainOutputObject == null;
+
+            if (createdObject)
+            {
+                mainOutputObject = new GameObject("Main Camera");
+                Undo.RegisterCreatedObjectUndo(
+                    mainOutputObject,
+                    "Create Main Camera"
+                );
+                mainOutputObject.transform.position = new Vector3(0f, 0f, -10f);
+                mainOutputObject.transform.rotation = Quaternion.identity;
+                mainOutputObject.transform.localScale = Vector3.one;
+            }
+
+            Undo.RecordObject(mainOutputObject, "Configure Main Camera");
+
+            if (!mainOutputObject.activeSelf)
+                mainOutputObject.SetActive(true);
+
+            if (!mainOutputObject.CompareTag("MainCamera"))
+                mainOutputObject.tag = "MainCamera";
+
+            Camera mainCamera = mainOutputObject.GetComponent<Camera>();
+
+            if (mainCamera == null)
+                mainCamera = Undo.AddComponent<Camera>(mainOutputObject);
+
+            Undo.RecordObject(mainCamera, "Configure Main Camera");
+            mainCamera.enabled = true;
+            mainCamera.targetTexture = null;
+
+            CinemachineBrain mainBrain =
+                mainOutputObject.GetComponent<CinemachineBrain>();
+
+            if (mainBrain == null)
+                mainBrain = Undo.AddComponent<CinemachineBrain>(mainOutputObject);
+
+            Undo.RecordObject(mainBrain, "Configure Main Camera Brain");
+            mainBrain.enabled = true;
+
+            EnsureUniversalAdditionalCameraData(mainCamera);
+
+            AudioListener[] listeners = Object.FindObjectsByType<AudioListener>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
+            bool hasNonCrossFadeListener = false;
+
+            foreach (AudioListener listener in listeners)
+            {
+                bool isSeparateCrossFadeListener =
+                    crossFadeRenderCamera != null &&
+                    crossFadeRenderCamera.gameObject != mainOutputObject &&
+                    listener != null &&
+                    listener.gameObject == crossFadeRenderCamera.gameObject;
+
+                if (listener == null || isSeparateCrossFadeListener)
+                {
+                    continue;
+                }
+
+                hasNonCrossFadeListener = true;
+                break;
+            }
+
+            if (!hasNonCrossFadeListener)
+                Undo.AddComponent<AudioListener>(mainOutputObject);
+
+            EditorUtility.SetDirty(mainOutputObject);
+            EditorUtility.SetDirty(mainCamera);
+            EditorUtility.SetDirty(mainBrain);
+
+            return mainCamera;
+        }
+
+        private static void EnsureUniversalAdditionalCameraData(Camera camera)
+        {
+            if (camera == null || GetAdditionalCameraData(camera) != null)
+                return;
+
+            Type additionalDataType = null;
+
+            foreach (System.Reflection.Assembly assembly in
+                AppDomain.CurrentDomain.GetAssemblies())
+            {
+                additionalDataType = assembly.GetType(
+                    "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData",
+                    false
+                );
+
+                if (additionalDataType != null)
+                    break;
+            }
+
+            if (additionalDataType == null ||
+                !typeof(Component).IsAssignableFrom(additionalDataType))
+            {
+                Debug.LogError(
+                    $"[{nameof(CameraSystemMaster)}] 找不到 URP UniversalAdditionalCameraData 類型，無法補齊 Main Camera 的 URP 設定。",
+                    camera
+                );
+                return;
+            }
+
+            Component additionalData = Undo.AddComponent(
+                camera.gameObject,
+                additionalDataType
+            );
+
+            if (additionalData != null)
+                EditorUtility.SetDirty(additionalData);
         }
 
         private void EnsureCrossFadeRenderRig(Camera mainOutputCamera)
@@ -1886,36 +2076,6 @@ namespace Runtime.CameraSystem
             Undo.RecordObject(camera, "Configure Main Cinemachine Camera Channel");
             camera.OutputChannel = OutputChannels.Default;
             EditorUtility.SetDirty(camera);
-        }
-
-        private bool HasMatchingComposerSetup(
-            CinemachineCamera source,
-            CinemachineCamera target)
-        {
-            CinemachinePositionComposer sourcePosition =
-                source.GetComponent<CinemachinePositionComposer>();
-            CinemachinePositionComposer targetPosition =
-                target.GetComponent<CinemachinePositionComposer>();
-            CinemachineRotationComposer sourceRotation =
-                source.GetComponent<CinemachineRotationComposer>();
-            CinemachineRotationComposer targetRotation =
-                target.GetComponent<CinemachineRotationComposer>();
-
-            if (sourcePosition == null ||
-                targetPosition == null ||
-                sourceRotation == null ||
-                targetRotation == null)
-            {
-                return false;
-            }
-
-            return Mathf.Approximately(sourcePosition.CameraDistance, targetPosition.CameraDistance) &&
-                sourcePosition.Composition.ScreenPosition == targetPosition.Composition.ScreenPosition &&
-                sourcePosition.TargetOffset == targetPosition.TargetOffset &&
-                sourcePosition.Damping == targetPosition.Damping &&
-                sourceRotation.Composition.ScreenPosition == targetRotation.Composition.ScreenPosition &&
-                sourceRotation.TargetOffset == targetRotation.TargetOffset &&
-                sourceRotation.Damping == targetRotation.Damping;
         }
 
         private CinemachineCamera CreateCameraRig(string objectName)
