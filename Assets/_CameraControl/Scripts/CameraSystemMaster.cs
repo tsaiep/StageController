@@ -14,26 +14,26 @@ namespace Runtime.CameraSystem
 {
     public class CameraSystemMaster : MonoBehaviour
     {
-        [Header("--- General Cameras ---")]
+        //[Header("--- General Cameras ---")]
         [Tooltip("General 運鏡使用的 A Camera。")]
         public CinemachineCamera generalCamera;
 
         [Tooltip("General 運鏡使用的 B Camera。請複製 General A 的 Cinemachine 組件設定。")]
         public CinemachineCamera generalCameraB;
 
-        [Header("--- Tracking Camera ---")]
+        //[Header("--- Tracking Camera ---")]
         [Tooltip("Tracking 運鏡使用的 Camera。")]
         public CinemachineCamera trackingCamera;
 
-        [Header("--- Dolly Camera ---")]
+        //[Header("--- Dolly Camera ---")]
         [Tooltip("Dolly 運鏡使用的 Camera。")]
         public CinemachineCamera dollyCamera;
 
-        [Header("--- Priority Settings ---")]
+        //[Header("--- Priority Settings ---")]
         public int livePriority = 100;
         public int inactivePriority = 0;
 
-        [Header("--- Storyboard RT Cross Fade ---")]
+        //[Header("--- Storyboard RT Cross Fade ---")]
         [Tooltip("Storyboard cross fade 用的離屏 Unity Camera。這台 Camera 需要掛 CinemachineBrain，並輸出到 RenderTexture。")]
         public Camera crossFadeRenderCamera;
 
@@ -2763,7 +2763,7 @@ namespace Runtime.CameraSystem
             {
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    if (GUILayout.Button("建立 / 修復全部", GUILayout.Height(32f)))
+                    if (GUILayout.Button("建立組件", GUILayout.Height(32f)))
                     {
                         master.DebugAutoFixCameraSetup();
                         serializedObject.Update();
