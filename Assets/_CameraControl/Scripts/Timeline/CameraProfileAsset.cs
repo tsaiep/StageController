@@ -5,14 +5,16 @@ using UnityEngine.Splines;
 
 public enum CameraProfileBlendMode
 {
-    ParameterBlend,
-    StoryboardRenderTextureCrossFade
+    ParameterBlend = 0,
+    StoryboardRenderTextureCrossFade = 1,
+    CrossFadeBlur = 2
 }
 
 [System.Serializable]
 public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
 {
     private const float MinFixedPlaybackSpeed = 0.001f;
+    internal const float MaxCrossFadeBlurIntensity = 5f;
 
     public CameraProfileSO cameraProfile;
 
@@ -22,8 +24,16 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
     [Tooltip("當使用 Dolly Profile 時，請將場景中的 Spline Container 拖入此欄位")]
     public ExposedReference<SplineContainer> splineContainer;
 
-    [Tooltip("Overlap 時的混合方式。Parameter Blend 會混合 Profile 參數；Storyboard RT Cross Fade 會用 RenderTexture 疊圖淡入。")]
+    [Tooltip("Overlap 時的混合方式。Parameter Blend 會混合 Profile 參數；Storyboard RT Cross Fade 會用 RenderTexture 疊圖淡入；Cross Fade Blur 會在相同淡入期間讓整體畫面清楚、模糊、再恢復清楚。")]
     public CameraProfileBlendMode blendMode = CameraProfileBlendMode.ParameterBlend;
+
+    [Range(0f, MaxCrossFadeBlurIntensity)]
+    [Tooltip("Cross Fade Blur 在 overlap 中點使用的最大模糊強度。每個 incoming Clip 可獨立設定；1 保留原本強度。")]
+    public float crossFadeBlurMaxIntensity = 1f;
+
+    [Range(0f, 1f)]
+    [Tooltip("壓縮 RenderTexture Alpha 混合發生的時間。0 保留原本線性結果；提高後會延後開始淡入並提早達到 1，不影響 Blur 曲線。")]
+    public float crossFadeAlphaTiming;
 
     //[Header("--- Playback Options ---")]
     [Tooltip("勾選後會以 1 - normalizedTime 取樣 Profile 曲線，等同將此 Clip 的運鏡倒轉播放。")]
@@ -110,6 +120,8 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
         behaviour.targetObject = trackingTarget.Resolve(graph.GetResolver());
         behaviour.splineContainer = splineContainer.Resolve(graph.GetResolver());
         behaviour.blendMode = blendMode;
+        behaviour.crossFadeBlurMaxIntensity = crossFadeBlurMaxIntensity;
+        behaviour.crossFadeAlphaTiming = crossFadeAlphaTiming;
         behaviour.reversePlayback = reversePlayback;
         behaviour.mirrorX = mirrorX;
         behaviour.mirrorY = mirrorY;
@@ -168,6 +180,8 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public GameObject targetObject;
     public SplineContainer splineContainer;
     public CameraProfileBlendMode blendMode;
+    public float crossFadeBlurMaxIntensity = 1f;
+    public float crossFadeAlphaTiming;
 
     public bool reversePlayback;
     public bool mirrorX;

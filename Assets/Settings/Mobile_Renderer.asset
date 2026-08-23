@@ -91,7 +91,8 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
   - {fileID: -5957528606032770162}
-  m_RendererFeatureMap: 8e4b30124c9b52ad
+  - {fileID: 9100000000000000002}
+  m_RendererFeatureMap: 8e4b30124c9b52ad02000e40c9b1497e
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -131,3 +132,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   _baseProfile: {fileID: 11400000, guid: f2d4d916a6612574cad220d125febbf2, type: 2}
+--- !u!114 &9100000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5611aef432038154399179cafdb80e33, type: 3}
+  m_Name: CameraBlurRendererFeature
+  m_EditorClassIdentifier:
+  m_Active: 1
+  iterations: 4
+  downsample: 2
+  enableMipMaps: 1
+  scale: 1
+  offset: 1
+  scaleMode: 1
+  scaleReferenceSize: 1080
+  injectionPoint: 600
+  shader: {fileID: 4800000, guid: 6142da59c4ca8d4409beec928645cf23, type: 3}

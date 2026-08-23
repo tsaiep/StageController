@@ -274,18 +274,65 @@ public class CameraProfileMixer : PlayableBehaviour
         if (TryGetStoryboardCrossFadePair(
                 activeInputs,
                 out CameraProfileInput outgoingCrossFadeInput,
-                out CameraProfileInput incomingCrossFadeInput))
+                out CameraProfileInput incomingCrossFadeInput,
+                out bool useCrossFadeBlur))
         {
+            float rawCrossFadeAlpha = GetRawCrossFadeAlpha(
+                outgoingCrossFadeInput,
+                incomingCrossFadeInput
+            );
+
+            float crossFadeAlphaTiming = useCrossFadeBlur
+                ? Mathf.Clamp01(
+                    incomingCrossFadeInput.Behaviour.crossFadeAlphaTiming)
+                : 0f;
+
+            float displayCrossFadeAlpha = useCrossFadeBlur
+                ? CalculateCrossFadeDisplayAlpha(
+                    rawCrossFadeAlpha,
+                    crossFadeAlphaTiming)
+                : rawCrossFadeAlpha;
+
+            bool useTimedCrossFadeAlpha =
+                useCrossFadeBlur && crossFadeAlphaTiming > 0f;
+
+            float crossFadeBlurWeight = useCrossFadeBlur
+                ? CalculateCrossFadeBlurWeight(rawCrossFadeAlpha)
+                : 0f;
+
+            if (useCrossFadeBlur)
+            {
+                master.TrySetCrossFadeBlurIntensity(
+                    crossFadeBlurWeight *
+                    Mathf.Clamp(
+                        incomingCrossFadeInput.Behaviour
+                            .crossFadeBlurMaxIntensity,
+                        0f,
+                        CameraProfileAsset.MaxCrossFadeBlurIntensity),
+                    crossFadeBlurWeight
+                );
+            }
+            else
+            {
+                master.ClearCrossFadeBlur();
+            }
+
             bool appliedCrossFade = Application.isPlaying
                 ? TryApplyStoryboardRenderTextureCrossFade(
                     master,
                     outgoingCrossFadeInput,
                     incomingCrossFadeInput,
+                    rawCrossFadeAlpha,
+                    displayCrossFadeAlpha,
+                    useTimedCrossFadeAlpha,
                     info.deltaTime)
                 : TryApplyStoryboardRenderTextureCrossFadePreview(
                     master,
                     outgoingCrossFadeInput,
                     incomingCrossFadeInput,
+                    rawCrossFadeAlpha,
+                    displayCrossFadeAlpha,
+                    useTimedCrossFadeAlpha,
                     info.deltaTime);
 
             if (!appliedCrossFade)
@@ -706,6 +753,9 @@ public class CameraProfileMixer : PlayableBehaviour
         CameraSystemMaster master,
         CameraProfileInput outgoingInput,
         CameraProfileInput incomingInput,
+        float rawAlpha,
+        float displayAlpha,
+        bool useTimedAlpha,
         float deltaTime)
     {
 #if UNITY_EDITOR
@@ -751,11 +801,6 @@ public class CameraProfileMixer : PlayableBehaviour
             startsNewEditorCrossFade = true;
         }
 
-        float totalWeight = outgoingInput.Weight + incomingInput.Weight;
-        float alpha = totalWeight > 0f
-            ? Mathf.Clamp01(incomingInput.Weight / totalWeight)
-            : Mathf.Clamp01(incomingInput.Weight);
-
         ApplyProfileToCamera(
             baseCamera,
             outgoingInput.Profile,
@@ -781,11 +826,20 @@ public class CameraProfileMixer : PlayableBehaviour
             renderTextureCamera.PreviousStateIsValid = false;
         }
 
-        if (!master.TrySetStoryboardCrossFadePreview(
-            baseCamera,
-            renderTextureCamera,
-            alpha,
-            deltaTime))
+        bool appliedCrossFade = useTimedAlpha
+            ? master.TrySetStoryboardCrossFadePreviewTimedAlpha(
+                baseCamera,
+                renderTextureCamera,
+                rawAlpha,
+                displayAlpha,
+                deltaTime)
+            : master.TrySetStoryboardCrossFadePreview(
+                baseCamera,
+                renderTextureCamera,
+                displayAlpha,
+                deltaTime);
+
+        if (!appliedCrossFade)
         {
             return false;
         }
@@ -823,6 +877,9 @@ public class CameraProfileMixer : PlayableBehaviour
         CameraSystemMaster master,
         CameraProfileInput outgoingInput,
         CameraProfileInput incomingInput,
+        float rawAlpha,
+        float displayAlpha,
+        bool useTimedAlpha,
         float deltaTime)
     {
         if (!TryGetCrossFadeRenderCamera(
@@ -895,11 +952,6 @@ public class CameraProfileMixer : PlayableBehaviour
             return false;
         }
 
-        float totalWeight = outgoingInput.Weight + incomingInput.Weight;
-        float alpha = totalWeight > 0f
-            ? Mathf.Clamp01(incomingInput.Weight / totalWeight)
-            : Mathf.Clamp01(incomingInput.Weight);
-
         ApplyProfileToCamera(
             baseCamera,
             outgoingInput.Profile,
@@ -922,11 +974,20 @@ public class CameraProfileMixer : PlayableBehaviour
 
         master.SetOnlyThisCameraLive(baseCamera);
 
-        if (!master.TrySetStoryboardCrossFade(
-            baseCamera,
-            renderTextureCamera,
-            alpha,
-            deltaTime))
+        bool appliedCrossFade = useTimedAlpha
+            ? master.TrySetStoryboardCrossFadeTimedAlpha(
+                baseCamera,
+                renderTextureCamera,
+                rawAlpha,
+                displayAlpha,
+                deltaTime)
+            : master.TrySetStoryboardCrossFade(
+                baseCamera,
+                renderTextureCamera,
+                displayAlpha,
+                deltaTime);
+
+        if (!appliedCrossFade)
         {
             return false;
         }
@@ -1029,6 +1090,10 @@ public class CameraProfileMixer : PlayableBehaviour
         {
             return false;
         }
+
+        // Overlap 已結束。即使 handoff 需要數幀遮罩，畫面也必須回到清楚，
+        // 並避免 seek 直接離開中點時殘留上一幀的 blur state。
+        master.ClearCrossFadeBlur();
 
         CinemachineCamera renderTextureCamera =
             _storyboardCrossFadeContext.RenderTextureCamera;
@@ -1214,10 +1279,12 @@ public class CameraProfileMixer : PlayableBehaviour
     private bool TryGetStoryboardCrossFadePair(
         List<CameraProfileInput> activeInputs,
         out CameraProfileInput outgoingInput,
-        out CameraProfileInput incomingInput)
+        out CameraProfileInput incomingInput,
+        out bool useCrossFadeBlur)
     {
         outgoingInput = default;
         incomingInput = default;
+        useCrossFadeBlur = false;
 
         if (activeInputs == null || activeInputs.Count != 2)
             return false;
@@ -1241,9 +1308,48 @@ public class CameraProfileMixer : PlayableBehaviour
             incomingInput = first;
         }
 
-        return incomingInput.Behaviour != null &&
-            incomingInput.Behaviour.blendMode ==
-                CameraProfileBlendMode.StoryboardRenderTextureCrossFade;
+        if (incomingInput.Behaviour == null)
+            return false;
+
+        CameraProfileBlendMode blendMode =
+            incomingInput.Behaviour.blendMode;
+
+        useCrossFadeBlur = blendMode ==
+            CameraProfileBlendMode.CrossFadeBlur;
+
+        return blendMode ==
+                CameraProfileBlendMode.StoryboardRenderTextureCrossFade ||
+            useCrossFadeBlur;
+    }
+
+    private static float GetRawCrossFadeAlpha(
+        CameraProfileInput outgoingInput,
+        CameraProfileInput incomingInput)
+    {
+        float totalWeight = outgoingInput.Weight + incomingInput.Weight;
+
+        return totalWeight > 0f
+            ? Mathf.Clamp01(incomingInput.Weight / totalWeight)
+            : Mathf.Clamp01(incomingInput.Weight);
+    }
+
+    internal static float CalculateCrossFadeBlurWeight(float alpha)
+    {
+        return Mathf.Sin(Mathf.Clamp01(alpha) * Mathf.PI);
+    }
+
+    internal static float CalculateCrossFadeDisplayAlpha(
+        float rawAlpha,
+        float alphaTiming)
+    {
+        float alpha = Mathf.Clamp01(rawAlpha);
+        float timing = Mathf.Clamp01(alphaTiming);
+
+        if (timing >= 1f)
+            return alpha < 0.5f ? 0f : 1f;
+
+        float hold = timing * 0.5f;
+        return Mathf.InverseLerp(hold, 1f - hold, alpha);
     }
 
     private double GetClipStart(int inputIndex)

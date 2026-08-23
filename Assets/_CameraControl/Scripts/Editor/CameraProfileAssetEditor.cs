@@ -12,6 +12,8 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _trackingTargetProp;
     private SerializedProperty _splineContainerProp;
     private SerializedProperty _blendModeProp;
+    private SerializedProperty _crossFadeBlurMaxIntensityProp;
+    private SerializedProperty _crossFadeAlphaTimingProp;
     private SerializedProperty _reversePlaybackProp;
     private SerializedProperty _mirrorXProp;
     private SerializedProperty _mirrorYProp;
@@ -37,6 +39,8 @@ public class CameraProfileAssetEditor : Editor
         _trackingTargetProp = serializedObject.FindProperty("trackingTarget");
         _splineContainerProp = serializedObject.FindProperty("splineContainer");
         _blendModeProp = serializedObject.FindProperty("blendMode");
+        _crossFadeBlurMaxIntensityProp = serializedObject.FindProperty("crossFadeBlurMaxIntensity");
+        _crossFadeAlphaTimingProp = serializedObject.FindProperty("crossFadeAlphaTiming");
         _reversePlaybackProp = serializedObject.FindProperty("reversePlayback");
         _mirrorXProp = serializedObject.FindProperty("mirrorX");
         _mirrorYProp = serializedObject.FindProperty("mirrorY");
@@ -77,6 +81,24 @@ public class CameraProfileAssetEditor : Editor
                 _blendModeProp,
                 new GUIContent("Blend Mode")
             );
+
+            if (_blendModeProp.enumValueIndex ==
+                (int)CameraProfileBlendMode.CrossFadeBlur)
+            {
+                EditorGUILayout.Space(4);
+                EditorGUILayout.LabelField(
+                    "Cross Fade Blur Settings",
+                    EditorStyles.boldLabel
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeBlurMaxIntensityProp,
+                    new GUIContent("Blur Max Intensity")
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeAlphaTimingProp,
+                    new GUIContent("Alpha Timing")
+                );
+            }
         }
 
         DrawPlaybackSettings();

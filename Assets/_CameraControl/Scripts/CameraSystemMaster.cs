@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine.Rendering.Universal;
 using Object = UnityEngine.Object;
 #endif
 
@@ -14,6 +15,8 @@ namespace Runtime.CameraSystem
 {
     public class CameraSystemMaster : MonoBehaviour
     {
+        private const float TimedAlphaActiveOverrideMaximum = 0.9999f;
+
         //[Header("--- General Cameras ---")]
         [Tooltip("General 運鏡使用的 A Camera。")]
         public CinemachineCamera generalCamera;
@@ -70,11 +73,20 @@ namespace Runtime.CameraSystem
         [Tooltip("Storyboard canvas sorting order。若 UI 需要蓋在轉場上，UI canvas sorting order 要更高。")]
         public int storyboardSortingOrder = 0;
 
+        [SerializeField]
+        [Tooltip("主輸出 Unity Camera 上的 per-camera blur state。可使用建立組件工具自動補齊。")]
+        private CameraBlurState mainCameraBlurState;
+
+        [SerializeField]
+        [Tooltip("Cross Fade Render Camera 上的 per-camera blur state。可使用建立組件工具自動補齊。")]
+        private CameraBlurState crossFadeRenderBlurState;
+
         private RenderTexture _ownedCrossFadeRenderTexture;
         private int _ownedCrossFadeRenderTextureWidth;
         private int _ownedCrossFadeRenderTextureHeight;
         private bool _hasLoggedCrossFadeChannelWarning;
         private bool _hasLoggedInvalidCrossFadeRig;
+        private bool _hasLoggedInvalidCrossFadeBlurSetup;
         private CinemachineBrain _crossFadeOverrideBrain;
         private int _crossFadeCameraOverrideId = -1;
         private bool _isEditorCrossFadePreviewActive;
@@ -157,10 +169,136 @@ namespace Runtime.CameraSystem
             SetCameraPriority(crossFadeDollyCamera, liveCamera);
         }
 
+        /// <summary>
+        /// 將同一個 blur intensity 套到主輸出與離屏輸出。兩張畫面
+        /// 使用相同 kernel，經 Storyboard alpha 合成後才會像整體畫面一起模糊。
+        /// Blur rig 缺失時只停用模糊，不影響既有 Cross Fade。
+        /// </summary>
+        public bool TrySetCrossFadeBlurIntensity(float intensity)
+        {
+            return TrySetCrossFadeBlurIntensity(
+                intensity,
+                intensity > CameraBlurPass.MinimumIntensity ? 1f : 0f
+            );
+        }
+
+        /// <summary>
+        /// intensity 控制 Kawase kernel 半徑，blendWeight 控制原圖與模糊圖
+        /// 的最終合成，讓低強度時能從完全清楚連續過渡。
+        /// </summary>
+        public bool TrySetCrossFadeBlurIntensity(
+            float intensity,
+            float blendWeight)
+        {
+            intensity = Mathf.Max(0f, intensity);
+            blendWeight = Mathf.Clamp01(blendWeight);
+
+            ResolveCameraBlurStates();
+
+            if (intensity <= CameraBlurPass.MinimumIntensity ||
+                blendWeight <= CameraBlurPass.MinimumIntensity)
+            {
+                ClearCrossFadeBlur();
+                return true;
+            }
+
+            if (mainCameraBlurState == null ||
+                crossFadeRenderBlurState == null ||
+                !mainCameraBlurState.isActiveAndEnabled ||
+                !crossFadeRenderBlurState.isActiveAndEnabled)
+            {
+                ClearCrossFadeBlur();
+
+                if (!_hasLoggedInvalidCrossFadeBlurSetup)
+                {
+                    Debug.LogWarning(
+                        $"[{nameof(CameraSystemMaster)}] Cross Fade Blur 缺少啟用中的 CameraBlurState；本次轉場退化為一般 Cross Fade。請在 Edit Mode 執行建立組件。",
+                        this
+                    );
+                    _hasLoggedInvalidCrossFadeBlurSetup = true;
+                }
+
+                return false;
+            }
+
+            mainCameraBlurState.SetBlur(intensity, blendWeight);
+            crossFadeRenderBlurState.SetBlur(intensity, blendWeight);
+            _hasLoggedInvalidCrossFadeBlurSetup = false;
+            return true;
+        }
+
+        public void ClearCrossFadeBlur()
+        {
+            ResolveCameraBlurStates();
+            mainCameraBlurState?.Clear();
+            crossFadeRenderBlurState?.Clear();
+        }
+
+        private void ResolveCameraBlurStates()
+        {
+            Camera mainCamera = Camera.main;
+
+            if (mainCamera != null &&
+                (mainCameraBlurState == null ||
+                 mainCameraBlurState.gameObject != mainCamera.gameObject))
+            {
+                mainCameraBlurState =
+                    mainCamera.GetComponent<CameraBlurState>();
+            }
+
+            if (crossFadeRenderCamera != null &&
+                (crossFadeRenderBlurState == null ||
+                 crossFadeRenderBlurState.gameObject !=
+                    crossFadeRenderCamera.gameObject))
+            {
+                crossFadeRenderBlurState =
+                    crossFadeRenderCamera.GetComponent<CameraBlurState>();
+            }
+        }
+
         public bool TrySetStoryboardCrossFade(
             CinemachineCamera baseCamera,
             CinemachineCamera renderTextureCamera,
             float alpha,
+            float deltaTime)
+        {
+            return TrySetStoryboardCrossFadeInternal(
+                baseCamera,
+                renderTextureCamera,
+                alpha,
+                alpha,
+                false,
+                deltaTime
+            );
+        }
+
+        /// <summary>
+        /// Cross Fade Blur 的 timed-alpha 路徑。rawAlpha 維持 Timeline overlap
+        /// 的生命週期，displayAlpha 只決定 Storyboard RT 的實際顯示透明度。
+        /// </summary>
+        public bool TrySetStoryboardCrossFadeTimedAlpha(
+            CinemachineCamera baseCamera,
+            CinemachineCamera renderTextureCamera,
+            float rawAlpha,
+            float displayAlpha,
+            float deltaTime)
+        {
+            return TrySetStoryboardCrossFadeInternal(
+                baseCamera,
+                renderTextureCamera,
+                rawAlpha,
+                displayAlpha,
+                true,
+                deltaTime
+            );
+        }
+
+        private bool TrySetStoryboardCrossFadeInternal(
+            CinemachineCamera baseCamera,
+            CinemachineCamera renderTextureCamera,
+            float rawAlpha,
+            float displayAlpha,
+            bool keepTimedOverrideInProgress,
             float deltaTime)
         {
             if (!TryGetCrossFadeRuntimeComponents(
@@ -185,8 +323,21 @@ namespace Runtime.CameraSystem
 
             SetOnlyThisCrossFadeCameraLive(renderTextureCamera);
 
-            ConfigureStoryboardOverlay(storyboard, texture);
-            SetStoryboardCameraOverride(mainBrain, baseCamera, alpha, deltaTime);
+            CalculateStoryboardAlphaControl(
+                rawAlpha,
+                displayAlpha,
+                keepTimedOverrideInProgress,
+                out float overrideAlpha,
+                out float storyboardAlpha
+            );
+
+            ConfigureStoryboardOverlay(storyboard, texture, storyboardAlpha);
+            SetStoryboardCameraOverride(
+                mainBrain,
+                baseCamera,
+                overrideAlpha,
+                deltaTime
+            );
 
             _hasLoggedInvalidCrossFadeRig = false;
 
@@ -206,12 +357,49 @@ namespace Runtime.CameraSystem
             float alpha,
             float deltaTime)
         {
+            return TrySetStoryboardCrossFadePreviewInternal(
+                baseCamera,
+                renderTextureCamera,
+                alpha,
+                alpha,
+                false,
+                deltaTime
+            );
+        }
+
+        public bool TrySetStoryboardCrossFadePreviewTimedAlpha(
+            CinemachineCamera baseCamera,
+            CinemachineCamera renderTextureCamera,
+            float rawAlpha,
+            float displayAlpha,
+            float deltaTime)
+        {
+            return TrySetStoryboardCrossFadePreviewInternal(
+                baseCamera,
+                renderTextureCamera,
+                rawAlpha,
+                displayAlpha,
+                true,
+                deltaTime
+            );
+        }
+
+        private bool TrySetStoryboardCrossFadePreviewInternal(
+            CinemachineCamera baseCamera,
+            CinemachineCamera renderTextureCamera,
+            float rawAlpha,
+            float displayAlpha,
+            bool keepTimedOverrideInProgress,
+            float deltaTime)
+        {
             if (Application.isPlaying)
             {
-                return TrySetStoryboardCrossFade(
+                return TrySetStoryboardCrossFadeInternal(
                     baseCamera,
                     renderTextureCamera,
-                    alpha,
+                    rawAlpha,
+                    displayAlpha,
+                    keepTimedOverrideInProgress,
                     deltaTime
                 );
             }
@@ -250,11 +438,19 @@ namespace Runtime.CameraSystem
             ManualUpdateBrain(crossFadeRenderBrain, previewDeltaTime);
             RenderCrossFadePreview(texture);
 
-            ConfigureStoryboardOverlay(storyboard, texture);
+            CalculateStoryboardAlphaControl(
+                rawAlpha,
+                displayAlpha,
+                keepTimedOverrideInProgress,
+                out float overrideAlpha,
+                out float storyboardAlpha
+            );
+
+            ConfigureStoryboardOverlay(storyboard, texture, storyboardAlpha);
             SetStoryboardCameraOverride(
                 mainBrain,
                 baseCamera,
-                alpha,
+                overrideAlpha,
                 previewDeltaTime
             );
             ManualUpdateBrain(mainBrain, previewDeltaTime);
@@ -465,6 +661,8 @@ namespace Runtime.CameraSystem
 
         public void ClearStoryboardCrossFade()
         {
+            ClearCrossFadeBlur();
+
             bool releaseEditorPreviewTexture =
                 !Application.isPlaying && _isEditorCrossFadePreviewActive;
 
@@ -632,9 +830,46 @@ namespace Runtime.CameraSystem
             camera.Priority.Value = inactivePriority;
         }
 
+        private static void CalculateStoryboardAlphaControl(
+            float rawAlpha,
+            float displayAlpha,
+            bool keepTimedOverrideInProgress,
+            out float overrideAlpha,
+            out float storyboardAlpha)
+        {
+            float raw = Mathf.Clamp01(rawAlpha);
+            float display = Mathf.Clamp01(displayAlpha);
+
+            if (!keepTimedOverrideInProgress)
+            {
+                overrideAlpha = display;
+                storyboardAlpha = 1f;
+                return;
+            }
+
+            // CinemachineStoryboard 的最終透明度是 Storyboard.Alpha 與
+            // override blend weight 的乘積。carrier 至少涵蓋 raw/display，
+            // 讓 Storyboard.Alpha 可維持在 0..1；overlap 尚未真正結束前
+            // 不允許 carrier 精確到 1，避免 Cinemachine 提前完成 override。
+            overrideAlpha = Mathf.Max(raw, display);
+
+            if (raw < 1f)
+            {
+                overrideAlpha = Mathf.Min(
+                    overrideAlpha,
+                    TimedAlphaActiveOverrideMaximum
+                );
+            }
+
+            storyboardAlpha = overrideAlpha > Mathf.Epsilon
+                ? Mathf.Clamp01(display / overrideAlpha)
+                : 0f;
+        }
+
         private void ConfigureStoryboardOverlay(
             CinemachineStoryboard storyboard,
-            RenderTexture texture)
+            RenderTexture texture,
+            float alpha = 1f)
         {
             crossFadeStoryboardCamera.OutputChannel = OutputChannels.Default;
             crossFadeStoryboardCamera.Priority.Value = GetStoryboardInactivePriority();
@@ -643,7 +878,7 @@ namespace Runtime.CameraSystem
             storyboard.enabled = true;
             storyboard.ShowImage = true;
             storyboard.Image = texture;
-            storyboard.Alpha = 1f;
+            storyboard.Alpha = Mathf.Clamp01(alpha);
             storyboard.Aspect = CinemachineStoryboard.FillStrategy.CropImageToFit;
             storyboard.Center = Vector2.zero;
             storyboard.Rotation = Vector3.zero;
@@ -856,7 +1091,7 @@ namespace Runtime.CameraSystem
             if (issues.Count == 0)
             {
                 Debug.Log(
-                    $"[{nameof(CameraSystemMaster)}] Camera setup 檢查完成：主 Camera 與 Storyboard RT Cross Fade rig 設定正常。",
+                    $"[{nameof(CameraSystemMaster)}] Camera setup 檢查完成：主 Camera、Storyboard RT Cross Fade 與 Camera Blur rig 設定正常。",
                     this
                 );
                 return;
@@ -982,7 +1217,7 @@ namespace Runtime.CameraSystem
             }
 
             Debug.Log(
-                $"[{nameof(CameraSystemMaster)}] 已自動建立/補上主 Camera 與 Storyboard RT Cross Fade rig。請重新按一次檢查確認細節。",
+                $"[{nameof(CameraSystemMaster)}] 已自動建立/補上主 Camera、Storyboard RT Cross Fade 與 Camera Blur rig。請重新按一次檢查確認細節。",
                 this
             );
         }
@@ -1523,6 +1758,8 @@ namespace Runtime.CameraSystem
                 ));
             }
 
+            ValidateCrossFadeBlurSetup(mainOutputCamera, issues);
+
             if (!validChannel)
                 return;
 
@@ -1546,6 +1783,117 @@ namespace Runtime.CameraSystem
                     $"CinemachineBrain ({brain.name}) 也包含 crossfade channel {crossFadeOutputChannel}，可能會誤選 transition camera。",
                     brain
                 ));
+            }
+        }
+
+        private void ValidateCrossFadeBlurSetup(
+            Camera mainOutputCamera,
+            List<DebugIssue> issues)
+        {
+            CameraBlurState expectedMainState = mainOutputCamera != null
+                ? mainOutputCamera.GetComponent<CameraBlurState>()
+                : null;
+
+            if (expectedMainState == null ||
+                mainCameraBlurState != expectedMainState)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    "Main Camera 缺少或尚未綁定 CameraBlurState。請執行建立組件。",
+                    mainOutputCamera != null
+                        ? (Object)mainOutputCamera
+                        : this
+                ));
+            }
+            else if (!expectedMainState.enabled)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    "Main Camera 的 CameraBlurState 必須保持啟用。",
+                    expectedMainState
+                ));
+            }
+
+            CameraBlurState expectedCrossFadeState =
+                crossFadeRenderCamera != null
+                    ? crossFadeRenderCamera.GetComponent<CameraBlurState>()
+                    : null;
+
+            if (expectedCrossFadeState == null ||
+                crossFadeRenderBlurState != expectedCrossFadeState)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    "Cross Fade Render Camera 缺少或尚未綁定 CameraBlurState。請執行建立組件。",
+                    crossFadeRenderCamera != null
+                        ? (Object)crossFadeRenderCamera
+                        : this
+                ));
+            }
+            else if (!expectedCrossFadeState.enabled)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    "Cross Fade Render Camera 的 CameraBlurState 必須保持啟用。",
+                    expectedCrossFadeState
+                ));
+            }
+
+            HashSet<ScriptableRendererData> rendererDataSet =
+                new HashSet<ScriptableRendererData>();
+
+            AddRendererData(
+                GraphicsSettings.currentRenderPipeline as
+                    UniversalRenderPipelineAsset,
+                rendererDataSet
+            );
+
+            for (int i = 0; i < QualitySettings.names.Length; i++)
+            {
+                AddRendererData(
+                    QualitySettings.GetRenderPipelineAssetAt(i) as
+                        UniversalRenderPipelineAsset,
+                    rendererDataSet
+                );
+            }
+
+            foreach (ScriptableRendererData rendererData in rendererDataSet)
+            {
+                if (rendererData == null)
+                    continue;
+
+                if (!rendererData.TryGetRendererFeature(
+                    out CameraBlurRendererFeature feature))
+                {
+                    issues.Add(new DebugIssue(
+                        DebugSeverity.Error,
+                        $"URP Renderer ({rendererData.name}) 缺少 CameraBlurRendererFeature。",
+                        rendererData
+                    ));
+                }
+                else if (feature != null && !feature.isActive)
+                {
+                    issues.Add(new DebugIssue(
+                        DebugSeverity.Error,
+                        $"URP Renderer ({rendererData.name}) 的 CameraBlurRendererFeature 已停用。",
+                        feature
+                    ));
+                }
+            }
+        }
+
+        private static void AddRendererData(
+            UniversalRenderPipelineAsset pipelineAsset,
+            HashSet<ScriptableRendererData> rendererDataSet)
+        {
+            if (pipelineAsset == null)
+                return;
+
+            foreach (ScriptableRendererData rendererData in
+                pipelineAsset.rendererDataList)
+            {
+                if (rendererData != null)
+                    rendererDataSet.Add(rendererData);
             }
         }
 
@@ -1909,6 +2257,7 @@ namespace Runtime.CameraSystem
             mainBrain.enabled = true;
 
             EnsureUniversalAdditionalCameraData(mainCamera);
+            mainCameraBlurState = EnsureCameraBlurState(mainCamera);
 
             AudioListener[] listeners = Object.FindObjectsByType<AudioListener>(
                 FindObjectsInactive.Include,
@@ -1981,6 +2330,25 @@ namespace Runtime.CameraSystem
                 EditorUtility.SetDirty(additionalData);
         }
 
+        private static CameraBlurState EnsureCameraBlurState(Camera camera)
+        {
+            if (camera == null)
+                return null;
+
+            CameraBlurState state = camera.GetComponent<CameraBlurState>();
+
+            if (state == null)
+                state = Undo.AddComponent<CameraBlurState>(camera.gameObject);
+
+            if (state != null)
+            {
+                state.Clear();
+                EditorUtility.SetDirty(state);
+            }
+
+            return state;
+        }
+
         private void EnsureCrossFadeRenderRig(Camera mainOutputCamera)
         {
             CinemachineBrain mainBrain = mainOutputCamera != null
@@ -2025,6 +2393,8 @@ namespace Runtime.CameraSystem
             {
                 renderCamera = Undo.AddComponent<Camera>(renderObject);
             }
+
+            crossFadeRenderBlurState = EnsureCameraBlurState(renderCamera);
 
             CinemachineBrain renderBrain =
                 renderObject.GetComponent<CinemachineBrain>();
@@ -2530,6 +2900,8 @@ namespace Runtime.CameraSystem
         private SerializedProperty _fallbackCrossFadeTextureWidth;
         private SerializedProperty _fallbackCrossFadeTextureHeight;
         private SerializedProperty _storyboardSortingOrder;
+        private SerializedProperty _mainCameraBlurState;
+        private SerializedProperty _crossFadeRenderBlurState;
 
         private bool _showGeneratedRig;
         private bool _showRenderTextureSettings;
@@ -2557,6 +2929,8 @@ namespace Runtime.CameraSystem
             _fallbackCrossFadeTextureWidth = serializedObject.FindProperty("fallbackCrossFadeTextureWidth");
             _fallbackCrossFadeTextureHeight = serializedObject.FindProperty("fallbackCrossFadeTextureHeight");
             _storyboardSortingOrder = serializedObject.FindProperty("storyboardSortingOrder");
+            _mainCameraBlurState = serializedObject.FindProperty("mainCameraBlurState");
+            _crossFadeRenderBlurState = serializedObject.FindProperty("crossFadeRenderBlurState");
 
             EditorApplication.hierarchyChanged += RequestStatusRefresh;
             Undo.undoRedoPerformed += RequestStatusRefresh;
@@ -2605,7 +2979,6 @@ namespace Runtime.CameraSystem
                 _storyboardSortingOrder,
                 new GUIContent("Storyboard Sorting Order")
             );
-
             _showGeneratedRig = EditorGUILayout.BeginFoldoutHeaderGroup(
                 _showGeneratedRig,
                 "生成的 Crossfade Rig 引用"
@@ -2637,6 +3010,14 @@ namespace Runtime.CameraSystem
                 EditorGUILayout.PropertyField(
                     _crossFadeStoryboardCamera,
                     new GUIContent("Storyboard Camera")
+                );
+                EditorGUILayout.PropertyField(
+                    _mainCameraBlurState,
+                    new GUIContent("Main Camera Blur State")
+                );
+                EditorGUILayout.PropertyField(
+                    _crossFadeRenderBlurState,
+                    new GUIContent("Render Camera Blur State")
                 );
                 EditorGUI.indentLevel--;
             }
@@ -2741,7 +3122,7 @@ namespace Runtime.CameraSystem
             else
             {
                 EditorGUILayout.HelpBox(
-                    "主 Camera 與 Storyboard RT Crossfade rig 設定正常。",
+                    "主 Camera、Storyboard RT Crossfade 與 Camera Blur rig 設定正常。",
                     MessageType.Info
                 );
             }
