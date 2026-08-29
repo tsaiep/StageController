@@ -79,6 +79,7 @@ public class CameraProfileMixer : PlayableBehaviour
         public CinemachineCamera RenderTextureCamera;
         public CinemachineCamera HandoffCamera;
         public bool HandoffGeneralUseB;
+        public bool UsesMotionCut;
         public CrossFadeHandoffPhase HandoffPhase;
         public int HandoffPhaseFrame;
     }
@@ -107,6 +108,7 @@ public class CameraProfileMixer : PlayableBehaviour
     private Transform _blendTargetProxy;
     private StoryboardCrossFadeContext _storyboardCrossFadeContext;
     private CameraSystemMaster _activeMaster;
+    private int _reportedMotionCutFallbackInputIndex = -1;
 
     public void Initialize(
         TimelineClip[] clips,
@@ -275,7 +277,8 @@ public class CameraProfileMixer : PlayableBehaviour
                 activeInputs,
                 out CameraProfileInput outgoingCrossFadeInput,
                 out CameraProfileInput incomingCrossFadeInput,
-                out bool useCrossFadeBlur))
+                out bool useCrossFadeBlur,
+                out bool useMotionCut))
         {
             float rawCrossFadeAlpha = GetRawCrossFadeAlpha(
                 outgoingCrossFadeInput,
@@ -287,14 +290,17 @@ public class CameraProfileMixer : PlayableBehaviour
                     incomingCrossFadeInput.Behaviour.crossFadeAlphaTiming)
                 : 0f;
 
-            float displayCrossFadeAlpha = useCrossFadeBlur
-                ? CalculateCrossFadeDisplayAlpha(
-                    rawCrossFadeAlpha,
-                    crossFadeAlphaTiming)
-                : rawCrossFadeAlpha;
+            float displayCrossFadeAlpha = useMotionCut
+                ? CalculateMotionCutDisplayAlpha(rawCrossFadeAlpha)
+                : useCrossFadeBlur
+                    ? CalculateCrossFadeDisplayAlpha(
+                        rawCrossFadeAlpha,
+                        crossFadeAlphaTiming)
+                    : rawCrossFadeAlpha;
 
             bool useTimedCrossFadeAlpha =
-                useCrossFadeBlur && crossFadeAlphaTiming > 0f;
+                useMotionCut ||
+                (useCrossFadeBlur && crossFadeAlphaTiming > 0f);
 
             float crossFadeBlurWeight = useCrossFadeBlur
                 ? CalculateCrossFadeBlurWeight(rawCrossFadeAlpha)
@@ -325,6 +331,7 @@ public class CameraProfileMixer : PlayableBehaviour
                     rawCrossFadeAlpha,
                     displayCrossFadeAlpha,
                     useTimedCrossFadeAlpha,
+                    useMotionCut,
                     info.deltaTime)
                 : TryApplyStoryboardRenderTextureCrossFadePreview(
                     master,
@@ -333,10 +340,16 @@ public class CameraProfileMixer : PlayableBehaviour
                     rawCrossFadeAlpha,
                     displayCrossFadeAlpha,
                     useTimedCrossFadeAlpha,
+                    useMotionCut,
                     info.deltaTime);
 
             if (!appliedCrossFade)
             {
+                if (useMotionCut)
+                {
+                    master.ClearAllDirectionalCameraOffsets();
+                }
+
                 ApplyStoryboardCrossFadeHardCutFallback(
                     master,
                     outgoingCrossFadeInput
@@ -756,6 +769,7 @@ public class CameraProfileMixer : PlayableBehaviour
         float rawAlpha,
         float displayAlpha,
         bool useTimedAlpha,
+        bool useMotionCut,
         float deltaTime)
     {
 #if UNITY_EDITOR
@@ -821,6 +835,15 @@ public class CameraProfileMixer : PlayableBehaviour
             false
         );
 
+        ApplyOrClearMotionCut(
+            master,
+            baseCamera,
+            renderTextureCamera,
+            incomingInput.Behaviour,
+            rawAlpha,
+            useMotionCut
+        );
+
         if (startsNewEditorCrossFade)
         {
             renderTextureCamera.PreviousStateIsValid = false;
@@ -850,7 +873,8 @@ public class CameraProfileMixer : PlayableBehaviour
             IncomingInputIndex = incomingInput.InputIndex,
             IncomingKind = incomingInput.Kind,
             BaseCamera = baseCamera,
-            RenderTextureCamera = renderTextureCamera
+            RenderTextureCamera = renderTextureCamera,
+            UsesMotionCut = useMotionCut
         };
 
         if (outgoingInput.Kind == CameraProfileKind.General ||
@@ -880,6 +904,7 @@ public class CameraProfileMixer : PlayableBehaviour
         float rawAlpha,
         float displayAlpha,
         bool useTimedAlpha,
+        bool useMotionCut,
         float deltaTime)
     {
         if (!TryGetCrossFadeRenderCamera(
@@ -972,6 +997,15 @@ public class CameraProfileMixer : PlayableBehaviour
             false
         );
 
+        ApplyOrClearMotionCut(
+            master,
+            baseCamera,
+            renderTextureCamera,
+            incomingInput.Behaviour,
+            rawAlpha,
+            useMotionCut
+        );
+
         master.SetOnlyThisCameraLive(baseCamera);
 
         bool appliedCrossFade = useTimedAlpha
@@ -1000,7 +1034,8 @@ public class CameraProfileMixer : PlayableBehaviour
             BaseCamera = baseCamera,
             RenderTextureCamera = renderTextureCamera,
             HandoffCamera = handoffCamera,
-            HandoffGeneralUseB = handoffGeneralUseB
+            HandoffGeneralUseB = handoffGeneralUseB,
+            UsesMotionCut = useMotionCut
         };
 
         if (outgoingInput.Kind == CameraProfileKind.General ||
@@ -1101,6 +1136,15 @@ public class CameraProfileMixer : PlayableBehaviour
             _storyboardCrossFadeContext.HandoffCamera;
         if (renderTextureCamera == null || handoffCamera == null)
             return false;
+
+        if (_storyboardCrossFadeContext.UsesMotionCut)
+        {
+            master.ClearDirectionalCameraOffset(
+                _storyboardCrossFadeContext.BaseCamera
+            );
+            master.ClearDirectionalCameraOffset(renderTextureCamera);
+            master.ClearDirectionalCameraOffset(handoffCamera);
+        }
 
         // 這個物件在 phase None 還是 RT camera；升格後則是同一個主 camera。
         // 全程只驅動這一套 pipeline，避免兩台 camera 的 damping 狀態分岔。
@@ -1280,11 +1324,13 @@ public class CameraProfileMixer : PlayableBehaviour
         List<CameraProfileInput> activeInputs,
         out CameraProfileInput outgoingInput,
         out CameraProfileInput incomingInput,
-        out bool useCrossFadeBlur)
+        out bool useCrossFadeBlur,
+        out bool useMotionCut)
     {
         outgoingInput = default;
         incomingInput = default;
         useCrossFadeBlur = false;
+        useMotionCut = false;
 
         if (activeInputs == null || activeInputs.Count != 2)
             return false;
@@ -1317,9 +1363,35 @@ public class CameraProfileMixer : PlayableBehaviour
         useCrossFadeBlur = blendMode ==
             CameraProfileBlendMode.CrossFadeBlur;
 
+        if (blendMode == CameraProfileBlendMode.MotionCut)
+        {
+            if (outgoingInput.Kind == CameraProfileKind.Dolly ||
+                incomingInput.Kind == CameraProfileKind.Dolly)
+            {
+                ReportMotionCutDollyFallback(incomingInput.InputIndex);
+                return true;
+            }
+
+            useMotionCut = true;
+            return true;
+        }
+
         return blendMode ==
-                CameraProfileBlendMode.StoryboardRenderTextureCrossFade ||
+                CameraProfileBlendMode.CrossFade ||
             useCrossFadeBlur;
+    }
+
+    private void ReportMotionCutDollyFallback(int incomingInputIndex)
+    {
+        if (_reportedMotionCutFallbackInputIndex == incomingInputIndex)
+            return;
+
+        _reportedMotionCutFallbackInputIndex = incomingInputIndex;
+
+        Debug.LogWarning(
+            "[CameraProfileMixer] Motion Cut 不支援 Dolly；" +
+            "本次 overlap 退回一般 Cross Fade。"
+        );
     }
 
     private static float GetRawCrossFadeAlpha(
@@ -1350,6 +1422,90 @@ public class CameraProfileMixer : PlayableBehaviour
 
         float hold = timing * 0.5f;
         return Mathf.InverseLerp(hold, 1f - hold, alpha);
+    }
+
+    internal static float CalculateMotionCutDisplayAlpha(float rawAlpha)
+    {
+        return Mathf.Clamp01(rawAlpha) < 0.5f ? 0f : 1f;
+    }
+
+    private static void ApplyOrClearMotionCut(
+        CameraSystemMaster master,
+        CinemachineCamera outgoingCamera,
+        CinemachineCamera incomingCamera,
+        CameraProfileBehaviour incomingBehaviour,
+        float rawAlpha,
+        bool useMotionCut)
+    {
+        if (master == null)
+            return;
+
+        if (!useMotionCut || incomingBehaviour == null)
+        {
+            master.ClearDirectionalCameraOffset(outgoingCamera);
+            master.ClearDirectionalCameraOffset(incomingCamera);
+            return;
+        }
+
+        float alpha = Mathf.Clamp01(rawAlpha);
+        AnimationCurve curve = incomingBehaviour.motionCutCurve;
+
+        float outgoingProgress = EvaluateDirectionalCurve(
+            curve,
+            Mathf.Clamp01(alpha * 2f)
+        );
+
+        float incomingRemaining = EvaluateDirectionalCurve(
+            curve,
+            1f - Mathf.Clamp01((alpha - 0.5f) * 2f)
+        );
+
+        Vector3 axisVector = GetDirectionalAxisVector(
+            incomingBehaviour.motionCutAxis
+        );
+
+        float inStrength = incomingBehaviour.motionCutInStrength;
+
+        if (!incomingBehaviour.reverseMotionCutInStrength)
+        {
+            inStrength = -inStrength;
+        }
+
+        master.TrySetDirectionalCameraOffset(
+            outgoingCamera,
+            axisVector *
+                incomingBehaviour.motionCutOutStrength *
+                outgoingProgress
+        );
+
+        master.TrySetDirectionalCameraOffset(
+            incomingCamera,
+            axisVector * inStrength * incomingRemaining
+        );
+    }
+
+    private static float EvaluateDirectionalCurve(
+        AnimationCurve curve,
+        float normalizedTime)
+    {
+        float time = Mathf.Clamp01(normalizedTime);
+        return curve != null ? curve.Evaluate(time) : time;
+    }
+
+    private static Vector3 GetDirectionalAxisVector(
+        CameraProfileDirectionalAxis axis)
+    {
+        switch (axis)
+        {
+            case CameraProfileDirectionalAxis.Vertical:
+                return Vector3.up;
+
+            case CameraProfileDirectionalAxis.Depth:
+                return Vector3.forward;
+
+            default:
+                return Vector3.right;
+        }
     }
 
     private double GetClipStart(int inputIndex)
@@ -1395,6 +1551,21 @@ public class CameraProfileMixer : PlayableBehaviour
 
     private void ClearStoryboardCrossFade(CameraSystemMaster master)
     {
+        if (master != null &&
+            _storyboardCrossFadeContext.Active &&
+            _storyboardCrossFadeContext.UsesMotionCut)
+        {
+            master.ClearDirectionalCameraOffset(
+                _storyboardCrossFadeContext.BaseCamera
+            );
+            master.ClearDirectionalCameraOffset(
+                _storyboardCrossFadeContext.RenderTextureCamera
+            );
+            master.ClearDirectionalCameraOffset(
+                _storyboardCrossFadeContext.HandoffCamera
+            );
+        }
+
         if (master != null)
         {
             master.ClearStoryboardCrossFade();
@@ -2186,6 +2357,7 @@ public class CameraProfileMixer : PlayableBehaviour
         _preparedGeneralUseB = false;
         _generalZeroDampingUntilFrame = -1;
         _lastWasBlending = false;
+        _reportedMotionCutFallbackInputIndex = -1;
         _storyboardCrossFadeContext = default;
     }
 

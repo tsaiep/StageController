@@ -22,6 +22,34 @@ MonoBehaviour:
   blendMode: 0
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -66,6 +94,34 @@ MonoBehaviour:
   blendMode: 0
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -110,6 +166,34 @@ MonoBehaviour:
   blendMode: 2
   crossFadeBlurMaxIntensity: 5
   crossFadeAlphaTiming: 0.534
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -154,11 +238,39 @@ MonoBehaviour:
   blendMode: 1
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 1
   mirrorX: 0
   mirrorY: 0
   mirrorZ: 0
-  useFixedPlaybackSpeed: 1
+  useFixedPlaybackSpeed: 0
   fixedPlaybackSpeed: 0.25
   fovBias: 0
   posDistanceBias: 1.94
@@ -198,6 +310,34 @@ MonoBehaviour:
   blendMode: 0
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -211,14 +351,14 @@ MonoBehaviour:
   posTargetOffsetXBias: 0
   posTargetOffsetYBias: 0
   posTargetOffsetZBias: 0
-  followOffsetXBias: 0
-  followOffsetYBias: 0
-  followOffsetZBias: 0
+  followOffsetXBias: -5.87
+  followOffsetYBias: 2.94
+  followOffsetZBias: -0.75
   splinePositionBias: 0
   rotScreenXBias: 0
   rotScreenYBias: 0
   rotTargetOffsetXBias: 0
-  rotTargetOffsetYBias: 0
+  rotTargetOffsetYBias: 0.31
   rotTargetOffsetZBias: 0
 --- !u!114 &-2022265786070042993
 MonoBehaviour:
@@ -242,6 +382,34 @@ MonoBehaviour:
   blendMode: 2
   crossFadeBlurMaxIntensity: 5
   crossFadeAlphaTiming: 0.3
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 1
   mirrorY: 0
@@ -400,7 +568,7 @@ MonoBehaviour:
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
-    m_BlendOutDuration: -1
+    m_BlendOutDuration: 1.3666666666666742
     m_MixInCurve:
       serializedVersion: 2
       m_Curve:
@@ -460,7 +628,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 9.399999999999999
     m_DisplayName: CameraProfileAsset
   - m_Version: 1
-    m_Start: 69.28333333333333
+    m_Start: 81.58333333333333
     m_ClipIn: 0
     m_Asset: {fileID: -4917609176124215647}
     m_Duration: 5
@@ -523,49 +691,13 @@ MonoBehaviour:
     m_BlendOutDuration: 3.1833333333333407
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -580,7 +712,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: CameraProfileAsset
   - m_Version: 1
-    m_Start: 72.46666666666667
+    m_Start: 84.76666666666667
     m_ClipIn: 0
     m_Asset: {fileID: 7981102132173246415}
     m_Duration: 5
@@ -631,7 +763,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: CameraProfileAsset
   - m_Version: 1
-    m_Start: 84.46666666666661
+    m_Start: 96.76666666666661
     m_ClipIn: 0
     m_Asset: {fileID: 1521804282068679657}
     m_Duration: 5
@@ -763,49 +895,13 @@ MonoBehaviour:
     m_BlendOutDuration: 1.7833333333333314
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -832,25 +928,7 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -874,13 +952,13 @@ MonoBehaviour:
     m_Start: 40.166666666666664
     m_ClipIn: 0
     m_Asset: {fileID: -2871877468039174864}
-    m_Duration: 1.3833333333333329
+    m_Duration: 4.616666666666667
     m_TimeScale: 1
     m_ParentTrack: {fileID: 1082857967886210342}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
-    m_BlendOutDuration: -1
+    m_BlendOutDuration: 0.7999999999999972
     m_MixInCurve:
       serializedVersion: 2
       m_Curve: []
@@ -972,6 +1050,108 @@ MonoBehaviour:
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
     m_DisplayName: CameraProfileAsset
+  - m_Version: 1
+    m_Start: 43.983333333333334
+    m_ClipIn: 0
+    m_Asset: {fileID: 3540929040745057454}
+    m_Duration: 4.616666666666667
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 1082857967886210342}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0.7999999999999972
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 3.56666666666667
+    m_DisplayName: CameraProfileAsset
+  - m_Version: 1
+    m_Start: 65.46666666666667
+    m_ClipIn: 0
+    m_Asset: {fileID: 4163300866765712752}
+    m_Duration: 5
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 1082857967886210342}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 1.3666666666666742
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 2.4499999999999886
+    m_PreExtrapolationTime: 9.399999999999999
+    m_DisplayName: CameraProfileAsset
   m_Markers:
     m_Objects: []
   generalPrewarmTime: 0.8
@@ -999,6 +1179,34 @@ MonoBehaviour:
   blendMode: 0
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -1043,6 +1251,34 @@ MonoBehaviour:
   blendMode: 0
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -1064,6 +1300,150 @@ MonoBehaviour:
   rotScreenYBias: 0
   rotTargetOffsetXBias: -0.17
   rotTargetOffsetYBias: 0
+  rotTargetOffsetZBias: 0
+--- !u!114 &3540929040745057454
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60258a76665044948956a5873731ccb6, type: 3}
+  m_Name: CameraProfileAsset(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)
+  m_EditorClassIdentifier: 
+  cameraProfile: {fileID: 11400000, guid: 5d46a7e764fcf2a479c013f9d8120088, type: 2}
+  trackingTarget:
+    exposedName: 2a13cf21f7579e74da2bb8b52cc17fd0
+    defaultValue: {fileID: 0}
+  splineContainer:
+    exposedName: e6f30e5ff184d4a45931a458dc518226
+    defaultValue: {fileID: 0}
+  blendMode: 3
+  crossFadeBlurMaxIntensity: 1
+  crossFadeAlphaTiming: 0
+  motionCutAxis: 2
+  motionCutOutStrength: 3
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reversePlayback: 1
+  mirrorX: 0
+  mirrorY: 0
+  mirrorZ: 0
+  useFixedPlaybackSpeed: 0
+  fixedPlaybackSpeed: 0.25
+  fovBias: 0
+  posDistanceBias: 1.94
+  posScreenXBias: 0
+  posScreenYBias: 0
+  posTargetOffsetXBias: 0
+  posTargetOffsetYBias: 0
+  posTargetOffsetZBias: 0
+  followOffsetXBias: 0
+  followOffsetYBias: 0
+  followOffsetZBias: 0
+  splinePositionBias: 0
+  rotScreenXBias: 0
+  rotScreenYBias: 0
+  rotTargetOffsetXBias: 0
+  rotTargetOffsetYBias: 0
+  rotTargetOffsetZBias: 0
+--- !u!114 &4163300866765712752
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60258a76665044948956a5873731ccb6, type: 3}
+  m_Name: CameraProfileAsset(Clone)(Clone)
+  m_EditorClassIdentifier: 
+  cameraProfile: {fileID: 11400000, guid: 1a025455ad55a964d854b998a8e8b096, type: 2}
+  trackingTarget:
+    exposedName: 3559e568bf8a85d43ad1b2c6c8a271f8
+    defaultValue: {fileID: 0}
+  splineContainer:
+    exposedName: a48bb61d097982849839d2472d11387d
+    defaultValue: {fileID: 0}
+  blendMode: 3
+  crossFadeBlurMaxIntensity: 1
+  crossFadeAlphaTiming: 0
+  motionCutAxis: 1
+  motionCutOutStrength: 3
+  motionCutInStrength: 10
+  reverseMotionCutInStrength: 0
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.011812169
+      outSlope: 0.011812169
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.75684935
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 216.30087
+      outSlope: 216.30087
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.0034245849
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reversePlayback: 0
+  mirrorX: 0
+  mirrorY: 0
+  mirrorZ: 0
+  useFixedPlaybackSpeed: 0
+  fixedPlaybackSpeed: 1
+  fovBias: 0
+  posDistanceBias: 0
+  posScreenXBias: 0
+  posScreenYBias: 0
+  posTargetOffsetXBias: 0
+  posTargetOffsetYBias: 0
+  posTargetOffsetZBias: 0
+  followOffsetXBias: 3.93
+  followOffsetYBias: 0.73
+  followOffsetZBias: -0.39
+  splinePositionBias: 0
+  rotScreenXBias: 0
+  rotScreenYBias: 0
+  rotTargetOffsetXBias: 0
+  rotTargetOffsetYBias: 0.57
   rotTargetOffsetZBias: 0
 --- !u!114 &5110829831200959743
 MonoBehaviour:
@@ -1087,6 +1467,34 @@ MonoBehaviour:
   blendMode: 0
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -1131,6 +1539,34 @@ MonoBehaviour:
   blendMode: 1
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -1175,6 +1611,34 @@ MonoBehaviour:
   blendMode: 1
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0
@@ -1219,6 +1683,34 @@ MonoBehaviour:
   blendMode: 0
   crossFadeBlurMaxIntensity: 1
   crossFadeAlphaTiming: 0
+  motionCutAxis: 0
+  motionCutOutStrength: 1
+  motionCutInStrength: 1
+  reverseMotionCutInStrength: 1
+  motionCutCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   reversePlayback: 0
   mirrorX: 0
   mirrorY: 0

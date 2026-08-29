@@ -119,6 +119,7 @@ namespace Runtime.CameraSystem
 
         private void OnDisable()
         {
+            ClearAllDirectionalCameraOffsets();
             ClearStoryboardCrossFade();
             ReleaseOwnedCrossFadeRenderTexture();
         }
@@ -160,6 +161,62 @@ namespace Runtime.CameraSystem
         public CinemachineCamera GetCrossFadeDollyCamera()
         {
             return crossFadeDollyCamera;
+        }
+
+        public bool TrySetDirectionalCameraOffset(
+            CinemachineCamera camera,
+            Vector3 localOffset)
+        {
+            if (camera == null)
+                return false;
+
+            CinemachineCameraOffset cameraOffset =
+                camera.GetComponent<CinemachineCameraOffset>();
+
+            if (cameraOffset == null)
+            {
+#if UNITY_EDITOR
+                cameraOffset = !Application.isPlaying
+                    ? Undo.AddComponent<CinemachineCameraOffset>(camera.gameObject)
+                    : camera.gameObject.AddComponent<CinemachineCameraOffset>();
+#else
+                cameraOffset = camera.gameObject.AddComponent<CinemachineCameraOffset>();
+#endif
+            }
+
+            if (cameraOffset == null)
+                return false;
+
+            cameraOffset.enabled = true;
+            cameraOffset.ApplyAfter = CinemachineCore.Stage.Aim;
+            cameraOffset.PreserveComposition = false;
+            cameraOffset.Offset = localOffset;
+            return true;
+        }
+
+        public void ClearDirectionalCameraOffset(CinemachineCamera camera)
+        {
+            if (camera == null)
+                return;
+
+            CinemachineCameraOffset cameraOffset =
+                camera.GetComponent<CinemachineCameraOffset>();
+
+            if (cameraOffset != null)
+            {
+                cameraOffset.Offset = Vector3.zero;
+            }
+        }
+
+        public void ClearAllDirectionalCameraOffsets()
+        {
+            ClearDirectionalCameraOffset(generalCamera);
+            ClearDirectionalCameraOffset(generalCameraB);
+            ClearDirectionalCameraOffset(trackingCamera);
+            ClearDirectionalCameraOffset(dollyCamera);
+            ClearDirectionalCameraOffset(crossFadeGeneralCamera);
+            ClearDirectionalCameraOffset(crossFadeTrackingCamera);
+            ClearDirectionalCameraOffset(crossFadeDollyCamera);
         }
 
         public void SetOnlyThisCrossFadeCameraLive(CinemachineCamera liveCamera)
@@ -1322,6 +1379,15 @@ namespace Runtime.CameraSystem
                 issues,
                 "Rotation Composer"
             );
+
+            if (slot.Kind != CameraRigKind.Dolly)
+            {
+                ValidateRequiredComponent<CinemachineCameraOffset>(
+                    slot,
+                    issues,
+                    "Directional Camera Offset"
+                );
+            }
 
             switch (slot.Kind)
             {
@@ -2668,8 +2734,11 @@ namespace Runtime.CameraSystem
                 EnsureComponent<CinemachinePositionComposer>(camera);
             CinemachineRotationComposer rotation =
                 EnsureComponent<CinemachineRotationComposer>(camera);
+            CinemachineCameraOffset directionalOffset =
+                EnsureComponent<CinemachineCameraOffset>(camera);
 
             DisableConflictingBodyComponents<CinemachinePositionComposer>(camera);
+            ConfigureDirectionalCameraOffset(directionalOffset);
 
             if (copyFrom != null)
             {
@@ -2695,6 +2764,7 @@ namespace Runtime.CameraSystem
 
             EditorUtility.SetDirty(position);
             EditorUtility.SetDirty(rotation);
+            EditorUtility.SetDirty(directionalOffset);
         }
 
         private void FixTrackingCamera(
@@ -2710,8 +2780,11 @@ namespace Runtime.CameraSystem
                 EnsureComponent<CinemachineFollow>(camera);
             CinemachineRotationComposer rotation =
                 EnsureComponent<CinemachineRotationComposer>(camera);
+            CinemachineCameraOffset directionalOffset =
+                EnsureComponent<CinemachineCameraOffset>(camera);
 
             DisableConflictingBodyComponents<CinemachineFollow>(camera);
+            ConfigureDirectionalCameraOffset(directionalOffset);
 
             if (copyFrom != null)
             {
@@ -2740,6 +2813,18 @@ namespace Runtime.CameraSystem
 
             EditorUtility.SetDirty(follow);
             EditorUtility.SetDirty(rotation);
+            EditorUtility.SetDirty(directionalOffset);
+        }
+
+        private static void ConfigureDirectionalCameraOffset(
+            CinemachineCameraOffset cameraOffset)
+        {
+            if (cameraOffset == null)
+                return;
+
+            cameraOffset.Offset = Vector3.zero;
+            cameraOffset.ApplyAfter = CinemachineCore.Stage.Aim;
+            cameraOffset.PreserveComposition = false;
         }
 
         private void FixDollyCamera(

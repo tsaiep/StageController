@@ -2,12 +2,21 @@
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Splines;
+using UnityEngine.Serialization;
 
 public enum CameraProfileBlendMode
 {
     ParameterBlend = 0,
-    StoryboardRenderTextureCrossFade = 1,
-    CrossFadeBlur = 2
+    CrossFade = 1,
+    CrossFadeBlur = 2,
+    MotionCut = 3
+}
+
+public enum CameraProfileDirectionalAxis
+{
+    Horizontal = 0,
+    Vertical = 1,
+    Depth = 2
 }
 
 [System.Serializable]
@@ -34,6 +43,26 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
     [Range(0f, 1f)]
     [Tooltip("壓縮 RenderTexture Alpha 混合發生的時間。0 保留原本線性結果；提高後會延後開始淡入並提早達到 1，不影響 Blur 曲線。")]
     public float crossFadeAlphaTiming;
+
+    [FormerlySerializedAs("directionalAxis")]
+    [Tooltip("Motion Cut 的位移軸。Horizontal / Vertical / Depth 分別對應相機 Local X / Y / Z。")]
+    public CameraProfileDirectionalAxis motionCutAxis =
+        CameraProfileDirectionalAxis.Horizontal;
+
+    [FormerlySerializedAs("directionalStrength")]
+    [Tooltip("Motion Cut 前一個 Clip 的位移量（公尺）。正值代表右 / 上 / 前；負值代表左 / 下 / 後。")]
+    public float motionCutOutStrength = 1f;
+
+    [Tooltip("Motion Cut 後一個 Clip 的位移量（公尺）。")]
+    public float motionCutInStrength = 1f;
+
+    [Tooltip("反轉 incoming Clip 的移動方向。開啟後，相同正值的 Out / In Strength 會朝相反方向運動。")]
+    public bool reverseMotionCutInStrength = true;
+
+    [FormerlySerializedAs("directionalCurve")]
+    [Tooltip("Motion Cut 的 0~1 速度曲線。Out 使用正向取樣，In 使用反向取樣。")]
+    public AnimationCurve motionCutCurve =
+        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     //[Header("--- Playback Options ---")]
     [Tooltip("勾選後會以 1 - normalizedTime 取樣 Profile 曲線，等同將此 Clip 的運鏡倒轉播放。")]
@@ -122,6 +151,11 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
         behaviour.blendMode = blendMode;
         behaviour.crossFadeBlurMaxIntensity = crossFadeBlurMaxIntensity;
         behaviour.crossFadeAlphaTiming = crossFadeAlphaTiming;
+        behaviour.motionCutAxis = motionCutAxis;
+        behaviour.motionCutOutStrength = motionCutOutStrength;
+        behaviour.motionCutInStrength = motionCutInStrength;
+        behaviour.reverseMotionCutInStrength = reverseMotionCutInStrength;
+        behaviour.motionCutCurve = motionCutCurve;
         behaviour.reversePlayback = reversePlayback;
         behaviour.mirrorX = mirrorX;
         behaviour.mirrorY = mirrorY;
@@ -182,6 +216,11 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public CameraProfileBlendMode blendMode;
     public float crossFadeBlurMaxIntensity = 1f;
     public float crossFadeAlphaTiming;
+    public CameraProfileDirectionalAxis motionCutAxis;
+    public float motionCutOutStrength = 1f;
+    public float motionCutInStrength = 1f;
+    public bool reverseMotionCutInStrength = true;
+    public AnimationCurve motionCutCurve;
 
     public bool reversePlayback;
     public bool mirrorX;

@@ -14,6 +14,11 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _blendModeProp;
     private SerializedProperty _crossFadeBlurMaxIntensityProp;
     private SerializedProperty _crossFadeAlphaTimingProp;
+    private SerializedProperty _motionCutAxisProp;
+    private SerializedProperty _motionCutOutStrengthProp;
+    private SerializedProperty _motionCutInStrengthProp;
+    private SerializedProperty _reverseMotionCutInStrengthProp;
+    private SerializedProperty _motionCutCurveProp;
     private SerializedProperty _reversePlaybackProp;
     private SerializedProperty _mirrorXProp;
     private SerializedProperty _mirrorYProp;
@@ -41,6 +46,11 @@ public class CameraProfileAssetEditor : Editor
         _blendModeProp = serializedObject.FindProperty("blendMode");
         _crossFadeBlurMaxIntensityProp = serializedObject.FindProperty("crossFadeBlurMaxIntensity");
         _crossFadeAlphaTimingProp = serializedObject.FindProperty("crossFadeAlphaTiming");
+        _motionCutAxisProp = serializedObject.FindProperty("motionCutAxis");
+        _motionCutOutStrengthProp = serializedObject.FindProperty("motionCutOutStrength");
+        _motionCutInStrengthProp = serializedObject.FindProperty("motionCutInStrength");
+        _reverseMotionCutInStrengthProp = serializedObject.FindProperty("reverseMotionCutInStrength");
+        _motionCutCurveProp = serializedObject.FindProperty("motionCutCurve");
         _reversePlaybackProp = serializedObject.FindProperty("reversePlayback");
         _mirrorXProp = serializedObject.FindProperty("mirrorX");
         _mirrorYProp = serializedObject.FindProperty("mirrorY");
@@ -66,6 +76,10 @@ public class CameraProfileAssetEditor : Editor
         serializedObject.Update();
 
         DrawCameraProfilePicker();
+
+        CameraProfileSO currentProfile = _cameraProfileProp != null
+            ? _cameraProfileProp.objectReferenceValue as CameraProfileSO
+            : null;
 
         EditorGUILayout.Space(6);
 
@@ -99,13 +113,14 @@ public class CameraProfileAssetEditor : Editor
                     new GUIContent("Alpha Timing")
                 );
             }
+            else if (_blendModeProp.enumValueIndex ==
+                (int)CameraProfileBlendMode.MotionCut)
+            {
+                DrawMotionCutSettings(currentProfile);
+            }
         }
 
         DrawPlaybackSettings();
-
-        CameraProfileSO currentProfile = _cameraProfileProp != null
-            ? _cameraProfileProp.objectReferenceValue as CameraProfileSO
-            : null;
 
         if (currentProfile is DollyProfileSO && _splineContainerProp != null)
         {
@@ -128,6 +143,74 @@ public class CameraProfileAssetEditor : Editor
         }
 
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private void DrawMotionCutSettings(CameraProfileSO currentProfile)
+    {
+        EditorGUILayout.Space(4);
+        EditorGUILayout.LabelField(
+            "Motion Cut Settings",
+            EditorStyles.boldLabel
+        );
+
+        EditorGUI.indentLevel++;
+
+        if (_motionCutAxisProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _motionCutAxisProp,
+                new GUIContent("Axis")
+            );
+        }
+
+        if (_motionCutOutStrengthProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _motionCutOutStrengthProp,
+                new GUIContent("Out Strength")
+            );
+        }
+
+        if (_motionCutInStrengthProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _motionCutInStrengthProp,
+                new GUIContent("In Strength")
+            );
+        }
+
+        if (_reverseMotionCutInStrengthProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _reverseMotionCutInStrengthProp,
+                new GUIContent("Reverse In Strength")
+            );
+        }
+
+        if (_motionCutCurveProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _motionCutCurveProp,
+                new GUIContent("Motion Curve")
+            );
+        }
+
+        EditorGUI.indentLevel--;
+
+        if (currentProfile is DollyProfileSO)
+        {
+            EditorGUILayout.HelpBox(
+                "Motion Cut 不支援 Dolly。任一端為 Dolly 時，Runtime 會退回一般 Cross Fade。",
+                MessageType.Error
+            );
+        }
+        else
+        {
+            EditorGUILayout.HelpBox(
+                "若前一個 Clip 是 Dolly，這個轉場同樣會退回一般 Cross Fade。",
+                MessageType.None
+            );
+        }
     }
 
     private void DrawGeneralBiasSettings()
