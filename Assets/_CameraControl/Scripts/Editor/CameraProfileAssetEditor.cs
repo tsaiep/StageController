@@ -26,6 +26,14 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _noiseProfileProp;
     private SerializedProperty _noiseAmplitudeProp;
     private SerializedProperty _noiseFrequencyProp;
+    private SerializedProperty _enableDepthOfFieldProp;
+    private SerializedProperty _normalizedFocusDistanceCurveProp;
+    private SerializedProperty _focusDistanceMinProp;
+    private SerializedProperty _focusDistanceMaxProp;
+    private SerializedProperty _depthOfFieldNearRangeProp;
+    private SerializedProperty _depthOfFieldFarRangeProp;
+    private SerializedProperty _depthOfFieldMaxRadiusProp;
+    private SerializedProperty _depthOfFieldDebugViewProp;
     private SerializedProperty _reversePlaybackProp;
     private SerializedProperty _mirrorXProp;
     private SerializedProperty _mirrorYProp;
@@ -64,6 +72,14 @@ public class CameraProfileAssetEditor : Editor
         _noiseProfileProp = serializedObject.FindProperty("noiseProfile");
         _noiseAmplitudeProp = serializedObject.FindProperty("noiseAmplitude");
         _noiseFrequencyProp = serializedObject.FindProperty("noiseFrequency");
+        _enableDepthOfFieldProp = serializedObject.FindProperty("enableDepthOfField");
+        _normalizedFocusDistanceCurveProp = serializedObject.FindProperty("normalizedFocusDistanceCurve");
+        _focusDistanceMinProp = serializedObject.FindProperty("focusDistanceMin");
+        _focusDistanceMaxProp = serializedObject.FindProperty("focusDistanceMax");
+        _depthOfFieldNearRangeProp = serializedObject.FindProperty("depthOfFieldNearRange");
+        _depthOfFieldFarRangeProp = serializedObject.FindProperty("depthOfFieldFarRange");
+        _depthOfFieldMaxRadiusProp = serializedObject.FindProperty("depthOfFieldMaxRadius");
+        _depthOfFieldDebugViewProp = serializedObject.FindProperty("depthOfFieldDebugView");
         _reversePlaybackProp = serializedObject.FindProperty("reversePlayback");
         _mirrorXProp = serializedObject.FindProperty("mirrorX");
         _mirrorYProp = serializedObject.FindProperty("mirrorY");
@@ -155,9 +171,97 @@ public class CameraProfileAssetEditor : Editor
             DrawDollyBiasSettings();
         }
 
+        DrawDepthOfFieldSettings();
         DrawNoiseSettings();
 
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private void DrawDepthOfFieldSettings()
+    {
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Depth Of Field", EditorStyles.boldLabel);
+
+        EditorGUI.indentLevel++;
+        EditorGUILayout.PropertyField(
+            _enableDepthOfFieldProp,
+            new GUIContent("Enable DOF")
+        );
+
+        if (_enableDepthOfFieldProp == null ||
+            !_enableDepthOfFieldProp.boolValue)
+        {
+            EditorGUI.indentLevel--;
+            return;
+        }
+
+        EditorGUILayout.Space(2);
+        EditorGUILayout.LabelField(
+            "Focus Range (m)",
+            EditorStyles.miniBoldLabel
+        );
+
+        EditorGUILayout.PropertyField(
+            _focusDistanceMinProp,
+            new GUIContent("Min")
+        );
+        EditorGUILayout.PropertyField(
+            _focusDistanceMaxProp,
+            new GUIContent("Max")
+        );
+
+        if (_focusDistanceMinProp != null &&
+            _focusDistanceMaxProp != null)
+        {
+            _focusDistanceMinProp.floatValue = Mathf.Max(
+                0.01f,
+                _focusDistanceMinProp.floatValue
+            );
+            _focusDistanceMaxProp.floatValue = Mathf.Max(
+                _focusDistanceMinProp.floatValue + 0.01f,
+                _focusDistanceMaxProp.floatValue
+            );
+        }
+
+        EditorGUILayout.PropertyField(
+            _normalizedFocusDistanceCurveProp,
+            new GUIContent("Focus Over Clip")
+        );
+
+        EditorGUILayout.HelpBox(
+            "Curve X = Clip 時間，Y = 對焦距離 0~1。Y=0 對應 Min，Y=1 對應 Max。",
+            MessageType.Info
+        );
+
+        EditorGUILayout.Space(2);
+        EditorGUILayout.LabelField(
+            "Distance To Full Blur",
+            EditorStyles.miniBoldLabel
+        );
+        EditorGUILayout.PropertyField(
+            _depthOfFieldNearRangeProp,
+            new GUIContent("Near Side (m)")
+        );
+        EditorGUILayout.PropertyField(
+            _depthOfFieldFarRangeProp,
+            new GUIContent("Far Side (m)")
+        );
+
+        EditorGUILayout.PropertyField(
+            _depthOfFieldMaxRadiusProp,
+            new GUIContent("Max Radius")
+        );
+        EditorGUILayout.PropertyField(
+            _depthOfFieldDebugViewProp,
+            new GUIContent("Debug View")
+        );
+
+        EditorGUILayout.HelpBox(
+            "Focus 是清晰中心；Focus - Near Side 與 Focus + Far Side 分別到達最大模糊，不會把 Range 加回 Focus 數值。",
+            MessageType.None
+        );
+
+        EditorGUI.indentLevel--;
     }
 
     private void DrawNoiseSettings()

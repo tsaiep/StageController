@@ -4,6 +4,7 @@ using UnityEngine.Timeline;
 using UnityEngine.Splines;
 using UnityEngine.Serialization;
 using Unity.Cinemachine;
+using Runtime.CameraSystem;
 
 public enum CameraProfileBlendMode
 {
@@ -87,6 +88,39 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
     [Min(0f)]
     [Tooltip("晃動速度倍率。1 代表 Noise Profile 的原始速度。")]
     public float noiseFrequency = 1f;
+
+    [Tooltip("為這個 Clip 啟用自訂動態景深。只控制 DOF，不會修改攝影機 FOV。")]
+    public bool enableDepthOfField;
+
+    [Tooltip("X 是 Clip 進度，Y 是 0~1 的對焦距離；0 對應 Focus Min，1 對應 Focus Max。")]
+    public AnimationCurve normalizedFocusDistanceCurve =
+        AnimationCurve.Linear(0f, 0.2f, 1f, 0.2f);
+
+    [FormerlySerializedAs("focusDistanceRemapMin")]
+    [Min(0.01f)]
+    [Tooltip("Normalized Focus Distance = 0 時的對焦距離（公尺）。")]
+    public float focusDistanceMin = 0.3f;
+
+    [FormerlySerializedAs("focusDistanceRemapMax")]
+    [Min(0.02f)]
+    [Tooltip("Normalized Focus Distance = 1 時的對焦距離（公尺）。")]
+    public float focusDistanceMax = 50f;
+
+    [Min(0.01f)]
+    [Tooltip("焦點前方從清晰過渡到最模糊所需的距離（公尺）。")]
+    public float depthOfFieldNearRange = 1f;
+
+    [Min(0.01f)]
+    [Tooltip("焦點後方從清晰過渡到最模糊所需的距離（公尺）。")]
+    public float depthOfFieldFarRange = 3f;
+
+    [FormerlySerializedAs("depthOfFieldFarRadius")]
+    [Range(0f, 64f)]
+    [Tooltip("近景與遠景共用的最大模糊半徑；Renderer Feature 會依輸出解析度等比例縮放。")]
+    public float depthOfFieldMaxRadius = 24f;
+
+    [Tooltip("切換 DOF 最終畫面或 Near/Far/Focus Plane 可視化。")]
+    public CameraDepthOfFieldDebugView depthOfFieldDebugView;
 
     //[Header("--- Playback Options ---")]
     [Tooltip("勾選後會以 1 - normalizedTime 取樣 Profile 曲線，等同將此 Clip 的運鏡倒轉播放。")]
@@ -186,6 +220,31 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
         behaviour.noiseProfile = noiseProfile;
         behaviour.noiseAmplitude = Mathf.Max(0f, noiseAmplitude);
         behaviour.noiseFrequency = Mathf.Max(0f, noiseFrequency);
+        behaviour.enableDepthOfField = enableDepthOfField;
+        behaviour.normalizedFocusDistanceCurve =
+            normalizedFocusDistanceCurve;
+        behaviour.focusDistanceMin = Mathf.Max(
+            0.01f,
+            focusDistanceMin
+        );
+        behaviour.focusDistanceMax = Mathf.Max(
+            behaviour.focusDistanceMin + 0.01f,
+            focusDistanceMax
+        );
+        behaviour.depthOfFieldNearRange = Mathf.Max(
+            0.01f,
+            depthOfFieldNearRange
+        );
+        behaviour.depthOfFieldFarRange = Mathf.Max(
+            0.01f,
+            depthOfFieldFarRange
+        );
+        behaviour.depthOfFieldMaxRadius = Mathf.Clamp(
+            depthOfFieldMaxRadius,
+            0f,
+            64f
+        );
+        behaviour.depthOfFieldDebugView = depthOfFieldDebugView;
         behaviour.reversePlayback = reversePlayback;
         behaviour.mirrorX = mirrorX;
         behaviour.mirrorY = mirrorY;
@@ -258,6 +317,15 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public NoiseSettings noiseProfile;
     public float noiseAmplitude = 1f;
     public float noiseFrequency = 1f;
+
+    public bool enableDepthOfField;
+    public AnimationCurve normalizedFocusDistanceCurve;
+    public float focusDistanceMin = 0.3f;
+    public float focusDistanceMax = 50f;
+    public float depthOfFieldNearRange = 1f;
+    public float depthOfFieldFarRange = 3f;
+    public float depthOfFieldMaxRadius = 24f;
+    public CameraDepthOfFieldDebugView depthOfFieldDebugView;
 
     public bool reversePlayback;
     public bool mirrorX;

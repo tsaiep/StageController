@@ -129,6 +129,7 @@ public class CameraProfileMixer : PlayableBehaviour
         {
             if (_activeMaster != null)
             {
+                ClearDepthOfField(_activeMaster);
                 ClearStoryboardCrossFade(_activeMaster);
             }
 
@@ -138,6 +139,7 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (_activeMaster != null && _activeMaster != master)
         {
+            ClearDepthOfField(_activeMaster);
             ClearStoryboardCrossFade(_activeMaster);
         }
 
@@ -232,6 +234,8 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (!hasDominantInput || currentProfile == null)
         {
+            ClearDepthOfField(master);
+
             // Crossfade 被 gap / seek 中斷時，先停止離屏渲染與 Storyboard，
             // 再讓一般的 gap prewarm 接手，避免預熱改到仍在交接中的 camera。
             ClearStoryboardCrossFade(master);
@@ -279,6 +283,12 @@ public class CameraProfileMixer : PlayableBehaviour
                 out bool useCrossFadeBlur,
                 out bool useMotionCut))
         {
+            ApplyCrossFadeDepthOfField(
+                master,
+                outgoingCrossFadeInput,
+                incomingCrossFadeInput
+            );
+
             float rawCrossFadeAlpha = GetRawCrossFadeAlpha(
                 outgoingCrossFadeInput,
                 incomingCrossFadeInput
@@ -358,6 +368,11 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
         }
 
+        if (Application.isPlaying)
+        {
+            ApplyDepthOfField(master, dominantInput);
+        }
+
         if (Application.isPlaying &&
             TryCompleteStoryboardCrossFadeHandoff(
             master,
@@ -372,6 +387,15 @@ public class CameraProfileMixer : PlayableBehaviour
             !Application.isPlaying && _storyboardCrossFadeContext.Active;
 
         ClearStoryboardCrossFade(master);
+
+        if (shouldBlend)
+        {
+            ApplyBlendedDepthOfField(master, activeInputs);
+        }
+        else
+        {
+            ApplyDepthOfField(master, dominantInput);
+        }
 
         // 有效 Clip 期間：不管目前是 General / Tracking / Dolly，
         // 都可以往後找下一個 General，並在接近時預熱 General A/B。
@@ -395,6 +419,7 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (activeCamera == null)
         {
+            ClearDepthOfField(master);
             master.DisableAllCameras();
             ClearStoryboardCrossFade(master);
             ClearState();
@@ -1059,6 +1084,7 @@ public class CameraProfileMixer : PlayableBehaviour
         CameraProfileInput outgoingInput)
     {
         ClearStoryboardCrossFade(master);
+        ApplyDepthOfField(master, outgoingInput);
 
         bool ignoredPreparedCamera;
         CinemachineCamera outgoingCamera = GetCameraForProfile(
@@ -1071,6 +1097,7 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (outgoingCamera == null)
         {
+            ClearDepthOfField(master);
             master.DisableAllCameras();
             ClearState();
             return;
@@ -1843,6 +1870,153 @@ public class CameraProfileMixer : PlayableBehaviour
         return totalWeight;
     }
 
+    private static CameraDepthOfFieldSettings EvaluateDepthOfField(
+        CameraProfileInput input)
+    {
+        CameraProfileBehaviour behaviour = input.Behaviour;
+
+        if (behaviour == null || !behaviour.enableDepthOfField)
+            return default;
+
+        float normalizedFocus = behaviour.normalizedFocusDistanceCurve != null
+            ? behaviour.normalizedFocusDistanceCurve.Evaluate(
+                input.NormalizedTime)
+            : 0.2f;
+        float minimum = Mathf.Max(0.01f, behaviour.focusDistanceMin);
+        float maximum = Mathf.Max(
+            minimum + 0.01f,
+            behaviour.focusDistanceMax
+        );
+        float focusDistance = Mathf.Lerp(
+            minimum,
+            maximum,
+            Mathf.Clamp01(normalizedFocus)
+        );
+
+        return new CameraDepthOfFieldSettings
+        {
+            Enabled = true,
+            FocusDistance = focusDistance,
+            NearFocusRange = behaviour.depthOfFieldNearRange,
+            FarFocusRange = behaviour.depthOfFieldFarRange,
+            NearBlurRadius = behaviour.depthOfFieldMaxRadius,
+            FarBlurRadius = behaviour.depthOfFieldMaxRadius,
+            Intensity = 1f,
+            DebugView = behaviour.depthOfFieldDebugView
+        }.Sanitized();
+    }
+
+    private static void ApplyDepthOfField(
+        CameraSystemMaster master,
+        CameraProfileInput input)
+    {
+        Camera mainCamera = Camera.main;
+        CameraDepthOfFieldSettings settings = EvaluateDepthOfField(input);
+
+        CameraDepthOfFieldState.Set(mainCamera, settings);
+
+        if (master != null)
+            CameraDepthOfFieldState.Clear(master.crossFadeRenderCamera);
+    }
+
+    private static void ApplyBlendedDepthOfField(
+        CameraSystemMaster master,
+        List<CameraProfileInput> inputs)
+    {
+        if (inputs == null || inputs.Count == 0)
+        {
+            ClearDepthOfField(master);
+            return;
+        }
+
+        float totalWeight = GetTotalWeight(inputs);
+        float enabledWeight = 0f;
+        float focusDistance = 0f;
+        float nearRange = 0f;
+        float farRange = 0f;
+        float nearRadius = 0f;
+        float farRadius = 0f;
+        float intensity = 0f;
+        float debugViewWeight = -1f;
+        CameraDepthOfFieldDebugView debugView =
+            CameraDepthOfFieldDebugView.Final;
+
+        foreach (CameraProfileInput input in inputs)
+        {
+            CameraDepthOfFieldSettings settings =
+                EvaluateDepthOfField(input);
+
+            if (!settings.IsActive)
+                continue;
+
+            float weight = Mathf.Max(0f, input.Weight);
+            enabledWeight += weight;
+            focusDistance += settings.FocusDistance * weight;
+            nearRange += settings.NearFocusRange * weight;
+            farRange += settings.FarFocusRange * weight;
+            nearRadius += settings.NearBlurRadius * weight;
+            farRadius += settings.FarBlurRadius * weight;
+            intensity += settings.Intensity * weight;
+
+            if (weight >= debugViewWeight)
+            {
+                debugViewWeight = weight;
+                debugView = settings.DebugView;
+            }
+        }
+
+        if (enabledWeight <= 0f || totalWeight <= 0f)
+        {
+            ClearDepthOfField(master);
+            return;
+        }
+
+        CameraDepthOfFieldSettings blendedSettings =
+            new CameraDepthOfFieldSettings
+            {
+                Enabled = true,
+                FocusDistance = focusDistance / enabledWeight,
+                NearFocusRange = nearRange / enabledWeight,
+                FarFocusRange = farRange / enabledWeight,
+                NearBlurRadius = nearRadius / enabledWeight,
+                FarBlurRadius = farRadius / enabledWeight,
+                Intensity = intensity / totalWeight,
+                DebugView = debugView
+            };
+
+        CameraDepthOfFieldState.Set(Camera.main, blendedSettings);
+
+        if (master != null)
+            CameraDepthOfFieldState.Clear(master.crossFadeRenderCamera);
+    }
+
+    private static void ApplyCrossFadeDepthOfField(
+        CameraSystemMaster master,
+        CameraProfileInput outgoing,
+        CameraProfileInput incoming)
+    {
+        CameraDepthOfFieldState.Set(
+            Camera.main,
+            EvaluateDepthOfField(outgoing)
+        );
+
+        if (master != null)
+        {
+            CameraDepthOfFieldState.Set(
+                master.crossFadeRenderCamera,
+                EvaluateDepthOfField(incoming)
+            );
+        }
+    }
+
+    private static void ClearDepthOfField(CameraSystemMaster master)
+    {
+        CameraDepthOfFieldState.Clear(Camera.main);
+
+        if (master != null)
+            CameraDepthOfFieldState.Clear(master.crossFadeRenderCamera);
+    }
+
     private Transform GetBlendedTarget(List<CameraProfileInput> inputs)
     {
         if (inputs == null || inputs.Count == 0)
@@ -2487,12 +2661,19 @@ public class CameraProfileMixer : PlayableBehaviour
     {
         if (_activeMaster != null)
         {
+            ClearDepthOfField(_activeMaster);
             ClearStoryboardCrossFade(_activeMaster);
         }
 
         ClearState();
         _activeMaster = null;
         DestroyBlendTargetProxy();
+    }
+
+    public override void OnGraphStop(Playable playable)
+    {
+        if (_activeMaster != null)
+            ClearDepthOfField(_activeMaster);
     }
 
     private void DestroyBlendTargetProxy()
