@@ -119,7 +119,7 @@ namespace Runtime.CameraSystem
 
         private void OnDisable()
         {
-            ClearAllDirectionalCameraOffsets();
+            ClearAllMotionCutCameraEffects();
             ClearStoryboardCrossFade();
             ReleaseOwnedCrossFadeRenderTexture();
         }
@@ -208,6 +208,61 @@ namespace Runtime.CameraSystem
             }
         }
 
+        public bool TrySetMotionCutCameraRoll(
+            CinemachineCamera camera,
+            float rollAngle)
+        {
+            if (camera == null)
+                return false;
+
+            CinemachineRecomposer recomposer =
+                camera.GetComponent<CinemachineRecomposer>();
+
+            if (recomposer == null)
+            {
+#if UNITY_EDITOR
+                recomposer = !Application.isPlaying
+                    ? Undo.AddComponent<CinemachineRecomposer>(camera.gameObject)
+                    : camera.gameObject.AddComponent<CinemachineRecomposer>();
+#else
+                recomposer = camera.gameObject.AddComponent<CinemachineRecomposer>();
+#endif
+            }
+
+            if (recomposer == null)
+                return false;
+
+            recomposer.enabled = true;
+            recomposer.ApplyAfter = CinemachineCore.Stage.Finalize;
+            recomposer.Tilt = 0f;
+            recomposer.Pan = 0f;
+            recomposer.Dutch = rollAngle;
+            recomposer.ZoomScale = 1f;
+            recomposer.FollowAttachment = 1f;
+            recomposer.LookAtAttachment = 1f;
+            return true;
+        }
+
+        public void ClearMotionCutCameraRoll(CinemachineCamera camera)
+        {
+            if (camera == null)
+                return;
+
+            CinemachineRecomposer recomposer =
+                camera.GetComponent<CinemachineRecomposer>();
+
+            if (recomposer != null)
+            {
+                recomposer.Dutch = 0f;
+            }
+        }
+
+        public void ClearMotionCutCameraEffects(CinemachineCamera camera)
+        {
+            ClearDirectionalCameraOffset(camera);
+            ClearMotionCutCameraRoll(camera);
+        }
+
         public void ClearAllDirectionalCameraOffsets()
         {
             ClearDirectionalCameraOffset(generalCamera);
@@ -217,6 +272,17 @@ namespace Runtime.CameraSystem
             ClearDirectionalCameraOffset(crossFadeGeneralCamera);
             ClearDirectionalCameraOffset(crossFadeTrackingCamera);
             ClearDirectionalCameraOffset(crossFadeDollyCamera);
+        }
+
+        public void ClearAllMotionCutCameraEffects()
+        {
+            ClearMotionCutCameraEffects(generalCamera);
+            ClearMotionCutCameraEffects(generalCameraB);
+            ClearMotionCutCameraEffects(trackingCamera);
+            ClearMotionCutCameraEffects(dollyCamera);
+            ClearMotionCutCameraEffects(crossFadeGeneralCamera);
+            ClearMotionCutCameraEffects(crossFadeTrackingCamera);
+            ClearMotionCutCameraEffects(crossFadeDollyCamera);
         }
 
         public void SetOnlyThisCrossFadeCameraLive(CinemachineCamera liveCamera)
@@ -1148,7 +1214,7 @@ namespace Runtime.CameraSystem
             if (issues.Count == 0)
             {
                 Debug.Log(
-                    $"[{nameof(CameraSystemMaster)}] Camera setup 檢查完成：主 Camera、Storyboard RT Cross Fade 與 Camera Blur rig 設定正常。",
+                    $"[{nameof(CameraSystemMaster)}] Camera setup 檢查完成：主 Camera、Storyboard RT Cross Fade、Camera Blur 與 Cinemachine Noise rig 設定正常。",
                     this
                 );
                 return;
@@ -1274,7 +1340,7 @@ namespace Runtime.CameraSystem
             }
 
             Debug.Log(
-                $"[{nameof(CameraSystemMaster)}] 已自動建立/補上主 Camera、Storyboard RT Cross Fade 與 Camera Blur rig。請重新按一次檢查確認細節。",
+                $"[{nameof(CameraSystemMaster)}] 已自動建立/補上主 Camera、Storyboard RT Cross Fade、Camera Blur 與 Cinemachine Noise rig。請重新按一次檢查確認細節。",
                 this
             );
         }
@@ -1380,14 +1446,18 @@ namespace Runtime.CameraSystem
                 "Rotation Composer"
             );
 
-            if (slot.Kind != CameraRigKind.Dolly)
-            {
-                ValidateRequiredComponent<CinemachineCameraOffset>(
-                    slot,
-                    issues,
-                    "Directional Camera Offset"
-                );
-            }
+            ValidateNoiseComponent(slot, issues);
+
+            ValidateRequiredComponent<CinemachineCameraOffset>(
+                slot,
+                issues,
+                "Directional Camera Offset"
+            );
+            ValidateRequiredComponent<CinemachineRecomposer>(
+                slot,
+                issues,
+                "Motion Cut Roll Recomposer"
+            );
 
             switch (slot.Kind)
             {
@@ -1457,6 +1527,23 @@ namespace Runtime.CameraSystem
             }
 
             return component;
+        }
+
+        private static void ValidateNoiseComponent(
+            CameraSlot slot,
+            List<DebugIssue> issues)
+        {
+            CinemachineBasicMultiChannelPerlin noise =
+                slot.Camera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+
+            if (noise == null)
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"{slot.Label} 缺少必要組件：Cinemachine Noise。",
+                    slot.Camera
+                ));
+            }
         }
 
         private void ValidateConflictingBody<TExpected>(
@@ -2736,9 +2823,12 @@ namespace Runtime.CameraSystem
                 EnsureComponent<CinemachineRotationComposer>(camera);
             CinemachineCameraOffset directionalOffset =
                 EnsureComponent<CinemachineCameraOffset>(camera);
+            CinemachineRecomposer motionCutRecomposer =
+                EnsureComponent<CinemachineRecomposer>(camera);
 
             DisableConflictingBodyComponents<CinemachinePositionComposer>(camera);
             ConfigureDirectionalCameraOffset(directionalOffset);
+            ConfigureMotionCutRecomposer(motionCutRecomposer);
 
             if (copyFrom != null)
             {
@@ -2765,6 +2855,7 @@ namespace Runtime.CameraSystem
             EditorUtility.SetDirty(position);
             EditorUtility.SetDirty(rotation);
             EditorUtility.SetDirty(directionalOffset);
+            EditorUtility.SetDirty(motionCutRecomposer);
         }
 
         private void FixTrackingCamera(
@@ -2782,9 +2873,12 @@ namespace Runtime.CameraSystem
                 EnsureComponent<CinemachineRotationComposer>(camera);
             CinemachineCameraOffset directionalOffset =
                 EnsureComponent<CinemachineCameraOffset>(camera);
+            CinemachineRecomposer motionCutRecomposer =
+                EnsureComponent<CinemachineRecomposer>(camera);
 
             DisableConflictingBodyComponents<CinemachineFollow>(camera);
             ConfigureDirectionalCameraOffset(directionalOffset);
+            ConfigureMotionCutRecomposer(motionCutRecomposer);
 
             if (copyFrom != null)
             {
@@ -2814,6 +2908,7 @@ namespace Runtime.CameraSystem
             EditorUtility.SetDirty(follow);
             EditorUtility.SetDirty(rotation);
             EditorUtility.SetDirty(directionalOffset);
+            EditorUtility.SetDirty(motionCutRecomposer);
         }
 
         private static void ConfigureDirectionalCameraOffset(
@@ -2825,6 +2920,21 @@ namespace Runtime.CameraSystem
             cameraOffset.Offset = Vector3.zero;
             cameraOffset.ApplyAfter = CinemachineCore.Stage.Aim;
             cameraOffset.PreserveComposition = false;
+        }
+
+        private static void ConfigureMotionCutRecomposer(
+            CinemachineRecomposer recomposer)
+        {
+            if (recomposer == null)
+                return;
+
+            recomposer.ApplyAfter = CinemachineCore.Stage.Finalize;
+            recomposer.Tilt = 0f;
+            recomposer.Pan = 0f;
+            recomposer.Dutch = 0f;
+            recomposer.ZoomScale = 1f;
+            recomposer.FollowAttachment = 1f;
+            recomposer.LookAtAttachment = 1f;
         }
 
         private void FixDollyCamera(
@@ -2840,8 +2950,14 @@ namespace Runtime.CameraSystem
                 EnsureComponent<CinemachineSplineDolly>(camera);
             CinemachineRotationComposer rotation =
                 EnsureComponent<CinemachineRotationComposer>(camera);
+            CinemachineCameraOffset directionalOffset =
+                EnsureComponent<CinemachineCameraOffset>(camera);
+            CinemachineRecomposer motionCutRecomposer =
+                EnsureComponent<CinemachineRecomposer>(camera);
 
             DisableConflictingBodyComponents<CinemachineSplineDolly>(camera);
+            ConfigureDirectionalCameraOffset(directionalOffset);
+            ConfigureMotionCutRecomposer(motionCutRecomposer);
 
             if (copyFrom != null)
             {
@@ -2868,6 +2984,8 @@ namespace Runtime.CameraSystem
 
             EditorUtility.SetDirty(dolly);
             EditorUtility.SetDirty(rotation);
+            EditorUtility.SetDirty(directionalOffset);
+            EditorUtility.SetDirty(motionCutRecomposer);
         }
 
         private void FixCommonCameraSettings(CinemachineCamera camera)
@@ -2883,12 +3001,35 @@ namespace Runtime.CameraSystem
             camera.enabled = true;
             camera.Priority.Value = inactivePriority;
 
+            EnsureNoiseComponent(camera);
+
             if (camera.Lens.FieldOfView < 10f || camera.Lens.FieldOfView > 120f)
             {
                 camera.Lens.FieldOfView = Mathf.Clamp(camera.Lens.FieldOfView, 10f, 120f);
             }
 
             EditorUtility.SetDirty(camera);
+        }
+
+        private static CinemachineBasicMultiChannelPerlin EnsureNoiseComponent(
+            CinemachineCamera camera)
+        {
+            CinemachineBasicMultiChannelPerlin noise =
+                camera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+
+            if (noise != null)
+                return noise;
+
+            noise = Undo.AddComponent<CinemachineBasicMultiChannelPerlin>(
+                camera.gameObject
+            );
+            Undo.RecordObject(noise, "Configure Cinemachine Noise");
+            noise.enabled = false;
+            noise.AmplitudeGain = 0f;
+            noise.FrequencyGain = 1f;
+            EditorUtility.SetDirty(noise);
+
+            return noise;
         }
 
         private T EnsureComponent<T>(CinemachineCamera camera) where T : Behaviour
@@ -3207,7 +3348,7 @@ namespace Runtime.CameraSystem
             else
             {
                 EditorGUILayout.HelpBox(
-                    "主 Camera、Storyboard RT Crossfade 與 Camera Blur rig 設定正常。",
+                    "主 Camera、Storyboard RT Crossfade、Camera Blur 與 Cinemachine Noise rig 設定正常。",
                     MessageType.Info
                 );
             }

@@ -3,6 +3,7 @@ using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Splines;
 using UnityEngine.Serialization;
+using Unity.Cinemachine;
 
 public enum CameraProfileBlendMode
 {
@@ -60,9 +61,32 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
     public bool reverseMotionCutInStrength = true;
 
     [FormerlySerializedAs("directionalCurve")]
-    [Tooltip("Motion Cut 的 0~1 速度曲線。Out 使用正向取樣，In 使用反向取樣。")]
+    [Tooltip("Motion Cut 位移的 0~1 速度曲線。Out 使用正向取樣，In 使用反向取樣。")]
     public AnimationCurve motionCutCurve =
         AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    [FormerlySerializedAs("motionCutOutPanAngle")]
+    [Tooltip("Motion Cut 前後兩個 Clip 加總的 Roll 角度（度），繞攝影機 Local Z 軸旋轉。")]
+    public float motionCutRollAngle;
+
+    [FormerlySerializedAs("motionCutPanCurve")]
+    [Tooltip("Motion Cut Roll 的 0~1 速度曲線。Out 使用正向取樣，In 使用反向取樣。")]
+    public AnimationCurve motionCutRollCurve =
+        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    [Tooltip("為這個 Clip 開啟 Cinemachine 手持攝影機 Noise。")]
+    public bool enableNoise;
+
+    [Tooltip("手持晃動使用的 Cinemachine Noise Settings。開啟 Noise 時必須指定。")]
+    public NoiseSettings noiseProfile;
+
+    [Min(0f)]
+    [Tooltip("晃動幅度倍率。1 代表 Noise Profile 的原始強度。")]
+    public float noiseAmplitude = 1f;
+
+    [Min(0f)]
+    [Tooltip("晃動速度倍率。1 代表 Noise Profile 的原始速度。")]
+    public float noiseFrequency = 1f;
 
     //[Header("--- Playback Options ---")]
     [Tooltip("勾選後會以 1 - normalizedTime 取樣 Profile 曲線，等同將此 Clip 的運鏡倒轉播放。")]
@@ -156,6 +180,12 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
         behaviour.motionCutInStrength = motionCutInStrength;
         behaviour.reverseMotionCutInStrength = reverseMotionCutInStrength;
         behaviour.motionCutCurve = motionCutCurve;
+        behaviour.motionCutRollAngle = motionCutRollAngle;
+        behaviour.motionCutRollCurve = motionCutRollCurve;
+        behaviour.enableNoise = enableNoise;
+        behaviour.noiseProfile = noiseProfile;
+        behaviour.noiseAmplitude = Mathf.Max(0f, noiseAmplitude);
+        behaviour.noiseFrequency = Mathf.Max(0f, noiseFrequency);
         behaviour.reversePlayback = reversePlayback;
         behaviour.mirrorX = mirrorX;
         behaviour.mirrorY = mirrorY;
@@ -221,6 +251,13 @@ public class CameraProfileBehaviour : PlayableBehaviour
     public float motionCutInStrength = 1f;
     public bool reverseMotionCutInStrength = true;
     public AnimationCurve motionCutCurve;
+    public float motionCutRollAngle;
+    public AnimationCurve motionCutRollCurve;
+
+    public bool enableNoise;
+    public NoiseSettings noiseProfile;
+    public float noiseAmplitude = 1f;
+    public float noiseFrequency = 1f;
 
     public bool reversePlayback;
     public bool mirrorX;

@@ -108,7 +108,6 @@ public class CameraProfileMixer : PlayableBehaviour
     private Transform _blendTargetProxy;
     private StoryboardCrossFadeContext _storyboardCrossFadeContext;
     private CameraSystemMaster _activeMaster;
-    private int _reportedMotionCutFallbackInputIndex = -1;
 
     public void Initialize(
         TimelineClip[] clips,
@@ -347,7 +346,7 @@ public class CameraProfileMixer : PlayableBehaviour
             {
                 if (useMotionCut)
                 {
-                    master.ClearAllDirectionalCameraOffsets();
+                    master.ClearAllMotionCutCameraEffects();
                 }
 
                 ApplyStoryboardCrossFadeHardCutFallback(
@@ -1139,11 +1138,11 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (_storyboardCrossFadeContext.UsesMotionCut)
         {
-            master.ClearDirectionalCameraOffset(
+            master.ClearMotionCutCameraEffects(
                 _storyboardCrossFadeContext.BaseCamera
             );
-            master.ClearDirectionalCameraOffset(renderTextureCamera);
-            master.ClearDirectionalCameraOffset(handoffCamera);
+            master.ClearMotionCutCameraEffects(renderTextureCamera);
+            master.ClearMotionCutCameraEffects(handoffCamera);
         }
 
         // 這個物件在 phase None 還是 RT camera；升格後則是同一個主 camera。
@@ -1365,13 +1364,6 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (blendMode == CameraProfileBlendMode.MotionCut)
         {
-            if (outgoingInput.Kind == CameraProfileKind.Dolly ||
-                incomingInput.Kind == CameraProfileKind.Dolly)
-            {
-                ReportMotionCutDollyFallback(incomingInput.InputIndex);
-                return true;
-            }
-
             useMotionCut = true;
             return true;
         }
@@ -1379,19 +1371,6 @@ public class CameraProfileMixer : PlayableBehaviour
         return blendMode ==
                 CameraProfileBlendMode.CrossFade ||
             useCrossFadeBlur;
-    }
-
-    private void ReportMotionCutDollyFallback(int incomingInputIndex)
-    {
-        if (_reportedMotionCutFallbackInputIndex == incomingInputIndex)
-            return;
-
-        _reportedMotionCutFallbackInputIndex = incomingInputIndex;
-
-        Debug.LogWarning(
-            "[CameraProfileMixer] Motion Cut 不支援 Dolly；" +
-            "本次 overlap 退回一般 Cross Fade。"
-        );
     }
 
     private static float GetRawCrossFadeAlpha(
@@ -1442,20 +1421,20 @@ public class CameraProfileMixer : PlayableBehaviour
 
         if (!useMotionCut || incomingBehaviour == null)
         {
-            master.ClearDirectionalCameraOffset(outgoingCamera);
-            master.ClearDirectionalCameraOffset(incomingCamera);
+            master.ClearMotionCutCameraEffects(outgoingCamera);
+            master.ClearMotionCutCameraEffects(incomingCamera);
             return;
         }
 
         float alpha = Mathf.Clamp01(rawAlpha);
         AnimationCurve curve = incomingBehaviour.motionCutCurve;
 
-        float outgoingProgress = EvaluateDirectionalCurve(
+        float outgoingProgress = EvaluateMotionCutCurve(
             curve,
             Mathf.Clamp01(alpha * 2f)
         );
 
-        float incomingRemaining = EvaluateDirectionalCurve(
+        float incomingRemaining = EvaluateMotionCutCurve(
             curve,
             1f - Mathf.Clamp01((alpha - 0.5f) * 2f)
         );
@@ -1482,9 +1461,33 @@ public class CameraProfileMixer : PlayableBehaviour
             incomingCamera,
             axisVector * inStrength * incomingRemaining
         );
+
+        AnimationCurve rollCurve = incomingBehaviour.motionCutRollCurve;
+
+        float outgoingRollProgress = EvaluateMotionCutCurve(
+            rollCurve,
+            Mathf.Clamp01(alpha * 2f)
+        );
+
+        float incomingRollRemaining = EvaluateMotionCutCurve(
+            rollCurve,
+            1f - Mathf.Clamp01((alpha - 0.5f) * 2f)
+        );
+
+        float halfRollAngle = incomingBehaviour.motionCutRollAngle * 0.5f;
+
+        master.TrySetMotionCutCameraRoll(
+            outgoingCamera,
+            halfRollAngle * outgoingRollProgress
+        );
+
+        master.TrySetMotionCutCameraRoll(
+            incomingCamera,
+            -halfRollAngle * incomingRollRemaining
+        );
     }
 
-    private static float EvaluateDirectionalCurve(
+    private static float EvaluateMotionCutCurve(
         AnimationCurve curve,
         float normalizedTime)
     {
@@ -1555,13 +1558,13 @@ public class CameraProfileMixer : PlayableBehaviour
             _storyboardCrossFadeContext.Active &&
             _storyboardCrossFadeContext.UsesMotionCut)
         {
-            master.ClearDirectionalCameraOffset(
+            master.ClearMotionCutCameraEffects(
                 _storyboardCrossFadeContext.BaseCamera
             );
-            master.ClearDirectionalCameraOffset(
+            master.ClearMotionCutCameraEffects(
                 _storyboardCrossFadeContext.RenderTextureCamera
             );
-            master.ClearDirectionalCameraOffset(
+            master.ClearMotionCutCameraEffects(
                 _storyboardCrossFadeContext.HandoffCamera
             );
         }
@@ -1619,6 +1622,8 @@ public class CameraProfileMixer : PlayableBehaviour
                 ApplyBlendedTrackingProfile(camera, inputs);
                 break;
         }
+
+        ApplyBlendedNoise(camera, inputs);
     }
 
     private void ApplyBlendedGeneralProfile(
@@ -1960,6 +1965,124 @@ public class CameraProfileMixer : PlayableBehaviour
                 t
             );
         }
+
+        ApplyNoise(camera, behaviour);
+    }
+
+    private static void ApplyNoise(
+        CinemachineCamera camera,
+        CameraProfileBehaviour behaviour)
+    {
+        NoiseSettings noiseProfile = behaviour != null
+            ? behaviour.noiseProfile
+            : null;
+
+        float amplitude = behaviour != null
+            ? Mathf.Max(0f, behaviour.noiseAmplitude)
+            : 0f;
+
+        float frequency = behaviour != null
+            ? Mathf.Max(0f, behaviour.noiseFrequency)
+            : 0f;
+
+        bool shouldEnable =
+            behaviour != null &&
+            behaviour.enableNoise &&
+            noiseProfile != null &&
+            amplitude > 0f;
+
+        ApplyNoise(camera, noiseProfile, amplitude, frequency, shouldEnable);
+    }
+
+    private static void ApplyBlendedNoise(
+        CinemachineCamera camera,
+        List<CameraProfileInput> inputs)
+    {
+        if (camera == null || inputs == null || inputs.Count == 0)
+            return;
+
+        float totalWeight = GetTotalWeight(inputs);
+
+        if (totalWeight <= 0f)
+        {
+            ApplyNoise(camera, null, 0f, 0f, false);
+            return;
+        }
+
+        CameraProfileBehaviour selectedBehaviour = null;
+        float selectedWeight = -1f;
+        float amplitude = 0f;
+        float frequency = 0f;
+        float enabledNoiseWeight = 0f;
+
+        foreach (CameraProfileInput input in inputs)
+        {
+            CameraProfileBehaviour behaviour = input.Behaviour;
+
+            if (behaviour == null ||
+                !behaviour.enableNoise ||
+                behaviour.noiseProfile == null)
+            {
+                continue;
+            }
+
+            float weight = Mathf.Max(0f, input.Weight);
+            amplitude += Mathf.Max(0f, behaviour.noiseAmplitude) * weight;
+            frequency += Mathf.Max(0f, behaviour.noiseFrequency) * weight;
+            enabledNoiseWeight += weight;
+
+            if (weight > selectedWeight)
+            {
+                selectedBehaviour = behaviour;
+                selectedWeight = weight;
+            }
+        }
+
+        if (selectedBehaviour == null || enabledNoiseWeight <= 0f)
+        {
+            ApplyNoise(camera, null, 0f, 0f, false);
+            return;
+        }
+
+        amplitude /= totalWeight;
+        frequency /= enabledNoiseWeight;
+
+        ApplyNoise(
+            camera,
+            selectedBehaviour.noiseProfile,
+            amplitude,
+            frequency,
+            amplitude > 0f
+        );
+    }
+
+    private static void ApplyNoise(
+        CinemachineCamera camera,
+        NoiseSettings noiseProfile,
+        float amplitude,
+        float frequency,
+        bool shouldEnable)
+    {
+        if (camera == null)
+            return;
+
+        CinemachineBasicMultiChannelPerlin noise =
+            camera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+
+        if (noise == null)
+            return;
+
+        noise.enabled = shouldEnable;
+
+        if (!shouldEnable)
+        {
+            noise.AmplitudeGain = 0f;
+            return;
+        }
+
+        noise.NoiseProfile = noiseProfile;
+        noise.AmplitudeGain = Mathf.Max(0f, amplitude);
+        noise.FrequencyGain = Mathf.Max(0f, frequency);
     }
 
     private void ApplyGeneralProfile(
@@ -2357,7 +2480,6 @@ public class CameraProfileMixer : PlayableBehaviour
         _preparedGeneralUseB = false;
         _generalZeroDampingUntilFrame = -1;
         _lastWasBlending = false;
-        _reportedMotionCutFallbackInputIndex = -1;
         _storyboardCrossFadeContext = default;
     }
 

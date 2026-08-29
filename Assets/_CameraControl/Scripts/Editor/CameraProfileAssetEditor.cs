@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Unity.Cinemachine;
 
 [CustomEditor(typeof(CameraProfileAsset))]
 public class CameraProfileAssetEditor : Editor
@@ -19,6 +20,12 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _motionCutInStrengthProp;
     private SerializedProperty _reverseMotionCutInStrengthProp;
     private SerializedProperty _motionCutCurveProp;
+    private SerializedProperty _motionCutRollAngleProp;
+    private SerializedProperty _motionCutRollCurveProp;
+    private SerializedProperty _enableNoiseProp;
+    private SerializedProperty _noiseProfileProp;
+    private SerializedProperty _noiseAmplitudeProp;
+    private SerializedProperty _noiseFrequencyProp;
     private SerializedProperty _reversePlaybackProp;
     private SerializedProperty _mirrorXProp;
     private SerializedProperty _mirrorYProp;
@@ -51,6 +58,12 @@ public class CameraProfileAssetEditor : Editor
         _motionCutInStrengthProp = serializedObject.FindProperty("motionCutInStrength");
         _reverseMotionCutInStrengthProp = serializedObject.FindProperty("reverseMotionCutInStrength");
         _motionCutCurveProp = serializedObject.FindProperty("motionCutCurve");
+        _motionCutRollAngleProp = serializedObject.FindProperty("motionCutRollAngle");
+        _motionCutRollCurveProp = serializedObject.FindProperty("motionCutRollCurve");
+        _enableNoiseProp = serializedObject.FindProperty("enableNoise");
+        _noiseProfileProp = serializedObject.FindProperty("noiseProfile");
+        _noiseAmplitudeProp = serializedObject.FindProperty("noiseAmplitude");
+        _noiseFrequencyProp = serializedObject.FindProperty("noiseFrequency");
         _reversePlaybackProp = serializedObject.FindProperty("reversePlayback");
         _mirrorXProp = serializedObject.FindProperty("mirrorX");
         _mirrorYProp = serializedObject.FindProperty("mirrorY");
@@ -116,7 +129,7 @@ public class CameraProfileAssetEditor : Editor
             else if (_blendModeProp.enumValueIndex ==
                 (int)CameraProfileBlendMode.MotionCut)
             {
-                DrawMotionCutSettings(currentProfile);
+                DrawMotionCutSettings();
             }
         }
 
@@ -142,10 +155,68 @@ public class CameraProfileAssetEditor : Editor
             DrawDollyBiasSettings();
         }
 
+        DrawNoiseSettings();
+
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void DrawMotionCutSettings(CameraProfileSO currentProfile)
+    private void DrawNoiseSettings()
+    {
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Handheld Noise", EditorStyles.boldLabel);
+
+        EditorGUI.indentLevel++;
+        EditorGUILayout.PropertyField(
+            _enableNoiseProp,
+            new GUIContent("Enable Noise")
+        );
+
+        if (_enableNoiseProp != null && _enableNoiseProp.boolValue)
+        {
+            DrawNoiseProfileField();
+            EditorGUILayout.PropertyField(
+                _noiseAmplitudeProp,
+                new GUIContent("Amplitude")
+            );
+            EditorGUILayout.PropertyField(
+                _noiseFrequencyProp,
+                new GUIContent("Frequency")
+            );
+
+            if (_noiseProfileProp == null ||
+                _noiseProfileProp.objectReferenceValue == null)
+            {
+                EditorGUILayout.HelpBox(
+                    "請指定 Noise Profile，否則不會產生手持晃動。",
+                    MessageType.Warning
+                );
+            }
+        }
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawNoiseProfileField()
+    {
+        if (_noiseProfileProp == null)
+            return;
+
+        EditorGUI.BeginChangeCheck();
+
+        NoiseSettings selectedProfile = EditorGUILayout.ObjectField(
+            new GUIContent("Noise Profile"),
+            _noiseProfileProp.objectReferenceValue as NoiseSettings,
+            typeof(NoiseSettings),
+            false
+        ) as NoiseSettings;
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            _noiseProfileProp.objectReferenceValue = selectedProfile;
+        }
+    }
+
+    private void DrawMotionCutSettings()
     {
         EditorGUILayout.Space(4);
         EditorGUILayout.LabelField(
@@ -154,6 +225,8 @@ public class CameraProfileAssetEditor : Editor
         );
 
         EditorGUI.indentLevel++;
+
+        EditorGUILayout.LabelField("Position", EditorStyles.miniBoldLabel);
 
         if (_motionCutAxisProp != null)
         {
@@ -191,26 +264,30 @@ public class CameraProfileAssetEditor : Editor
         {
             EditorGUILayout.PropertyField(
                 _motionCutCurveProp,
-                new GUIContent("Motion Curve")
+                new GUIContent("Position Curve")
+            );
+        }
+
+        EditorGUILayout.Space(4);
+        EditorGUILayout.LabelField("Roll", EditorStyles.miniBoldLabel);
+
+        if (_motionCutRollAngleProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _motionCutRollAngleProp,
+                new GUIContent("Roll Angle")
+            );
+        }
+
+        if (_motionCutRollCurveProp != null)
+        {
+            EditorGUILayout.PropertyField(
+                _motionCutRollCurveProp,
+                new GUIContent("Roll Curve")
             );
         }
 
         EditorGUI.indentLevel--;
-
-        if (currentProfile is DollyProfileSO)
-        {
-            EditorGUILayout.HelpBox(
-                "Motion Cut 不支援 Dolly。任一端為 Dolly 時，Runtime 會退回一般 Cross Fade。",
-                MessageType.Error
-            );
-        }
-        else
-        {
-            EditorGUILayout.HelpBox(
-                "若前一個 Clip 是 Dolly，這個轉場同樣會退回一般 Cross Fade。",
-                MessageType.None
-            );
-        }
     }
 
     private void DrawGeneralBiasSettings()
