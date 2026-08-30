@@ -16,6 +16,8 @@ public class UnifiedStageTemplate : ScriptableObject
     [Range(0f, 100f), Tooltip("光束邊緣柔和度。Volumetric 模式對應 Side Softness，Spot 模式對應 Inner Spot Angle")]
     public float softness = 0f;
     [Tooltip("開啟散射模式")] public bool enableScatterMode = false;
+    [Tooltip("散射模式使用的 Cookie 貼圖，會同時套用到 Volumetric Cookie HD 與 Light Component")]
+    public Texture2D scatterTexture;
 
     [Header("燈光感應設定")]
     [Tooltip("燈光漸變")] public Gradient lightGradient;

@@ -146,7 +146,15 @@ public class UnifiedStageClipInspector : Editor
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("softness"));
 
                 if (lightMode == StageLightMode.VolumetricSpot || lightMode == StageLightMode.Spot)
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty("enableScatterMode"));
+                {
+                    SerializedProperty scatterModeProp = serializedObject.FindProperty("enableScatterMode");
+                    EditorGUILayout.PropertyField(scatterModeProp);
+                    if (scatterModeProp.boolValue)
+                    {
+                        using (new EditorGUI.IndentLevelScope())
+                            EditorGUILayout.PropertyField(serializedObject.FindProperty("scatterTexture"));
+                    }
+                }
 
             }
         }
@@ -453,6 +461,7 @@ public class UnifiedStageClipInspector : Editor
         template.beamAngle = clip.beamAngle;
         template.softness = clip.softness;
         template.enableScatterMode = clip.enableScatterMode;
+        template.scatterTexture = clip.scatterTexture;
         template.colorSampleMode = clip.colorSampleMode;
         template.bpm = clip.bpm;
         template.beatTimeRef = clip.beatTimeRef;

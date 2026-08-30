@@ -109,7 +109,7 @@ public class UnifiedStageController : MonoBehaviour
     public void UpdateStage(
         List<ActiveClipInfo> clips, float[] spec, bool isTimeJump,
         float mixedInten, float mixedBeamAngle, float mixedLightRange, float mixedSoftness,
-        bool activeScatter, StageLightMode activeLightMode,
+        bool activeScatter, Texture2D activeScatterTexture, StageLightMode activeLightMode,
         float totalMotionWeight, float weightedEffectiveTime,
         bool freezeJustActivated, float rootTime)
     {
@@ -506,9 +506,7 @@ public class UnifiedStageController : MonoBehaviour
                 {
                     var laserMeshVlb = unit.targetLight.GetComponent<VLB.VolumetricLightBeamHD>();
                     ApplyLightMode(unit, laserMeshVlb, activeLightMode);
-
-                    var laserMeshCookie = unit.targetLight.GetComponent<VLB.VolumetricCookieHD>();
-                    if (laserMeshCookie != null) laserMeshCookie.enabled = false;
+                    ApplyScatterCookie(unit.targetLight, false, null);
 
                     continue;
                 }
@@ -567,10 +565,27 @@ public class UnifiedStageController : MonoBehaviour
                         vlb.UpdateAfterManualPropertyChange();
                 }
 
-                var cookie = unit.targetLight.GetComponent<VLB.VolumetricCookieHD>();
-                if (cookie != null) cookie.enabled = activeScatter && activeLightMode != StageLightMode.LaserMesh && activeLightMode != StageLightMode.FannedLaser;
+                bool useScatter = activeScatter &&
+                                  (activeLightMode == StageLightMode.VolumetricSpot || activeLightMode == StageLightMode.Spot);
+                ApplyScatterCookie(unit.targetLight, useScatter, activeScatterTexture);
             }
         }
+    }
+
+    private static void ApplyScatterCookie(Light targetLight, bool enabled, Texture2D scatterTexture)
+    {
+        if (targetLight == null)
+            return;
+
+        Texture2D appliedTexture = enabled ? scatterTexture : null;
+        targetLight.cookie = appliedTexture;
+
+        var volumetricCookie = targetLight.GetComponent<VLB.VolumetricCookieHD>();
+        if (volumetricCookie == null)
+            return;
+
+        volumetricCookie.cookieTexture = appliedTexture;
+        volumetricCookie.enabled = enabled;
     }
 
     private void ApplyLaserMeshRenderers(SLMUnit unit, bool active, Color color, float softness, float lightRange)

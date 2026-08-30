@@ -18,6 +18,7 @@ public struct ActiveClipInfo
     public float normalizedClipTime;  // clip 內的正規化時間 (0~1)
     public Transform target;
     public bool scatterMode;
+    public Texture2D scatterTexture;
     public float intensity;
     public float sensitivity;
     public float smoothness;

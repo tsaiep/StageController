@@ -15,6 +15,7 @@ public class UnifiedStageBehaviour : PlayableBehaviour
     [Range(0f, 100f), Tooltip("光束邊緣柔和度。Volumetric 模式對應 Side Softness，Spot 模式對應 Inner Spot Angle")]
     public float softness = 0f;
     [Tooltip("散射模式")] public bool scatterMode;
+    [Tooltip("散射模式使用的 Cookie 貼圖")] public Texture2D scatterTexture;
     public UnifiedStageController.RotationMode clipMode;
     [Tooltip("旋轉速度")] public float rotationSpeed;
     [Tooltip("旋轉幅度")] public float rotationRange;

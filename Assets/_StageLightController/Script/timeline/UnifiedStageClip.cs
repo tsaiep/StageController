@@ -56,6 +56,8 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
     [Range(0f, 100f), Tooltip("光束邊緣柔和度。Volumetric 模式對應 Side Softness，Spot 模式對應 Inner Spot Angle")]
     public float softness = 0f;
     [Tooltip("開啟散射模式")] public bool enableScatterMode = false;
+    [Tooltip("散射模式使用的 Cookie 貼圖，會同時套用到 Volumetric Cookie HD 與 Light Component")]
+    public Texture2D scatterTexture;
 
     [Header("旋轉動作設定")]
     [Tooltip("旋轉模式")] public UnifiedStageController.RotationMode rotationMode;
@@ -217,6 +219,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
             beamAngle              = template.beamAngle;
             softness               = template.softness;
             enableScatterMode      = template.enableScatterMode;
+            scatterTexture         = template.scatterTexture;
         }
 
         clipDisplayName = template.name;
@@ -283,6 +286,7 @@ public class UnifiedStageClip : PlayableAsset, ITimelineClipAsset
         behaviour.lightRange            = lightRange;
         behaviour.softness              = softness;
         behaviour.scatterMode           = enableScatterMode;
+        behaviour.scatterTexture        = scatterTexture;
         behaviour.clipMode              = rotationMode;
         behaviour.rotationSpeed         = rotationSpeed;
         behaviour.rotationRange         = rotationRange;

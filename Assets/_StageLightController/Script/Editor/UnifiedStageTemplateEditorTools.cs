@@ -21,7 +21,28 @@ public class UnifiedStageTemplateEditor : Editor
         UnifiedStageTemplateEditorTools.DrawTemplateTags(template, tagsProp);
 
         EditorGUILayout.Space(6);
-        DrawPropertiesExcluding(serializedObject, "m_Script", "tags");
+        SerializedProperty property = serializedObject.GetIterator();
+        bool enterChildren = true;
+        while (property.NextVisible(enterChildren))
+        {
+            enterChildren = false;
+
+            if (property.propertyPath == "m_Script" || property.propertyPath == "tags")
+                continue;
+
+            if (property.propertyPath == "scatterTexture")
+            {
+                SerializedProperty lightModeProp = serializedObject.FindProperty("lightMode");
+                SerializedProperty scatterModeProp = serializedObject.FindProperty("enableScatterMode");
+                var lightMode = (UnifiedStageController.StageLightMode)lightModeProp.enumValueIndex;
+                bool supportsScatter = lightMode == UnifiedStageController.StageLightMode.VolumetricSpot ||
+                                       lightMode == UnifiedStageController.StageLightMode.Spot;
+                if (!supportsScatter || !scatterModeProp.boolValue)
+                    continue;
+            }
+
+            EditorGUILayout.PropertyField(property, true);
+        }
 
         serializedObject.ApplyModifiedProperties();
     }
