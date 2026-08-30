@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine.Rendering.Universal;
 using Object = UnityEngine.Object;
 #endif
 
@@ -43,7 +44,7 @@ namespace Runtime.CameraSystem
         [Tooltip("crossFadeRenderCamera 上的 CinemachineBrain。建議 Channel Mask 設為 Channel01。")]
         public CinemachineBrain crossFadeRenderBrain;
 
-        [Tooltip("可手動指定 RenderTexture。若留空，Play Mode 會依照畫面大小自動建立並釋放。")]
+        [Tooltip("可手動指定 Linear HDR RenderTexture。若留空，Play Mode 會依照畫面大小、URP HDR 精度與 MSAA 設定自動建立並釋放。LDR RT 會截斷 Bloom/ACES 所需的 HDR 亮度。")]
         public RenderTexture crossFadeRenderTexture;
 
         [Tooltip("離屏 cross fade vcams 使用的 Cinemachine Output Channel。Main Camera Brain 應排除此 channel。")]
@@ -84,9 +85,12 @@ namespace Runtime.CameraSystem
         private RenderTexture _ownedCrossFadeRenderTexture;
         private int _ownedCrossFadeRenderTextureWidth;
         private int _ownedCrossFadeRenderTextureHeight;
+        private GraphicsFormat _ownedCrossFadeRenderTextureFormat;
+        private int _ownedCrossFadeRenderTextureMsaaSamples;
         private bool _hasLoggedCrossFadeChannelWarning;
         private bool _hasLoggedInvalidCrossFadeRig;
         private bool _hasLoggedInvalidCrossFadeBlurSetup;
+        private bool _hasLoggedInvalidCrossFadeTextureFormat;
         private CinemachineBrain _crossFadeOverrideBrain;
         private int _crossFadeCameraOverrideId = -1;
         private bool _isEditorCrossFadePreviewActive;
@@ -1057,7 +1061,28 @@ namespace Runtime.CameraSystem
         private RenderTexture GetOrCreateCrossFadeRenderTexture()
         {
             if (crossFadeRenderTexture != null)
-                return crossFadeRenderTexture;
+            {
+                if (IsCrossFadeHdrRenderTexture(crossFadeRenderTexture))
+                {
+                    _hasLoggedInvalidCrossFadeTextureFormat = false;
+                    return crossFadeRenderTexture;
+                }
+
+                if (!_hasLoggedInvalidCrossFadeTextureFormat)
+                {
+                    Debug.LogWarning(
+                        $"[{nameof(CameraSystemMaster)}] 指定的 Cross Fade RenderTexture " +
+                        $"({crossFadeRenderTexture.name}, {crossFadeRenderTexture.graphicsFormat}) 不是 Linear HDR 格式；" +
+                        "它會在 Bloom/ACES 前截斷 HDR 亮度。本次改用系統自動建立的 HDR RenderTexture。",
+                        crossFadeRenderTexture
+                    );
+                    _hasLoggedInvalidCrossFadeTextureFormat = true;
+                }
+            }
+            else
+            {
+                _hasLoggedInvalidCrossFadeTextureFormat = false;
+            }
 
             int width = fallbackCrossFadeTextureWidth;
             int height = fallbackCrossFadeTextureHeight;
@@ -1068,30 +1093,169 @@ namespace Runtime.CameraSystem
                 height = Mathf.Max(16, Screen.height);
             }
 
+            GraphicsFormat graphicsFormat = GetSupportedCrossFadeHdrGraphicsFormat();
+
+            if (graphicsFormat == GraphicsFormat.None)
+                return null;
+
+            int msaaSamples = GetSupportedCrossFadeMsaaSamples(graphicsFormat);
+
             if (_ownedCrossFadeRenderTexture != null &&
                 _ownedCrossFadeRenderTextureWidth == width &&
-                _ownedCrossFadeRenderTextureHeight == height)
+                _ownedCrossFadeRenderTextureHeight == height &&
+                _ownedCrossFadeRenderTextureFormat == graphicsFormat &&
+                _ownedCrossFadeRenderTextureMsaaSamples == msaaSamples &&
+                _ownedCrossFadeRenderTexture.IsCreated())
             {
                 return _ownedCrossFadeRenderTexture;
             }
 
             ReleaseOwnedCrossFadeRenderTexture();
 
-            _ownedCrossFadeRenderTexture = new RenderTexture(
+            RenderTextureDescriptor descriptor = new RenderTextureDescriptor(
                 width,
-                height,
-                24,
-                RenderTextureFormat.Default
+                height
             )
             {
-                name = "CameraProfileCrossFadeRT"
+                graphicsFormat = graphicsFormat,
+                depthStencilFormat = SystemInfo.GetGraphicsFormat(
+                    DefaultFormat.DepthStencil
+                ),
+                msaaSamples = msaaSamples,
+                volumeDepth = 1,
+                dimension = TextureDimension.Tex2D,
+                sRGB = false,
+                useMipMap = false,
+                autoGenerateMips = false,
+                enableRandomWrite = false,
+                bindMS = false,
+                useDynamicScale = false
             };
 
-            _ownedCrossFadeRenderTexture.Create();
+            _ownedCrossFadeRenderTexture = new RenderTexture(descriptor)
+            {
+                name = "CameraProfileCrossFadeRT_HDR",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
+
+            if (!_ownedCrossFadeRenderTexture.Create())
+            {
+                ReleaseOwnedCrossFadeRenderTexture();
+                return null;
+            }
+
             _ownedCrossFadeRenderTextureWidth = width;
             _ownedCrossFadeRenderTextureHeight = height;
+            _ownedCrossFadeRenderTextureFormat = graphicsFormat;
+            _ownedCrossFadeRenderTextureMsaaSamples = msaaSamples;
 
             return _ownedCrossFadeRenderTexture;
+        }
+
+        private static GraphicsFormat GetSupportedCrossFadeHdrGraphicsFormat()
+        {
+            UniversalRenderPipelineAsset pipelineAsset = GetActiveUrpAsset();
+            bool request64Bits = pipelineAsset != null &&
+                pipelineAsset.hdrColorBufferPrecision ==
+                    HDRColorBufferPrecision._64Bits;
+
+            if (!request64Bits && IsCrossFadeHdrFormatSupported(
+                GraphicsFormat.B10G11R11_UFloatPack32))
+            {
+                return GraphicsFormat.B10G11R11_UFloatPack32;
+            }
+
+            if (IsCrossFadeHdrFormatSupported(
+                GraphicsFormat.R16G16B16A16_SFloat))
+            {
+                return GraphicsFormat.R16G16B16A16_SFloat;
+            }
+
+            GraphicsFormat fallback = SystemInfo.GetGraphicsFormat(
+                DefaultFormat.HDR
+            );
+
+            return IsCrossFadeHdrGraphicsFormat(fallback) &&
+                IsCrossFadeHdrFormatSupported(fallback)
+                    ? fallback
+                    : GraphicsFormat.None;
+        }
+
+        private static UniversalRenderPipelineAsset GetActiveUrpAsset()
+        {
+            UniversalRenderPipelineAsset pipelineAsset =
+                QualitySettings.renderPipeline as UniversalRenderPipelineAsset;
+
+            if (pipelineAsset == null)
+            {
+                pipelineAsset = GraphicsSettings.defaultRenderPipeline as
+                    UniversalRenderPipelineAsset;
+            }
+
+            return pipelineAsset;
+        }
+
+        private static bool IsCrossFadeHdrRenderTexture(RenderTexture texture)
+        {
+            return texture != null &&
+                texture.dimension == TextureDimension.Tex2D &&
+                IsCrossFadeHdrGraphicsFormat(texture.graphicsFormat) &&
+                IsCrossFadeHdrFormatSupported(texture.graphicsFormat);
+        }
+
+        private static bool IsCrossFadeHdrGraphicsFormat(GraphicsFormat format)
+        {
+            return format == GraphicsFormat.B10G11R11_UFloatPack32 ||
+                GraphicsFormatUtility.IsHalfFormat(format) ||
+                GraphicsFormatUtility.IsFloatFormat(format);
+        }
+
+        private static bool IsCrossFadeHdrFormatSupported(GraphicsFormat format)
+        {
+            return SystemInfo.IsFormatSupported(
+                    format,
+                    GraphicsFormatUsage.Render) &&
+                SystemInfo.IsFormatSupported(
+                    format,
+                    GraphicsFormatUsage.Blend) &&
+                SystemInfo.IsFormatSupported(
+                    format,
+                    GraphicsFormatUsage.Sample);
+        }
+
+        private static int GetSupportedCrossFadeMsaaSamples(
+            GraphicsFormat graphicsFormat)
+        {
+            UniversalRenderPipelineAsset pipelineAsset = GetActiveUrpAsset();
+            int requestedSamples = pipelineAsset != null
+                ? Mathf.Max(1, pipelineAsset.msaaSampleCount)
+                : 1;
+
+            int samples = requestedSamples >= 8
+                ? 8
+                : requestedSamples >= 4
+                    ? 4
+                    : requestedSamples >= 2
+                        ? 2
+                        : 1;
+
+            while (samples > 1)
+            {
+                GraphicsFormatUsage usage = samples switch
+                {
+                    8 => GraphicsFormatUsage.MSAA8x,
+                    4 => GraphicsFormatUsage.MSAA4x,
+                    _ => GraphicsFormatUsage.MSAA2x
+                };
+
+                if (SystemInfo.IsFormatSupported(graphicsFormat, usage))
+                    return samples;
+
+                samples /= 2;
+            }
+
+            return 1;
         }
 
         private void ReleaseOwnedCrossFadeRenderTexture()
@@ -1119,6 +1283,8 @@ namespace Runtime.CameraSystem
             _ownedCrossFadeRenderTexture = null;
             _ownedCrossFadeRenderTextureWidth = 0;
             _ownedCrossFadeRenderTextureHeight = 0;
+            _ownedCrossFadeRenderTextureFormat = GraphicsFormat.None;
+            _ownedCrossFadeRenderTextureMsaaSamples = 0;
         }
 
         private void WarnIfCrossFadeChannelCanDriveMainBrain()
@@ -1921,6 +2087,18 @@ namespace Runtime.CameraSystem
                     crossFadeRenderCamera
                 ));
             }
+            else if (mainAdditionalData != null &&
+                crossFadeAdditionalData != null &&
+                !HasMatchingAdditionalCameraData(
+                    mainOutputCamera,
+                    crossFadeRenderCamera))
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Warning,
+                    "Cross Fade Render Camera 的 URP Renderer、Volume、Post Processing、HDR Output 或 AA 設定與 MainCamera 不一致。建議按自動修復重新同步。",
+                    crossFadeRenderCamera
+                ));
+            }
 
             ValidateCrossFadeBlurSetup(mainOutputCamera, issues);
 
@@ -2063,6 +2241,33 @@ namespace Runtime.CameraSystem
 
         private void ValidateCrossFadeRenderCamera(List<DebugIssue> issues)
         {
+            if (crossFadeRenderTexture != null)
+            {
+                if (!IsCrossFadeHdrRenderTexture(crossFadeRenderTexture))
+                {
+                    issues.Add(new DebugIssue(
+                        DebugSeverity.Warning,
+                        $"指定的 Cross Fade RenderTexture ({crossFadeRenderTexture.name}) 必須是目前平台支援的 Linear HDR 2D 格式；目前為 {crossFadeRenderTexture.graphicsFormat}。Runtime 將忽略它並自動建立 HDR RT。",
+                        crossFadeRenderTexture
+                    ));
+                }
+                else
+                {
+                    int expectedMsaa = GetSupportedCrossFadeMsaaSamples(
+                        crossFadeRenderTexture.graphicsFormat
+                    );
+
+                    if (crossFadeRenderTexture.antiAliasing != expectedMsaa)
+                    {
+                        issues.Add(new DebugIssue(
+                            DebugSeverity.Warning,
+                            $"Cross Fade RenderTexture 的 MSAA 為 {crossFadeRenderTexture.antiAliasing}x，目前 URP/平台建議為 {expectedMsaa}x。這不會破壞 HDR，但幾何邊緣可能與 MainCamera 略有差異。",
+                            crossFadeRenderTexture
+                        ));
+                    }
+                }
+            }
+
             if (!crossFadeRenderCamera.gameObject.activeInHierarchy)
             {
                 issues.Add(new DebugIssue(
@@ -2282,6 +2487,36 @@ namespace Runtime.CameraSystem
                 source.allowHDR == target.allowHDR &&
                 source.allowMSAA == target.allowMSAA &&
                 source.useOcclusionCulling == target.useOcclusionCulling;
+        }
+
+        private static bool HasMatchingAdditionalCameraData(
+            Camera sourceCamera,
+            Camera targetCamera)
+        {
+            if (sourceCamera == null || targetCamera == null)
+                return false;
+
+            UniversalAdditionalCameraData source =
+                sourceCamera.GetComponent<UniversalAdditionalCameraData>();
+            UniversalAdditionalCameraData target =
+                targetCamera.GetComponent<UniversalAdditionalCameraData>();
+
+            if (source == null || target == null)
+                return source == target;
+
+            return source.renderShadows == target.renderShadows &&
+                source.requiresDepthOption == target.requiresDepthOption &&
+                source.requiresColorOption == target.requiresColorOption &&
+                source.renderType == target.renderType &&
+                source.scriptableRenderer == target.scriptableRenderer &&
+                source.volumeLayerMask == target.volumeLayerMask &&
+                source.volumeTrigger == target.volumeTrigger &&
+                source.renderPostProcessing == target.renderPostProcessing &&
+                source.antialiasing == target.antialiasing &&
+                source.antialiasingQuality == target.antialiasingQuality &&
+                source.stopNaN == target.stopNaN &&
+                source.dithering == target.dithering &&
+                source.allowHDROutput == target.allowHDROutput;
         }
 
         private static Component GetAdditionalCameraData(Camera camera)

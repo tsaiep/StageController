@@ -35,7 +35,11 @@ Edit Mode 預覽不交換 camera 引用。每次 Timeline 評估都直接更新�
 
 完成後可按「檢查設定」查看詳細問題。Inspector 上方也會顯示目前錯誤與警告數量。
 
-若 `Render Texture (Optional)` 留空，系統會依 Game View 尺寸動態建立 RenderTexture，並在 crossfade 結束後釋放。
+若 `Render Texture (Optional)` 留空，系統會依 Game View 尺寸、目前 URP HDR Color Buffer Precision 與平台支援的 MSAA 動態建立 Linear HDR RenderTexture，並在 crossfade 結束後釋放。PC 64-bit HDR precision 優先使用 `R16G16B16A16_SFloat`；32-bit HDR precision 優先使用 `B10G11R11_UFloatPack32`，不支援時再使用平台 HDR fallback。
+
+不可使用 `RenderTextureFormat.Default`、ARGB32 或其他 LDR target。URP 會把 Camera 的外部 target texture format 當作內部 color buffer format；LDR RT 會在 Bloom 與 Tonemapping 前截斷大於 1 的 HDR 亮度，造成 Bloom 消失、ACES/Neutral 亮部偏暗以及 runtime handoff 色跳。若指定的 RT 不是目前平台支援的 Linear HDR 2D 格式，runtime 會警告並改用自動建立的 HDR RT。
+
+專案提供 `Assets/_CameraControl/RenderTextures/RT_StoryboardCrossFade_HDR_Reference.renderTexture` 作為 PC 固定解析度參照：1920×1080、`R16G16B16A16_SFloat`、Linear、Depth 24/Stencil 8、8x MSAA、Bilinear、Clamp、無 mipmap。正式使用仍建議讓欄位留空，以便系統依 Game View、Quality Level 與硬體能力自動配置。
 
 ## Timeline 設定與預覽
 
@@ -78,6 +82,8 @@ CameraSystemMaster
   Cross Fade Tracking Camera = transition Tracking camera
   Cross Fade Dolly Camera = transition Dolly camera
   Cross Fade Storyboard Camera = CrossFade Storyboard Camera
+  Render Texture = 留空（推薦，自動建立 HDR RT）
+    或 RT_StoryboardCrossFade_HDR_Reference（PC 1920×1080 對照用）
 
 Incoming Cross Fade Blur Clip
   Blur Max Intensity = 1
