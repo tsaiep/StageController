@@ -1857,6 +1857,17 @@ namespace Runtime.CameraSystem
                 ));
             }
 
+            if (mainBrain.DefaultBlend.Style !=
+                    CinemachineBlendDefinition.Styles.Cut ||
+                !Mathf.Approximately(mainBrain.DefaultBlend.Time, 0f))
+            {
+                issues.Add(new DebugIssue(
+                    DebugSeverity.Error,
+                    $"MainCamera Brain ({mainBrain.name}) 的 Default Blend 必須為 Cut / 0，確保沒有 overlap 的 Camera Profile Clip 會瞬間切換。",
+                    mainBrain
+                ));
+            }
+
             if (crossFadeRenderCamera == mainOutputCamera ||
                 crossFadeRenderBrain == mainBrain)
             {
@@ -2408,6 +2419,10 @@ namespace Runtime.CameraSystem
 
             Undo.RecordObject(mainBrain, "Configure Main Camera Brain");
             mainBrain.enabled = true;
+            mainBrain.DefaultBlend = new CinemachineBlendDefinition(
+                CinemachineBlendDefinition.Styles.Cut,
+                0f
+            );
 
             EnsureUniversalAdditionalCameraData(mainCamera);
             mainCameraBlurState = EnsureCameraBlurState(mainCamera);
