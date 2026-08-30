@@ -286,7 +286,7 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
         get
         {
             return useFixedPlaybackSpeed
-                ? ClipCaps.Blending | ClipCaps.Extrapolation
+                ? ClipCaps.Blending | ClipCaps.Extrapolation | ClipCaps.ClipIn
                 : ClipCaps.Blending;
         }
     }

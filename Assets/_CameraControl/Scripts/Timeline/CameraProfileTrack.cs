@@ -506,7 +506,13 @@ public class CameraProfileMixer : PlayableBehaviour
             dominantInputIndex < _clips.Length &&
             _clips[dominantInputIndex] != null)
         {
-            return _clips[dominantInputIndex].start + dominantLocalTime;
+            TimelineClip clip = _clips[dominantInputIndex];
+
+            // Timeline 將 Playable local time 定義為：
+            // (timelineTime - clip.start) * timeScale + clipIn。
+            // 反算時必須扣掉 clipIn，否則左側 trim 後會讓 General prewarm 提早觸發。
+            return clip.start +
+                   ((dominantLocalTime - clip.clipIn) / clip.timeScale);
         }
 
         return playable.GetTime();
@@ -537,9 +543,22 @@ public class CameraProfileMixer : PlayableBehaviour
             : normalizedTime;
     }
 
-    private static float GetStartSampleTime(CameraProfileBehaviour behaviour)
+    private static float GetClipStartSampleTime(
+        TimelineClip clip,
+        CameraProfileBehaviour behaviour)
     {
-        return IsReversePlayback(behaviour) ? 1f : 0f;
+        float normalizedTime = 0f;
+
+        if (clip != null && UseFixedPlaybackSpeed(behaviour))
+        {
+            normalizedTime = Mathf.Clamp01(
+                (float)clip.clipIn * GetFixedPlaybackSpeed(behaviour)
+            );
+        }
+
+        return IsReversePlayback(behaviour)
+            ? 1f - normalizedTime
+            : normalizedTime;
     }
 
     private static bool IsReversePlayback(CameraProfileBehaviour behaviour)
@@ -671,7 +690,7 @@ public class CameraProfileMixer : PlayableBehaviour
             nextGeneralProfile,
             nextTarget,
             nextBehaviour,
-            GetStartSampleTime(nextBehaviour),
+            GetClipStartSampleTime(nextClip, nextBehaviour),
             true
         );
 
