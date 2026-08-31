@@ -313,9 +313,8 @@ public class CameraProfileMixer : PlayableBehaviour
 
             if (useCrossFadeBlur)
             {
-                float outgoingBlurWeight = Mathf.Clamp01(
-                    rawCrossFadeAlpha
-                );
+                float outgoingBlurWeight =
+                    CalculateCrossFadeBlurWeight(rawCrossFadeAlpha);
                 float incomingBlurWeight = 1f - outgoingBlurWeight;
                 float maxBlurIntensity = Mathf.Clamp(
                     incomingCrossFadeInput.Behaviour
@@ -1446,6 +1445,12 @@ public class CameraProfileMixer : PlayableBehaviour
 
         float hold = timing * 0.5f;
         return Mathf.InverseLerp(hold, 1f - hold, alpha);
+    }
+
+    internal static float CalculateCrossFadeBlurWeight(float rawAlpha)
+    {
+        float alpha = Mathf.Clamp01(rawAlpha);
+        return alpha * alpha * (3f - 2f * alpha);
     }
 
     internal static float CalculateMotionCutDisplayAlpha(float rawAlpha)
