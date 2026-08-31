@@ -297,9 +297,7 @@ namespace Runtime.CameraSystem
         }
 
         /// <summary>
-        /// 將同一個 blur intensity 套到主輸出與離屏輸出。兩張畫面
-        /// 使用相同 kernel，經 Storyboard alpha 合成後才會像整體畫面一起模糊。
-        /// Blur rig 缺失時只停用模糊，不影響既有 Cross Fade。
+        /// 相容舊呼叫：將同一組 blur 參數套到主輸出與離屏輸出。
         /// </summary>
         public bool TrySetCrossFadeBlurIntensity(float intensity)
         {
@@ -317,13 +315,42 @@ namespace Runtime.CameraSystem
             float intensity,
             float blendWeight)
         {
-            intensity = Mathf.Max(0f, intensity);
-            blendWeight = Mathf.Clamp01(blendWeight);
+            return TrySetCrossFadeBlur(
+                intensity,
+                blendWeight,
+                intensity,
+                blendWeight
+            );
+        }
+
+        /// <summary>
+        /// 分別設定主輸出（Outgoing）與離屏 RT（Incoming）的 blur。
+        /// 任一側為零時會立即 Clear 該 CameraBlurState，避免 seek、handoff
+        /// 或 overlap 端點沿用上一幀的模糊值。
+        /// </summary>
+        public bool TrySetCrossFadeBlur(
+            float outgoingIntensity,
+            float outgoingBlendWeight,
+            float incomingIntensity,
+            float incomingBlendWeight)
+        {
+            outgoingIntensity = Mathf.Max(0f, outgoingIntensity);
+            outgoingBlendWeight = Mathf.Clamp01(outgoingBlendWeight);
+            incomingIntensity = Mathf.Max(0f, incomingIntensity);
+            incomingBlendWeight = Mathf.Clamp01(incomingBlendWeight);
 
             ResolveCameraBlurStates();
 
-            if (intensity <= CameraBlurPass.MinimumIntensity ||
-                blendWeight <= CameraBlurPass.MinimumIntensity)
+            bool outgoingActive = IsCrossFadeBlurActive(
+                outgoingIntensity,
+                outgoingBlendWeight
+            );
+            bool incomingActive = IsCrossFadeBlurActive(
+                incomingIntensity,
+                incomingBlendWeight
+            );
+
+            if (!outgoingActive && !incomingActive)
             {
                 ClearCrossFadeBlur();
                 return true;
@@ -348,10 +375,37 @@ namespace Runtime.CameraSystem
                 return false;
             }
 
-            mainCameraBlurState.SetBlur(intensity, blendWeight);
-            crossFadeRenderBlurState.SetBlur(intensity, blendWeight);
+            SetOrClearCrossFadeBlur(
+                mainCameraBlurState,
+                outgoingIntensity,
+                outgoingBlendWeight
+            );
+            SetOrClearCrossFadeBlur(
+                crossFadeRenderBlurState,
+                incomingIntensity,
+                incomingBlendWeight
+            );
             _hasLoggedInvalidCrossFadeBlurSetup = false;
             return true;
+        }
+
+        private static bool IsCrossFadeBlurActive(
+            float intensity,
+            float blendWeight)
+        {
+            return intensity > CameraBlurPass.MinimumIntensity &&
+                blendWeight > CameraBlurPass.MinimumIntensity;
+        }
+
+        private static void SetOrClearCrossFadeBlur(
+            CameraBlurState state,
+            float intensity,
+            float blendWeight)
+        {
+            if (IsCrossFadeBlurActive(intensity, blendWeight))
+                state.SetBlur(intensity, blendWeight);
+            else
+                state.Clear();
         }
 
         public void ClearCrossFadeBlur()

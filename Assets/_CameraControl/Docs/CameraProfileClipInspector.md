@@ -86,7 +86,7 @@ sampleTime = Clip 內時間 / Clip 長度
 啟用固定速度時：
 
 ```text
-sampleTime = Clamp01(Clip 內秒數 × Playback Speed)
+sampleTime = Clamp01((Clip In + Clip 內經過秒數) × Playback Speed)
 Profile 完整播放秒數 = 1 / Playback Speed
 ```
 
@@ -99,9 +99,11 @@ Profile 完整播放秒數 = 1 / Playback Speed
 規則：
 
 - Inspector 最小值為 `0.001`。
+- 拖動 Clip 左側邊界會增加 `Clip In`，可裁掉 Profile 的前段；把左側邊界往回拉會先恢復被裁掉的內容。
+- 拖動 Clip 右側邊界仍然只會縮短 Clip，讓播放提早結束。
 - Clip 比完整播放時間長時，超出的部分會 Hold 在 Profile 終點。
 - Clip 比完整播放時間短時，只會播到被裁掉前的進度。
-- 同時啟用 Reverse 時，固定速度取樣完成後才套用 `1 - t`，所以 Hold 的會是反轉後的終點。
+- 同時啟用 Reverse 時，會先套用 `Clip In` 與固定速度，再套用 `1 - t`；因此左側 trim 裁掉的是畫面上反向播放的前段，Hold 的會是反轉後的終點。
 
 ### Dynamic Mirror X / Y / Z
 

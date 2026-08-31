@@ -39,7 +39,7 @@ public class CameraProfileAsset : PlayableAsset, ITimelineClipAsset
     public CameraProfileBlendMode blendMode = CameraProfileBlendMode.ParameterBlend;
 
     [Range(0f, MaxCrossFadeBlurIntensity)]
-    [Tooltip("Cross Fade Blur 在 overlap 中點使用的最大模糊強度。每個 incoming Clip 可獨立設定；1 保留原本強度。")]
+    [Tooltip("Cross Fade Blur 的最大模糊強度。Outgoing 在 overlap 中由 0 增至此值，Incoming 則由此值降至 0。每個 incoming Clip 可獨立設定。")]
     public float crossFadeBlurMaxIntensity = 1f;
 
     [Range(0f, 1f)]

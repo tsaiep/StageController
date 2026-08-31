@@ -311,20 +311,24 @@ public class CameraProfileMixer : PlayableBehaviour
                 useMotionCut ||
                 (useCrossFadeBlur && crossFadeAlphaTiming > 0f);
 
-            float crossFadeBlurWeight = useCrossFadeBlur
-                ? CalculateCrossFadeBlurWeight(rawCrossFadeAlpha)
-                : 0f;
-
             if (useCrossFadeBlur)
             {
-                master.TrySetCrossFadeBlurIntensity(
-                    crossFadeBlurWeight *
-                    Mathf.Clamp(
-                        incomingCrossFadeInput.Behaviour
-                            .crossFadeBlurMaxIntensity,
-                        0f,
-                        CameraProfileAsset.MaxCrossFadeBlurIntensity),
-                    crossFadeBlurWeight
+                float outgoingBlurWeight = Mathf.Clamp01(
+                    rawCrossFadeAlpha
+                );
+                float incomingBlurWeight = 1f - outgoingBlurWeight;
+                float maxBlurIntensity = Mathf.Clamp(
+                    incomingCrossFadeInput.Behaviour
+                        .crossFadeBlurMaxIntensity,
+                    0f,
+                    CameraProfileAsset.MaxCrossFadeBlurIntensity
+                );
+
+                master.TrySetCrossFadeBlur(
+                    outgoingBlurWeight * maxBlurIntensity,
+                    outgoingBlurWeight,
+                    incomingBlurWeight * maxBlurIntensity,
+                    incomingBlurWeight
                 );
             }
             else
@@ -1428,11 +1432,6 @@ public class CameraProfileMixer : PlayableBehaviour
         return totalWeight > 0f
             ? Mathf.Clamp01(incomingInput.Weight / totalWeight)
             : Mathf.Clamp01(incomingInput.Weight);
-    }
-
-    internal static float CalculateCrossFadeBlurWeight(float alpha)
-    {
-        return Mathf.Sin(Mathf.Clamp01(alpha) * Mathf.PI);
     }
 
     internal static float CalculateCrossFadeDisplayAlpha(
