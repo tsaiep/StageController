@@ -15,6 +15,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     [Header("References")]
     public PlayableDirector director;
     public List<VisualEffect> vfxList = new List<VisualEffect>();
+    public List<ParticleSystem> particleSystemList = new List<ParticleSystem>();
 
     [Header("Simulation")]
     public float targetFPS = 60f;
@@ -37,7 +38,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     private bool activeSession;
     private bool isSamplingTimeline;
     private bool isRebuilding;
-    private bool vfxIsResetOrHidden;
+    private bool effectsAreResetOrHidden;
 
     private float FixedStep => 1f / Mathf.Max(1f, targetFPS);
 
@@ -48,6 +49,11 @@ public class TimelineVFXScrubber : MonoBehaviour
         if (localVfx != null)
             vfxList.Add(localVfx);
 
+        particleSystemList = new List<ParticleSystem>();
+        ParticleSystem localParticleSystem = GetComponent<ParticleSystem>();
+        if (localParticleSystem != null)
+            particleSystemList.Add(localParticleSystem);
+
         directorManuallyOverridden = false;
         AutoAssignDirector();
     }
@@ -56,12 +62,13 @@ public class TimelineVFXScrubber : MonoBehaviour
     {
         EnsureReferences();
         PrepareVFXForManagedSimulation();
+        PrepareParticleSystemsForManagedSimulation();
         triggerTimelineTimes.Clear();
         activeSession = false;
         lastSimulatedTimelineTime = UninitializedTime;
 
         if (CanSimulateNow())
-            ResetOrHideVFX(GetCurrentTimelineTimeOrZero());
+            ResetOrHideManagedEffects(GetCurrentTimelineTimeOrZero());
     }
 
     private void OnValidate()
@@ -69,6 +76,7 @@ public class TimelineVFXScrubber : MonoBehaviour
         targetFPS = Mathf.Max(1f, targetFPS);
 
         EnsureVFXReferences();
+        EnsureParticleSystemReferences();
 
         ResolveDirectorReference();
         triggerTimelineTimes.Sort();
@@ -85,7 +93,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             return;
 
         EnsureReferences();
-        if (director == null)
+        if (director == null || !HasAnyManagedEffect())
             return;
 
         double signalTimelineTime = director.time;
@@ -113,8 +121,9 @@ public class TimelineVFXScrubber : MonoBehaviour
         }
 
         PrepareVFXForManagedSimulation();
-        vfxIsResetOrHidden = false;
-        SendManagedPlayEvent();
+        PrepareParticleSystemsForManagedSimulation();
+        effectsAreResetOrHidden = false;
+        TriggerManagedEffects();
     }
 
     [ContextMenu("Clear Managed Bursts")]
@@ -123,14 +132,14 @@ public class TimelineVFXScrubber : MonoBehaviour
         ClearRuntimeSession(GetCurrentTimelineTimeOrZero(), true);
     }
 
-    private void ClearRuntimeSession(double targetTimelineTime, bool resetVFX)
+    private void ClearRuntimeSession(double targetTimelineTime, bool resetEffects)
     {
         triggerTimelineTimes.Clear();
         activeSession = false;
         lastSimulatedTimelineTime = UninitializedTime;
 
-        if (resetVFX)
-            ResetOrHideVFX(targetTimelineTime);
+        if (resetEffects)
+            ResetOrHideManagedEffects(targetTimelineTime);
     }
 
     public void RebuildToCurrentTimelineTime()
@@ -155,10 +164,11 @@ public class TimelineVFXScrubber : MonoBehaviour
             return;
 
         PrepareVFXForManagedSimulation();
+        PrepareParticleSystemsForManagedSimulation();
 
         if (!activeSession)
         {
-            ResetOrHideVFX(director.time);
+            ResetOrHideManagedEffects(director.time);
             return;
         }
 
@@ -191,11 +201,11 @@ public class TimelineVFXScrubber : MonoBehaviour
         double localTime = currentTimelineTime - sessionStartTime;
         if (localTime < 0.0)
         {
-            ResetOrHideVFX(currentTimelineTime);
+            ResetOrHideManagedEffects(currentTimelineTime);
             return;
         }
 
-        if (vfxIsResetOrHidden || double.IsNaN(lastSimulatedTimelineTime))
+        if (effectsAreResetOrHidden || double.IsNaN(lastSimulatedTimelineTime))
         {
             RebuildTo(currentTimelineTime, SampleTimelinePropertiesDuringRebuild);
             return;
@@ -221,7 +231,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             return false;
 
         EnsureReferences();
-        return director != null && HasAnyVFX();
+        return director != null && HasAnyManagedEffect();
     }
 
     private double GetCurrentTimelineTimeOrZero()
@@ -232,6 +242,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     private void EnsureReferences()
     {
         EnsureVFXReferences();
+        EnsureParticleSystemReferences();
         ResolveDirectorReference();
     }
 
@@ -268,6 +279,31 @@ public class TimelineVFXScrubber : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void EnsureParticleSystemReferences()
+    {
+        if (particleSystemList == null)
+            particleSystemList = new List<ParticleSystem>();
+    }
+
+    private bool HasAnyParticleSystem()
+    {
+        if (particleSystemList == null)
+            return false;
+
+        for (int i = 0; i < particleSystemList.Count; i++)
+        {
+            if (particleSystemList[i] != null)
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool HasAnyManagedEffect()
+    {
+        return HasAnyVFX() || HasAnyParticleSystem();
     }
 
     private void ResolveDirectorReference()
@@ -361,37 +397,87 @@ public class TimelineVFXScrubber : MonoBehaviour
         }
     }
 
-    private void ResetOrHideVFX(double targetTimelineTime)
+    private void PrepareParticleSystemsForManagedSimulation()
     {
-        if (!HasAnyVFX())
+        if (particleSystemList == null)
             return;
 
-        if (vfxIsResetOrHidden)
+        uint particleSeed = seed == 0 ? 1u : seed;
+        for (int i = 0; i < particleSystemList.Count; i++)
+        {
+            ParticleSystem currentParticleSystem = particleSystemList[i];
+            if (currentParticleSystem == null)
+                continue;
+
+            SetParticleSystemSeed(currentParticleSystem, particleSeed);
+        }
+    }
+
+    private static void SetParticleSystemSeed(ParticleSystem particleSystem, uint particleSeed)
+    {
+        if (particleSystem.useAutoRandomSeed)
+            particleSystem.useAutoRandomSeed = false;
+
+        if (particleSystem.randomSeed != particleSeed)
+            particleSystem.randomSeed = particleSeed;
+
+        ParticleSystem.SubEmittersModule subEmitters = particleSystem.subEmitters;
+        for (int i = 0; i < subEmitters.subEmittersCount; i++)
+        {
+            ParticleSystem subEmitter = subEmitters.GetSubEmitterSystem(i);
+            if (subEmitter != null)
+                SetParticleSystemSeed(subEmitter, ++particleSeed);
+        }
+    }
+
+    private void ResetOrHideManagedEffects(double targetTimelineTime)
+    {
+        if (!HasAnyManagedEffect())
+            return;
+
+        if (effectsAreResetOrHidden)
         {
             lastSimulatedTimelineTime = targetTimelineTime;
             return;
         }
 
         PrepareVFXForManagedSimulation();
+        PrepareParticleSystemsForManagedSimulation();
 
-        for (int i = 0; i < vfxList.Count; i++)
+        if (vfxList != null)
         {
-            VisualEffect currentVfx = vfxList[i];
-            if (currentVfx == null)
-                continue;
+            for (int i = 0; i < vfxList.Count; i++)
+            {
+                VisualEffect currentVfx = vfxList[i];
+                if (currentVfx == null)
+                    continue;
 
-            currentVfx.Stop();
-            currentVfx.Reinit();
-            currentVfx.Stop();
+                currentVfx.Stop();
+                currentVfx.Reinit();
+                currentVfx.Stop();
+            }
         }
 
-        vfxIsResetOrHidden = true;
+        if (particleSystemList != null)
+        {
+            for (int i = 0; i < particleSystemList.Count; i++)
+            {
+                ParticleSystem currentParticleSystem = particleSystemList[i];
+                if (currentParticleSystem == null)
+                    continue;
+
+                currentParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                currentParticleSystem.Simulate(0f, false, true, false);
+            }
+        }
+
+        effectsAreResetOrHidden = true;
         lastSimulatedTimelineTime = targetTimelineTime;
     }
 
     private void RebuildTo(double targetTimelineTime, bool sampleTimelineProperties)
     {
-        if (!HasAnyVFX())
+        if (!HasAnyManagedEffect())
             return;
 
         isRebuilding = true;
@@ -402,23 +488,41 @@ public class TimelineVFXScrubber : MonoBehaviour
             double localTime = targetTimelineTime - sessionStartTime;
             if (!activeSession || localTime < 0.0)
             {
-                ResetOrHideVFX(targetTimelineTime);
+                ResetOrHideManagedEffects(targetTimelineTime);
                 return;
             }
 
             PrepareVFXForManagedSimulation();
+            PrepareParticleSystemsForManagedSimulation();
 
-            for (int i = 0; i < vfxList.Count; i++)
+            if (vfxList != null)
             {
-                VisualEffect currentVfx = vfxList[i];
-                if (currentVfx == null)
-                    continue;
+                for (int i = 0; i < vfxList.Count; i++)
+                {
+                    VisualEffect currentVfx = vfxList[i];
+                    if (currentVfx == null)
+                        continue;
 
-                currentVfx.Reinit();
-                currentVfx.pause = true;
+                    currentVfx.Reinit();
+                    currentVfx.pause = true;
+                }
             }
 
-            vfxIsResetOrHidden = false;
+            if (particleSystemList != null)
+            {
+                for (int i = 0; i < particleSystemList.Count; i++)
+                {
+                    ParticleSystem currentParticleSystem = particleSystemList[i];
+                    if (currentParticleSystem == null)
+                        continue;
+
+                    currentParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    currentParticleSystem.Play(false);
+                    currentParticleSystem.Pause(false);
+                }
+            }
+
+            effectsAreResetOrHidden = false;
             SimulateFromZero(sessionStartTime, localTime, sampleTimelineProperties);
             lastSimulatedTimelineTime = targetTimelineTime;
         }
@@ -445,7 +549,7 @@ public class TimelineVFXScrubber : MonoBehaviour
                 {
                     SimulateSegment(sessionStartTime, simulated, nextTriggerLocalTime);
                     simulated = nextTriggerLocalTime;
-                    SendManagedPlayEvent();
+                    TriggerManagedEffects();
                     nextTriggerIndex++;
                     continue;
                 }
@@ -463,7 +567,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             return;
 
         SampleTimelineAt(sessionStartTime + toLocalTime);
-        SimulateAllVFX((float)delta);
+        SimulateAllManagedEffects((float)delta);
     }
 
     private bool TryGetNextTriggerLocalTime(
@@ -506,7 +610,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             {
                 double stepTimelineTime = startTime + simulated + step;
                 SampleTimelineAt(stepTimelineTime);
-                SimulateAllVFX((float)step);
+                SimulateAllManagedEffects((float)step);
                 simulated += step;
             }
 
@@ -514,7 +618,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             if (remainder > 0.0)
             {
                 SampleTimelineAt(targetTimelineTime);
-                SimulateAllVFX((float)remainder);
+                SimulateAllManagedEffects((float)remainder);
             }
         }
 
@@ -534,7 +638,7 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private bool ShouldRebuildForSignal(double signalTimelineTime)
     {
-        if (vfxIsResetOrHidden || double.IsNaN(lastSimulatedTimelineTime))
+        if (effectsAreResetOrHidden || double.IsNaN(lastSimulatedTimelineTime))
             return true;
 
         double delta = signalTimelineTime - lastSimulatedTimelineTime;
@@ -568,33 +672,58 @@ public class TimelineVFXScrubber : MonoBehaviour
         }
     }
 
-    private void SendManagedPlayEvent()
+    private void TriggerManagedEffects()
     {
-        if (vfxList == null)
-            return;
-
-        for (int i = 0; i < vfxList.Count; i++)
+        if (vfxList != null)
         {
-            VisualEffect currentVfx = vfxList[i];
-            if (currentVfx == null)
-                continue;
+            for (int i = 0; i < vfxList.Count; i++)
+            {
+                VisualEffect currentVfx = vfxList[i];
+                if (currentVfx == null)
+                    continue;
 
-            currentVfx.SendEvent(VisualEffectAsset.PlayEventName);
+                currentVfx.SendEvent(VisualEffectAsset.PlayEventName);
+            }
+        }
+
+        if (particleSystemList != null)
+        {
+            for (int i = 0; i < particleSystemList.Count; i++)
+            {
+                ParticleSystem currentParticleSystem = particleSystemList[i];
+                if (currentParticleSystem == null)
+                    continue;
+
+                currentParticleSystem.Play(false);
+                currentParticleSystem.Pause(false);
+            }
         }
     }
 
-    private void SimulateAllVFX(float deltaTime)
+    private void SimulateAllManagedEffects(float deltaTime)
     {
-        if (vfxList == null)
-            return;
-
-        for (int i = 0; i < vfxList.Count; i++)
+        if (vfxList != null)
         {
-            VisualEffect currentVfx = vfxList[i];
-            if (currentVfx == null)
-                continue;
+            for (int i = 0; i < vfxList.Count; i++)
+            {
+                VisualEffect currentVfx = vfxList[i];
+                if (currentVfx == null)
+                    continue;
 
-            currentVfx.Simulate(deltaTime, 1u);
+                currentVfx.Simulate(deltaTime, 1u);
+            }
+        }
+
+        if (particleSystemList != null)
+        {
+            for (int i = 0; i < particleSystemList.Count; i++)
+            {
+                ParticleSystem currentParticleSystem = particleSystemList[i];
+                if (currentParticleSystem == null)
+                    continue;
+
+                currentParticleSystem.Simulate(deltaTime, false, false, false);
+            }
         }
     }
 
