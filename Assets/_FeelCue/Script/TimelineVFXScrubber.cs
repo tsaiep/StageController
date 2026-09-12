@@ -12,10 +12,38 @@ using UnityEngine.VFX;
 [AddComponentMenu("Stage Controller/Timeline VFX Scrubber")]
 public class TimelineVFXScrubber : MonoBehaviour
 {
+    [Serializable]
+    public sealed class VFXBinding
+    {
+        public VisualEffect visualEffect;
+
+        [Tooltip("When enabled, Play sends the configured custom event attributes to this VFX.")]
+        public bool sendAttributesOnPlay;
+
+        public List<VFXEventAttributePlayer.AttributeValue> attributes =
+            new List<VFXEventAttributePlayer.AttributeValue>();
+
+        public VFXBinding()
+        {
+        }
+
+        public VFXBinding(VisualEffect visualEffect)
+        {
+            this.visualEffect = visualEffect;
+        }
+    }
+
     [Header("References")]
     public PlayableDirector director;
-    public List<VisualEffect> vfxList = new List<VisualEffect>();
+    [SerializeField, InspectorName("VFX List")]
+    private List<VFXBinding> vfxBindings = new List<VFXBinding>();
     public List<ParticleSystem> particleSystemList = new List<ParticleSystem>();
+
+    public List<VFXBinding> vfxList
+    {
+        get => vfxBindings;
+        set => vfxBindings = value;
+    }
 
     [Header("Simulation")]
     public float targetFPS = 60f;
@@ -29,6 +57,8 @@ public class TimelineVFXScrubber : MonoBehaviour
     private const bool SampleTimelinePropertiesDuringRebuild = true;
 
     private readonly List<double> triggerTimelineTimes = new List<double>();
+    [FormerlySerializedAs("vfxList")]
+    [SerializeField, HideInInspector] private List<VisualEffect> legacyVfxList;
     [FormerlySerializedAs("vfx")]
     [SerializeField, HideInInspector] private VisualEffect legacyVfx;
     [SerializeField, HideInInspector] private PlayableDirector autoAssignedDirector;
@@ -44,10 +74,10 @@ public class TimelineVFXScrubber : MonoBehaviour
 
     private void Reset()
     {
-        vfxList = new List<VisualEffect>();
+        vfxList = new List<VFXBinding>();
         VisualEffect localVfx = GetComponent<VisualEffect>();
         if (localVfx != null)
-            vfxList.Add(localVfx);
+            vfxList.Add(new VFXBinding(localVfx));
 
         particleSystemList = new List<ParticleSystem>();
         ParticleSystem localParticleSystem = GetComponent<ParticleSystem>();
@@ -249,12 +279,24 @@ public class TimelineVFXScrubber : MonoBehaviour
     private void EnsureVFXReferences()
     {
         if (vfxList == null)
-            vfxList = new List<VisualEffect>();
+            vfxList = new List<VFXBinding>();
+
+        if (legacyVfxList != null)
+        {
+            for (int i = 0; i < legacyVfxList.Count; i++)
+            {
+                VisualEffect oldVfx = legacyVfxList[i];
+                if (oldVfx != null && !ContainsVFX(oldVfx))
+                    vfxList.Add(new VFXBinding(oldVfx));
+            }
+
+            legacyVfxList.Clear();
+        }
 
         if (legacyVfx != null)
         {
-            if (!vfxList.Contains(legacyVfx))
-                vfxList.Add(legacyVfx);
+            if (!ContainsVFX(legacyVfx))
+                vfxList.Add(new VFXBinding(legacyVfx));
 
             legacyVfx = null;
         }
@@ -264,7 +306,30 @@ public class TimelineVFXScrubber : MonoBehaviour
 
         VisualEffect localVfx = GetComponent<VisualEffect>();
         if (localVfx != null)
-            vfxList.Add(localVfx);
+            vfxList.Add(new VFXBinding(localVfx));
+    }
+
+    private bool ContainsVFX(VisualEffect targetVfx)
+    {
+        if (vfxList == null)
+            return false;
+
+        for (int i = 0; i < vfxList.Count; i++)
+        {
+            if (GetVFX(i) == targetVfx)
+                return true;
+        }
+
+        return false;
+    }
+
+    private VisualEffect GetVFX(int index)
+    {
+        if (vfxList == null || index < 0 || index >= vfxList.Count)
+            return null;
+
+        VFXBinding binding = vfxList[index];
+        return binding != null ? binding.visualEffect : null;
     }
 
     private bool HasAnyVFX()
@@ -274,7 +339,7 @@ public class TimelineVFXScrubber : MonoBehaviour
 
         for (int i = 0; i < vfxList.Count; i++)
         {
-            if (vfxList[i] != null)
+            if (GetVFX(i) != null)
                 return true;
         }
 
@@ -387,7 +452,7 @@ public class TimelineVFXScrubber : MonoBehaviour
 
         for (int i = 0; i < vfxList.Count; i++)
         {
-            VisualEffect currentVfx = vfxList[i];
+            VisualEffect currentVfx = GetVFX(i);
             if (currentVfx == null)
                 continue;
 
@@ -448,7 +513,7 @@ public class TimelineVFXScrubber : MonoBehaviour
         {
             for (int i = 0; i < vfxList.Count; i++)
             {
-                VisualEffect currentVfx = vfxList[i];
+                VisualEffect currentVfx = GetVFX(i);
                 if (currentVfx == null)
                     continue;
 
@@ -499,7 +564,7 @@ public class TimelineVFXScrubber : MonoBehaviour
             {
                 for (int i = 0; i < vfxList.Count; i++)
                 {
-                    VisualEffect currentVfx = vfxList[i];
+                    VisualEffect currentVfx = GetVFX(i);
                     if (currentVfx == null)
                         continue;
 
@@ -678,11 +743,31 @@ public class TimelineVFXScrubber : MonoBehaviour
         {
             for (int i = 0; i < vfxList.Count; i++)
             {
-                VisualEffect currentVfx = vfxList[i];
+                VFXBinding binding = vfxList[i];
+                VisualEffect currentVfx = GetVFX(i);
                 if (currentVfx == null)
                     continue;
 
-                currentVfx.SendEvent(VisualEffectAsset.PlayEventName);
+                if (binding.sendAttributesOnPlay)
+                {
+                    VFXEventAttribute eventAttribute = currentVfx.CreateVFXEventAttribute();
+
+                    if (binding.attributes != null)
+                    {
+                        for (int attributeIndex = 0; attributeIndex < binding.attributes.Count; attributeIndex++)
+                        {
+                            VFXEventAttributePlayer.AttributeValue attribute = binding.attributes[attributeIndex];
+                            if (attribute != null)
+                                attribute.ApplyTo(eventAttribute);
+                        }
+                    }
+
+                    currentVfx.Play(eventAttribute);
+                }
+                else
+                {
+                    currentVfx.SendEvent(VisualEffectAsset.PlayEventName);
+                }
             }
         }
 
@@ -706,7 +791,7 @@ public class TimelineVFXScrubber : MonoBehaviour
         {
             for (int i = 0; i < vfxList.Count; i++)
             {
-                VisualEffect currentVfx = vfxList[i];
+                VisualEffect currentVfx = GetVFX(i);
                 if (currentVfx == null)
                     continue;
 

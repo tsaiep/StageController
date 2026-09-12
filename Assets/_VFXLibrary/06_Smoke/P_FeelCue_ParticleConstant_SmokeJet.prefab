@@ -28,6 +28,30 @@ PrefabInstance:
       propertyPath: 'vfxList.Array.data[0]'
       value: 
       objectReference: {fileID: 4630119575343608980}
+    - target: {fileID: 4283548638081301149, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: vfxBindings.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4283548638081301149, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: vfxBindings.Array.data[0].visualEffect
+      value: 
+      objectReference: {fileID: 4630119575343608980}
+    - target: {fileID: 4283548638081301149, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: vfxBindings.Array.data[0].sendAttributesOnPlay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4283548638081301149, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: vfxBindings.Array.data[0].attributes.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4283548638081301149, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: vfxBindings.Array.data[0].attributes.Array.data[0].type
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4283548638081301149, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
+      propertyPath: vfxBindings.Array.data[0].attributes.Array.data[0].attributeName
+      value: CueTime
+      objectReference: {fileID: 0}
     - target: {fileID: 5982687147543576973, guid: 4147b888a191e5a499239d9a394e6105, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2654713513136650083}
   - component: {fileID: 5881562589550232895}
   - component: {fileID: 8496170697320193165}
+  - component: {fileID: 4475412407025658450}
   m_Layer: 0
   m_Name: P_SmokeJet
   m_TagString: Untagged
@@ -60,7 +61,7 @@ VisualEffect:
       - m_Value: 0.322
         m_Name: Speed Randomize
         m_Overridden: 1
-      - m_Value: 1.5
+      - m_Value: 0.5
         m_Name: Spawn Duration
         m_Overridden: 1
       - m_Value: 0.078
@@ -93,7 +94,7 @@ VisualEffect:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 1, y: 0.18057667, z: 0.16666657, w: 1}
+      - m_Value: {x: 1.9971792, y: 12.125731, z: 12.020184, w: 1}
         m_Name: Color
         m_Overridden: 1
     m_Uint:
@@ -211,7 +212,10 @@ VisualEffect:
         m_Name: Base Map
         m_Overridden: 1
     m_Bool:
-      m_Array: []
+      m_Array:
+      - m_Value: 0
+        m_Name: Preview
+        m_Overridden: 0
 --- !u!73398921 &8496170697320193165
 VFXRenderer:
   serializedVersion: 1
@@ -255,3 +259,28 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &4475412407025658450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3039980946704557992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 147f9e67ecef4080b0d4bde57a7e975b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetVisualEffect: {fileID: 5881562589550232895}
+  attributes:
+  - attributeName: CueTime
+    type: 8
+    floatValue: 0
+    vector2Value: {x: 0, y: 0}
+    vector3Value: {x: 0, y: 0, z: 0}
+    vector4Value: {x: 0, y: 0, z: 0, w: 0}
+    colorValue: {r: 0, g: 0, b: 0, a: 0}
+    intValue: 0
+    uintValue: 0
+    boolValue: 0
+  logInvalidAttributes: 1

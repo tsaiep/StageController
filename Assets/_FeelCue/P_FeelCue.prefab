@@ -479,9 +479,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   director: {fileID: 0}
-  vfx: {fileID: 0}
+  vfxList: []
   targetFPS: 60
   seed: 12345
   simulateInEditMode: 1
+  legacyVfx: {fileID: 0}
   autoAssignedDirector: {fileID: 0}
   directorManuallyOverridden: 0
