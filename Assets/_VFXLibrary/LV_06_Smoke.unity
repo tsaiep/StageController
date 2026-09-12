@@ -1410,18 +1410,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_FeelCue_ParticleConstant_SmokeJet
       objectReference: {fileID: 0}
-    - target: {fileID: 8144783270044546431, guid: 9eb28d566c5cad3468cdc94a00e51fdc, type: 3}
-      propertyPath: PlayCount
-      value: 93
-      objectReference: {fileID: 0}
-    - target: {fileID: 8144783270044546431, guid: 9eb28d566c5cad3468cdc94a00e51fdc, type: 3}
-      propertyPath: managedReferences[3105843370892460116].Timing.PlayCount
-      value: 39
-      objectReference: {fileID: 0}
-    - target: {fileID: 8144783270044546431, guid: 9eb28d566c5cad3468cdc94a00e51fdc, type: 3}
-      propertyPath: managedReferences[3105843370892460117].Timing.PlayCount
-      value: 39
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1801,7 +1789,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2914750679332621374, guid: 532b5fb695a427944b4ff4c9a3595a24, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3658967304934548876, guid: 532b5fb695a427944b4ff4c9a3595a24, type: 3}
       propertyPath: m_Name

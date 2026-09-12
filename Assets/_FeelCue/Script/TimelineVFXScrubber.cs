@@ -568,7 +568,26 @@ public class TimelineVFXScrubber : MonoBehaviour
                     if (currentVfx == null)
                         continue;
 
-                    currentVfx.Reinit();
+                    // Attribute-enabled bindings explicitly send their first Play below.
+                    // Suppress Reinit's default event so the burst is not triggered twice.
+                    if (vfxList[i].sendAttributesOnPlay)
+                    {
+                        string initialEventName = currentVfx.initialEventName;
+                        try
+                        {
+                            // Reserved, unconnected event: reset without starting the spawner.
+                            currentVfx.initialEventName = "__TimelineVFXScrubber_ResetOnly";
+                            currentVfx.Reinit();
+                        }
+                        finally
+                        {
+                            currentVfx.initialEventName = initialEventName;
+                        }
+                    }
+                    else
+                    {
+                        currentVfx.Reinit();
+                    }
                     currentVfx.pause = true;
                 }
             }
@@ -605,6 +624,17 @@ public class TimelineVFXScrubber : MonoBehaviour
 
         using (new DirectorTimeSampler(this, sampleTimelineProperties))
         {
+            SampleTimelineAt(sessionStartTime);
+            if (vfxList != null)
+            {
+                for (int i = 0; i < vfxList.Count; i++)
+                {
+                    VisualEffect currentVfx = GetVFX(i);
+                    if (currentVfx != null && vfxList[i].sendAttributesOnPlay)
+                        PlayVFXWithAttributes(currentVfx, vfxList[i]);
+                }
+            }
+
             while (simulated < targetLocalTime)
             {
                 double nextLocalTime = Math.Min(targetLocalTime, simulated + step);
@@ -750,19 +780,7 @@ public class TimelineVFXScrubber : MonoBehaviour
 
                 if (binding.sendAttributesOnPlay)
                 {
-                    VFXEventAttribute eventAttribute = currentVfx.CreateVFXEventAttribute();
-
-                    if (binding.attributes != null)
-                    {
-                        for (int attributeIndex = 0; attributeIndex < binding.attributes.Count; attributeIndex++)
-                        {
-                            VFXEventAttributePlayer.AttributeValue attribute = binding.attributes[attributeIndex];
-                            if (attribute != null)
-                                attribute.ApplyTo(eventAttribute);
-                        }
-                    }
-
-                    currentVfx.Play(eventAttribute);
+                    PlayVFXWithAttributes(currentVfx, binding);
                 }
                 else
                 {
@@ -782,6 +800,24 @@ public class TimelineVFXScrubber : MonoBehaviour
                 currentParticleSystem.Play(false);
                 currentParticleSystem.Pause(false);
             }
+        }
+    }
+
+    private static void PlayVFXWithAttributes(VisualEffect currentVfx, VFXBinding binding)
+    {
+        using (VFXEventAttribute eventAttribute = currentVfx.CreateVFXEventAttribute())
+        {
+            if (binding.attributes != null)
+            {
+                for (int i = 0; i < binding.attributes.Count; i++)
+                {
+                    VFXEventAttributePlayer.AttributeValue attribute = binding.attributes[i];
+                    if (attribute != null)
+                        attribute.ApplyTo(eventAttribute);
+                }
+            }
+
+            currentVfx.Play(eventAttribute);
         }
     }
 
