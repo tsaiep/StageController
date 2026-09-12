@@ -55,6 +55,7 @@ public class TimelineVFXScrubber : MonoBehaviour
     private const double TriggerMergeWindow = 0.05;
     private const double SeekThreshold = 0.1;
     private const bool SampleTimelinePropertiesDuringRebuild = true;
+    private const bool IncludeChildParticleSystems = true;
 
     private readonly List<double> triggerTimelineTimes = new List<double>();
     [FormerlySerializedAs("vfxList")]
@@ -531,8 +532,8 @@ public class TimelineVFXScrubber : MonoBehaviour
                 if (currentParticleSystem == null)
                     continue;
 
-                currentParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
-                currentParticleSystem.Simulate(0f, false, true, false);
+                currentParticleSystem.Stop(IncludeChildParticleSystems, ParticleSystemStopBehavior.StopEmittingAndClear);
+                currentParticleSystem.Simulate(0f, IncludeChildParticleSystems, true, false);
             }
         }
 
@@ -600,9 +601,9 @@ public class TimelineVFXScrubber : MonoBehaviour
                     if (currentParticleSystem == null)
                         continue;
 
-                    currentParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
-                    currentParticleSystem.Play(false);
-                    currentParticleSystem.Pause(false);
+                    currentParticleSystem.Stop(IncludeChildParticleSystems, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    currentParticleSystem.Play(IncludeChildParticleSystems);
+                    currentParticleSystem.Pause(IncludeChildParticleSystems);
                 }
             }
 
@@ -797,8 +798,8 @@ public class TimelineVFXScrubber : MonoBehaviour
                 if (currentParticleSystem == null)
                     continue;
 
-                currentParticleSystem.Play(false);
-                currentParticleSystem.Pause(false);
+                currentParticleSystem.Play(IncludeChildParticleSystems);
+                currentParticleSystem.Pause(IncludeChildParticleSystems);
             }
         }
     }
@@ -843,7 +844,7 @@ public class TimelineVFXScrubber : MonoBehaviour
                 if (currentParticleSystem == null)
                     continue;
 
-                currentParticleSystem.Simulate(deltaTime, false, false, false);
+                currentParticleSystem.Simulate(deltaTime, IncludeChildParticleSystems, false, false);
             }
         }
     }
