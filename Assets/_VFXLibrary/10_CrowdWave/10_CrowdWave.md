@@ -55,6 +55,8 @@ Alternate Height Offset - 揮動每隔一次會增加高度，製造高低交錯
 
 Overhead Wave Switch - 從往前揮動的動態改為高舉過頭的左右揮動
 
+Rest Mode - 休息模式的動態，優先度低於 Overhead Wave Switch
+
 Coloring
 
 Left Color - 右手顏色
