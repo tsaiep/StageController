@@ -207,7 +207,18 @@ MonoBehaviour:
     - model: {fileID: 8926484042661619715}
       id: 0
       isStickyNote: 0
-  stickyNoteInfos: []
+  stickyNoteInfos:
+  - title: "\u6539\u5716\u7247\u63DB\u9019\u88E1"
+    position:
+      serializedVersion: 2
+      x: 2508
+      y: 1169
+      width: 318
+      height: 108
+    contents: "\u70D8\u7119\u8CBC\u5716\u5DE5\u5177\u5728\nWindow/Visual Effects/Utilities/Point
+      Cache Bake Tool"
+    theme: Classic
+    textSize: Small
   categories:
   - name: Parent
     collapsed: 1
@@ -217,10 +228,10 @@ MonoBehaviour:
     collapsed: 1
   uiBounds:
     serializedVersion: 2
-    x: -1632
+    x: -1633
     y: -2112
-    width: 6605
-    height: 7015
+    width: 6604
+    height: 7012
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3835,7 +3846,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618149}
   m_ExposedName: Target Height
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 5
   m_Category: Parent
   m_Min:
     m_Type:
@@ -3925,7 +3936,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618167}
   m_ExposedName: Parent Base Map
   m_Exposed: 1
-  m_Order: 10
+  m_Order: 11
   m_Category: Parent
   m_Min:
     m_Type:
@@ -4006,7 +4017,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618173}
   m_ExposedName: Gravity
   m_Exposed: 1
-  m_Order: 12
+  m_Order: 13
   m_Category: Force
   m_Min:
     m_Type:
@@ -4135,7 +4146,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618175}
   m_ExposedName: Turbulence Strength
   m_Exposed: 1
-  m_Order: 14
+  m_Order: 15
   m_Category: Force
   m_Min:
     m_Type:
@@ -4246,7 +4257,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618177}
   m_ExposedName: Turbulence Frequency
   m_Exposed: 1
-  m_Order: 15
+  m_Order: 16
   m_Category: Force
   m_Min:
     m_Type:
@@ -4357,7 +4368,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618179}
   m_ExposedName: Color Gradient
   m_Exposed: 1
-  m_Order: 13
+  m_Order: 14
   m_Category: Parent
   m_Min:
     m_Type:
@@ -6896,7 +6907,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618331}
   m_ExposedName: Burst Speed Range
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 9
   m_Category: Force
   m_Min:
     m_Type:
@@ -7049,7 +7060,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618335}
   m_ExposedName: Burst Drag
   m_Exposed: 1
-  m_Order: 11
+  m_Order: 12
   m_Category: Force
   m_Min:
     m_Type:
@@ -10524,7 +10535,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618486}
   m_ExposedName: Child Base Map
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 10
   m_Category: Child
   m_Min:
     m_Type:
@@ -10605,7 +10616,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618488}
   m_ExposedName: Child Hue Variety
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 7
   m_Category: Child
   m_Min:
     m_Type:
@@ -10688,7 +10699,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618490}
   m_ExposedName: Child Lifetime
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 3
   m_Category: Child
   m_Min:
     m_Type:
@@ -16604,7 +16615,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618759}
   m_ExposedName: Sparkling Speed
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 6
   m_Category: Child
   m_Min:
     m_Type:
@@ -22515,7 +22526,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618970}
   m_ExposedName: Trail Lifetime
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 4
   m_Category: Child
   m_Min:
     m_Type:
@@ -22735,7 +22746,7 @@ MonoBehaviour:
   - {fileID: 8926484042661618976}
   m_ExposedName: Trail Alpha
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 8
   m_Category: Child
   m_Min:
     m_Type:
@@ -27312,7 +27323,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619273}
   m_ExposedName: Pattern Scale
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: Child
   m_Min:
     m_Type:
@@ -27463,7 +27474,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 2661, y: 1137}
+  m_UIPosition: {x: 2695, y: 1005}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
@@ -32618,7 +32629,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619601}
   m_ExposedName: New Camera
   m_Exposed: 1
-  m_Order: 16
+  m_Order: 17
   m_Category: 
   m_Min:
     m_Type:
@@ -35348,7 +35359,7 @@ MonoBehaviour:
   - {fileID: 8926484042661619721}
   m_ExposedName: Child Burst Count
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: Child
   m_Min:
     m_Type:

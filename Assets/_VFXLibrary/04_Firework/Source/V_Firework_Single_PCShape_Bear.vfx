@@ -207,7 +207,18 @@ MonoBehaviour:
     - model: {fileID: 8926484042661619715}
       id: 0
       isStickyNote: 0
-  stickyNoteInfos: []
+  stickyNoteInfos:
+  - title: "\u6539\u5716\u7247\u63DB\u9019\u88E1"
+    position:
+      serializedVersion: 2
+      x: 2538
+      y: 1190
+      width: 318
+      height: 108
+    contents: "\u70D8\u7119\u8CBC\u5716\u5DE5\u5177\u5728\nWindow/Visual Effects/Utilities/Point
+      Cache Bake Tool"
+    theme: Classic
+    textSize: Small
   categories:
   - name: Parent
     collapsed: 1
@@ -217,10 +228,10 @@ MonoBehaviour:
     collapsed: 1
   uiBounds:
     serializedVersion: 2
-    x: -1632
+    x: -1633
     y: -2112
-    width: 6605
-    height: 7015
+    width: 6604
+    height: 7012
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -27462,7 +27473,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 2661, y: 1137}
+  m_UIPosition: {x: 2724, y: 1059}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []

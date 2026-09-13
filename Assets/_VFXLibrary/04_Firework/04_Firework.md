@@ -42,6 +42,15 @@ Notion 版本：https://www.notion.so/04_Firework-d6ecadc081ca427e935b3f613f2fef
 3. Child 分類下設定爆炸的外觀，包含生命、閃爍、顏色透明度
 4. Force 分類下設定地心引力、立場擾動、阻力等參數
 
+更換圖樣
+
+1. 上方欄打開 Window/Visual Effects/Utilities/Point Cache Bake Tool
+    1. Bake Mode 選擇 Texture，並指定目標貼圖
+    2. Decimation Threshold 選擇用來判斷的資訊，若是黑白圖選擇 Luminance，透明 PNG 選擇Alpha
+    3. Threshold 可在 Bake 完成後不滿意再來回調整
+    4. 按下 Save 按鈕
+2. 複製一份 VFX 檔案，在其中找到替換PC檔案的節點，替換成目標Asset
+
 控制項
 
 1. 建議使用 `Animation Track 或 Assets\_FeelCue\Script\VFXPropertiesControl.cs 控制 Spawn Control` 參數，達成控制粒子生成
