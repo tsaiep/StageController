@@ -53,6 +53,33 @@ public class CameraProfileAssetEditor : Editor
     private SerializedProperty _rotTargetOffsetYBiasProp;
     private SerializedProperty _rotTargetOffsetZBiasProp;
 
+    private bool _crossFadeBlurExpanded = true;
+    private bool _motionCutExpanded = true;
+    private bool _playbackExpanded = true;
+    private bool _generalBiasExpanded = true;
+
+    private GUIStyle SectionTitle
+    {
+        get
+        {
+            var style = new GUIStyle(EditorStyles.boldLabel);
+            style.fontSize = 12;
+            style.margin = new RectOffset(2, 2, 2, 6);
+            return style;
+        }
+    }
+
+    private GUIStyle FoldoutTitle
+    {
+        get
+        {
+            var style = new GUIStyle(EditorStyles.foldout);
+            style.fontSize = 12;
+            style.fontStyle = FontStyle.Bold;
+            return style;
+        }
+    }
+
     private void OnEnable()
     {
         _cameraProfileProp = serializedObject.FindProperty("cameraProfile");
@@ -103,36 +130,95 @@ public class CameraProfileAssetEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-
-        DrawCameraProfilePicker();
-
-        CameraProfileSO currentProfile = _cameraProfileProp != null
-            ? _cameraProfileProp.objectReferenceValue as CameraProfileSO
-            : null;
-
-        EditorGUILayout.Space(6);
-
-        if (_trackingTargetProp != null)
+        float previousLabelWidth = EditorGUIUtility.labelWidth;
+        EditorGUIUtility.labelWidth = 168f;
+        try
         {
-            EditorGUILayout.PropertyField(_trackingTargetProp);
-        }
+            CameraProfileSO currentProfile;
+            EditorGUILayout.LabelField("基本設定", SectionTitle);
+            DrawCameraProfilePicker();
 
-        if (_blendModeProp != null)
-        {
-            EditorGUILayout.Space(6);
-            EditorGUILayout.PropertyField(
-                _blendModeProp,
-                new GUIContent("Blend Mode")
-            );
+            currentProfile = _cameraProfileProp != null
+                ? _cameraProfileProp.objectReferenceValue as CameraProfileSO
+                : null;
 
-            if (_blendModeProp.enumValueIndex ==
+            if (_trackingTargetProp != null)
+                EditorGUILayout.PropertyField(_trackingTargetProp);
+
+            if (_blendModeProp != null)
+                EditorGUILayout.PropertyField(_blendModeProp, new GUIContent("Blend Mode"));
+
+            if (currentProfile is DollyProfileSO && _splineContainerProp != null)
+                EditorGUILayout.PropertyField(_splineContainerProp, new GUIContent("Spline Container"));
+
+            if (_blendModeProp != null && _blendModeProp.enumValueIndex ==
                 (int)CameraProfileBlendMode.CrossFadeBlur)
+                DrawCrossFadeBlurSettings();
+            else if (_blendModeProp != null && _blendModeProp.enumValueIndex ==
+                (int)CameraProfileBlendMode.MotionCut)
+                DrawMotionCutSettings();
+
+            DrawPlaybackSettings();
+
+            if (currentProfile is GeneralProfileSO)
+                DrawGeneralBiasSettings();
+            else if (currentProfile is TrackingProfileSO)
+                DrawTrackingBiasSettings();
+            else if (currentProfile is DollyProfileSO)
+                DrawDollyBiasSettings();
+
+            DrawDepthOfFieldSettings();
+            DrawNoiseSettings();
+
+            serializedObject.ApplyModifiedProperties();
+        }
+        finally
+        {
+            EditorGUIUtility.labelWidth = previousLabelWidth;
+        }
+    }
+
+    private void DrawFoldoutSection(
+        ref bool expanded,
+        string title,
+        string tooltip,
+        Action drawContents)
+    {
+        EditorGUILayout.Space(5);
+        using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+        {
+            using (new EditorGUILayout.HorizontalScope())
             {
-                EditorGUILayout.Space(4);
-                EditorGUILayout.LabelField(
-                    "Cross Fade Blur Settings",
-                    EditorStyles.boldLabel
+                GUILayout.Space(8f);
+                expanded = EditorGUILayout.Foldout(
+                    expanded,
+                    new GUIContent(title, tooltip),
+                    true,
+                    FoldoutTitle
                 );
+            }
+
+            if (!expanded)
+                return;
+
+            EditorGUILayout.Space(2);
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.Space(14f);
+                using (new EditorGUILayout.VerticalScope())
+                    drawContents();
+            }
+        }
+    }
+
+    private void DrawCrossFadeBlurSettings()
+    {
+        DrawFoldoutSection(
+            ref _crossFadeBlurExpanded,
+            "Cross Fade Blur Settings",
+            "設定 Cross Fade Blur 的模糊強度與 Alpha 混合時機。",
+            () =>
+            {
                 EditorGUILayout.PropertyField(
                     _crossFadeBlurMaxIntensityProp,
                     new GUIContent("Blur Max Intensity")
@@ -142,162 +228,136 @@ public class CameraProfileAssetEditor : Editor
                     new GUIContent("Alpha Timing")
                 );
             }
-            else if (_blendModeProp.enumValueIndex ==
-                (int)CameraProfileBlendMode.MotionCut)
-            {
-                DrawMotionCutSettings();
-            }
-        }
-
-        DrawPlaybackSettings();
-
-        if (currentProfile is DollyProfileSO && _splineContainerProp != null)
-        {
-            EditorGUILayout.Space(6);
-            EditorGUILayout.LabelField("Dolly Settings", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(_splineContainerProp);
-        }
-
-        if (currentProfile is GeneralProfileSO)
-        {
-            DrawGeneralBiasSettings();
-        }
-        else if (currentProfile is TrackingProfileSO)
-        {
-            DrawTrackingBiasSettings();
-        }
-        else if (currentProfile is DollyProfileSO)
-        {
-            DrawDollyBiasSettings();
-        }
-
-        DrawDepthOfFieldSettings();
-        DrawNoiseSettings();
-
-        serializedObject.ApplyModifiedProperties();
+        );
     }
 
     private void DrawDepthOfFieldSettings()
     {
-        EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("Depth Of Field", EditorStyles.boldLabel);
-
-        EditorGUI.indentLevel++;
-        EditorGUILayout.PropertyField(
-            _enableDepthOfFieldProp,
-            new GUIContent("Enable DOF")
-        );
-
-        if (_enableDepthOfFieldProp == null ||
-            !_enableDepthOfFieldProp.boolValue)
+        EditorGUILayout.Space(5);
+        using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
         {
+            EditorGUILayout.LabelField("Depth Of Field", SectionTitle);
+
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(
+                _enableDepthOfFieldProp,
+                new GUIContent("Enable DOF")
+            );
+
+            if (_enableDepthOfFieldProp == null ||
+                !_enableDepthOfFieldProp.boolValue)
+            {
+                EditorGUI.indentLevel--;
+                return;
+            }
+
+            EditorGUILayout.Space(2);
+            EditorGUILayout.LabelField(
+                "Focus Range (m)",
+                EditorStyles.miniBoldLabel
+            );
+
+            EditorGUILayout.PropertyField(
+                _focusDistanceMinProp,
+                new GUIContent("Min")
+            );
+            EditorGUILayout.PropertyField(
+                _focusDistanceMaxProp,
+                new GUIContent("Max")
+            );
+
+            if (_focusDistanceMinProp != null &&
+                _focusDistanceMaxProp != null)
+            {
+                _focusDistanceMinProp.floatValue = Mathf.Max(
+                    0.01f,
+                    _focusDistanceMinProp.floatValue
+                );
+                _focusDistanceMaxProp.floatValue = Mathf.Max(
+                    _focusDistanceMinProp.floatValue + 0.01f,
+                    _focusDistanceMaxProp.floatValue
+                );
+            }
+
+            EditorGUILayout.PropertyField(
+                _normalizedFocusDistanceCurveProp,
+                new GUIContent("Focus Over Clip")
+            );
+
+            EditorGUILayout.HelpBox(
+                "Curve X = Clip 時間，Y = 對焦距離 0~1。Y=0 對應 Min，Y=1 對應 Max。",
+                MessageType.Info
+            );
+
+            EditorGUILayout.Space(2);
+            EditorGUILayout.LabelField(
+                "Distance To Full Blur",
+                EditorStyles.miniBoldLabel
+            );
+            EditorGUILayout.PropertyField(
+                _depthOfFieldNearRangeProp,
+                new GUIContent("Near Side (m)")
+            );
+            EditorGUILayout.PropertyField(
+                _depthOfFieldFarRangeProp,
+                new GUIContent("Far Side (m)")
+            );
+
+            EditorGUILayout.PropertyField(
+                _depthOfFieldMaxRadiusProp,
+                new GUIContent("Max Radius")
+            );
+            EditorGUILayout.PropertyField(
+                _depthOfFieldDebugViewProp,
+                new GUIContent("Debug View")
+            );
+
+            EditorGUILayout.HelpBox(
+                "Focus 是清晰中心；Focus - Near Side 與 Focus + Far Side 分別到達最大模糊，不會把 Range 加回 Focus 數值。",
+                MessageType.None
+            );
+
             EditorGUI.indentLevel--;
-            return;
         }
-
-        EditorGUILayout.Space(2);
-        EditorGUILayout.LabelField(
-            "Focus Range (m)",
-            EditorStyles.miniBoldLabel
-        );
-
-        EditorGUILayout.PropertyField(
-            _focusDistanceMinProp,
-            new GUIContent("Min")
-        );
-        EditorGUILayout.PropertyField(
-            _focusDistanceMaxProp,
-            new GUIContent("Max")
-        );
-
-        if (_focusDistanceMinProp != null &&
-            _focusDistanceMaxProp != null)
-        {
-            _focusDistanceMinProp.floatValue = Mathf.Max(
-                0.01f,
-                _focusDistanceMinProp.floatValue
-            );
-            _focusDistanceMaxProp.floatValue = Mathf.Max(
-                _focusDistanceMinProp.floatValue + 0.01f,
-                _focusDistanceMaxProp.floatValue
-            );
-        }
-
-        EditorGUILayout.PropertyField(
-            _normalizedFocusDistanceCurveProp,
-            new GUIContent("Focus Over Clip")
-        );
-
-        EditorGUILayout.HelpBox(
-            "Curve X = Clip 時間，Y = 對焦距離 0~1。Y=0 對應 Min，Y=1 對應 Max。",
-            MessageType.Info
-        );
-
-        EditorGUILayout.Space(2);
-        EditorGUILayout.LabelField(
-            "Distance To Full Blur",
-            EditorStyles.miniBoldLabel
-        );
-        EditorGUILayout.PropertyField(
-            _depthOfFieldNearRangeProp,
-            new GUIContent("Near Side (m)")
-        );
-        EditorGUILayout.PropertyField(
-            _depthOfFieldFarRangeProp,
-            new GUIContent("Far Side (m)")
-        );
-
-        EditorGUILayout.PropertyField(
-            _depthOfFieldMaxRadiusProp,
-            new GUIContent("Max Radius")
-        );
-        EditorGUILayout.PropertyField(
-            _depthOfFieldDebugViewProp,
-            new GUIContent("Debug View")
-        );
-
-        EditorGUILayout.HelpBox(
-            "Focus 是清晰中心；Focus - Near Side 與 Focus + Far Side 分別到達最大模糊，不會把 Range 加回 Focus 數值。",
-            MessageType.None
-        );
-
-        EditorGUI.indentLevel--;
     }
 
     private void DrawNoiseSettings()
     {
-        EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("Handheld Noise", EditorStyles.boldLabel);
-
-        EditorGUI.indentLevel++;
-        EditorGUILayout.PropertyField(
-            _enableNoiseProp,
-            new GUIContent("Enable Noise")
-        );
-
-        if (_enableNoiseProp != null && _enableNoiseProp.boolValue)
+        EditorGUILayout.Space(5);
+        using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
         {
-            DrawNoiseProfileField();
+            EditorGUILayout.LabelField("Handheld Noise", SectionTitle);
+
+            EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(
-                _noiseAmplitudeProp,
-                new GUIContent("Amplitude")
-            );
-            EditorGUILayout.PropertyField(
-                _noiseFrequencyProp,
-                new GUIContent("Frequency")
+                _enableNoiseProp,
+                new GUIContent("Enable Noise")
             );
 
-            if (_noiseProfileProp == null ||
-                _noiseProfileProp.objectReferenceValue == null)
+            if (_enableNoiseProp != null && _enableNoiseProp.boolValue)
             {
-                EditorGUILayout.HelpBox(
-                    "請指定 Noise Profile，否則不會產生手持晃動。",
-                    MessageType.Warning
+                DrawNoiseProfileField();
+                EditorGUILayout.PropertyField(
+                    _noiseAmplitudeProp,
+                    new GUIContent("Amplitude")
                 );
-            }
-        }
+                EditorGUILayout.PropertyField(
+                    _noiseFrequencyProp,
+                    new GUIContent("Frequency")
+                );
 
-        EditorGUI.indentLevel--;
+                if (_noiseProfileProp == null ||
+                    _noiseProfileProp.objectReferenceValue == null)
+                {
+                    EditorGUILayout.HelpBox(
+                        "請指定 Noise Profile，否則不會產生手持晃動。",
+                        MessageType.Warning
+                    );
+                }
+            }
+
+            EditorGUI.indentLevel--;
+        }
     }
 
     private void DrawNoiseProfileField()
@@ -322,138 +382,138 @@ public class CameraProfileAssetEditor : Editor
 
     private void DrawMotionCutSettings()
     {
-        EditorGUILayout.Space(4);
-        EditorGUILayout.LabelField(
+        DrawFoldoutSection(
+            ref _motionCutExpanded,
             "Motion Cut Settings",
-            EditorStyles.boldLabel
+            "設定 Motion Cut 的位移方向、強度、速度曲線與 Roll。",
+            () =>
+            {
+                EditorGUILayout.LabelField("Position", EditorStyles.miniBoldLabel);
+
+                if (_motionCutAxisProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _motionCutAxisProp,
+                        new GUIContent("Axis")
+                    );
+                }
+
+                if (_motionCutOutStrengthProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _motionCutOutStrengthProp,
+                        new GUIContent("Out Strength")
+                    );
+                }
+
+                if (_motionCutInStrengthProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _motionCutInStrengthProp,
+                        new GUIContent("In Strength")
+                    );
+                }
+
+                if (_reverseMotionCutInStrengthProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _reverseMotionCutInStrengthProp,
+                        new GUIContent("Reverse In Strength")
+                    );
+                }
+
+                if (_motionCutCurveProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _motionCutCurveProp,
+                        new GUIContent("Position Curve")
+                    );
+                }
+
+                EditorGUILayout.Space(4);
+                EditorGUILayout.LabelField("Roll", EditorStyles.miniBoldLabel);
+
+                if (_motionCutRollAngleProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _motionCutRollAngleProp,
+                        new GUIContent("Roll Angle")
+                    );
+                }
+
+                if (_motionCutRollCurveProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _motionCutRollCurveProp,
+                        new GUIContent("Roll Curve")
+                    );
+                }
+            }
         );
-
-        EditorGUI.indentLevel++;
-
-        EditorGUILayout.LabelField("Position", EditorStyles.miniBoldLabel);
-
-        if (_motionCutAxisProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _motionCutAxisProp,
-                new GUIContent("Axis")
-            );
-        }
-
-        if (_motionCutOutStrengthProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _motionCutOutStrengthProp,
-                new GUIContent("Out Strength")
-            );
-        }
-
-        if (_motionCutInStrengthProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _motionCutInStrengthProp,
-                new GUIContent("In Strength")
-            );
-        }
-
-        if (_reverseMotionCutInStrengthProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _reverseMotionCutInStrengthProp,
-                new GUIContent("Reverse In Strength")
-            );
-        }
-
-        if (_motionCutCurveProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _motionCutCurveProp,
-                new GUIContent("Position Curve")
-            );
-        }
-
-        EditorGUILayout.Space(4);
-        EditorGUILayout.LabelField("Roll", EditorStyles.miniBoldLabel);
-
-        if (_motionCutRollAngleProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _motionCutRollAngleProp,
-                new GUIContent("Roll Angle")
-            );
-        }
-
-        if (_motionCutRollCurveProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _motionCutRollCurveProp,
-                new GUIContent("Roll Curve")
-            );
-        }
-
-        EditorGUI.indentLevel--;
     }
 
     private void DrawGeneralBiasSettings()
     {
-        EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("General Bias", EditorStyles.boldLabel);
+        DrawFoldoutSection(
+            ref _generalBiasExpanded,
+            "General Bias",
+            "在不修改 Camera Profile SO 的情況下調整 General 鏡頭參數。",
+            () =>
+            {
+                DrawLensBiasFields();
+                EditorGUILayout.Space(2);
 
-        EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(
+                    _posDistanceBiasProp,
+                    new GUIContent("Pos Distance Bias")
+                );
 
-        DrawLensBiasFields();
-        EditorGUILayout.Space(2);
+                EditorGUILayout.Space(2);
+                EditorGUILayout.LabelField("Position Composer Target Offset", EditorStyles.miniBoldLabel);
 
-        EditorGUILayout.PropertyField(
-            _posDistanceBiasProp,
-            new GUIContent("Pos Distance Bias")
+                EditorGUILayout.PropertyField(
+                    _posTargetOffsetXBiasProp,
+                    new GUIContent("Pos Target Offset X Bias")
+                );
+                EditorGUILayout.PropertyField(
+                    _posTargetOffsetYBiasProp,
+                    new GUIContent("Pos Target Offset Y Bias")
+                );
+                EditorGUILayout.PropertyField(
+                    _posTargetOffsetZBiasProp,
+                    new GUIContent("Pos Target Offset Z Bias")
+                );
+
+                EditorGUILayout.Space(2);
+                DrawRotationTargetOffsetBiasFields();
+            }
         );
-
-        EditorGUILayout.Space(2);
-        EditorGUILayout.LabelField("Position Composer Target Offset", EditorStyles.miniBoldLabel);
-
-        EditorGUILayout.PropertyField(
-            _posTargetOffsetXBiasProp,
-            new GUIContent("Pos Target Offset X Bias")
-        );
-        EditorGUILayout.PropertyField(
-            _posTargetOffsetYBiasProp,
-            new GUIContent("Pos Target Offset Y Bias")
-        );
-        EditorGUILayout.PropertyField(
-            _posTargetOffsetZBiasProp,
-            new GUIContent("Pos Target Offset Z Bias")
-        );
-
-        EditorGUILayout.Space(2);
-        DrawRotationTargetOffsetBiasFields();
-
-        EditorGUI.indentLevel--;
     }
 
     private void DrawPlaybackSettings()
     {
-        EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("Playback Options", EditorStyles.boldLabel);
+        DrawFoldoutSection(
+            ref _playbackExpanded,
+            "Playback Options",
+            "設定倒放、固定播放速度與動態鏡像。",
+            () =>
+            {
+                if (_reversePlaybackProp != null)
+                {
+                    EditorGUILayout.PropertyField(
+                        _reversePlaybackProp,
+                        new GUIContent("Reverse Playback")
+                    );
+                }
 
-        EditorGUI.indentLevel++;
+                DrawFixedPlaybackSpeedSettings();
 
-        if (_reversePlaybackProp != null)
-        {
-            EditorGUILayout.PropertyField(
-                _reversePlaybackProp,
-                new GUIContent("Reverse Playback")
-            );
-        }
+                EditorGUILayout.Space(2);
+                EditorGUILayout.LabelField("Dynamic Mirror", EditorStyles.miniBoldLabel);
 
-        DrawFixedPlaybackSpeedSettings();
-
-        EditorGUILayout.Space(2);
-        EditorGUILayout.LabelField("Dynamic Mirror", EditorStyles.miniBoldLabel);
-
-        DrawMirrorToggleRow();
-
-        EditorGUI.indentLevel--;
+                DrawMirrorToggleRow();
+            }
+        );
     }
 
     private void DrawFixedPlaybackSpeedSettings()
