@@ -42,6 +42,20 @@ public class CameraProfileTrack : TrackAsset
 
 public class CameraProfileMixer : PlayableBehaviour
 {
+    private readonly HashSet<CameraProfileBakedPlayback> _bakePlayback = new HashSet<CameraProfileBakedPlayback>();
+
+    private void ConfigureBakePlayback(CinemachineCamera camera, bool active, bool general)
+    {
+        var extension = CameraProfileBakedPlayback.Configure(camera, active, general);
+        if (extension != null) _bakePlayback.Add(extension);
+    }
+
+    private void ClearBakePlayback()
+    {
+        foreach (var extension in _bakePlayback)
+            if (extension != null) extension.Active = false;
+        _bakePlayback.Clear();
+    }
     private enum CameraProfileKind
     {
         None,
@@ -1687,8 +1701,10 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, GetBlendedTarget(inputs));
+        ConfigureBakePlayback(camera, inputs.All(x => x.Profile != null && x.Profile.scenePoseBaked), true);
 
         float fov = 0f;
+        float dutch = 0f;
         float cameraDistance = 0f;
         Vector2 posScreenPosition = Vector2.zero;
         Vector3 posTargetOffset = Vector3.zero;
@@ -1709,6 +1725,7 @@ public class CameraProfileMixer : PlayableBehaviour
             CameraProfileBehaviour behaviour = input.Behaviour;
 
             fov += GetBiasedFov(profile, behaviour, t) * weight;
+            dutch += GetDutch(profile, t) * weight;
 
             cameraDistance +=
                 (profile.posDistanceCurve.Evaluate(t) + GetPosDistanceBias(behaviour)) *
@@ -1761,6 +1778,7 @@ public class CameraProfileMixer : PlayableBehaviour
         }
 
         camera.Lens.FieldOfView = Mathf.Clamp(fov, 10f, 120f);
+        camera.Lens.Dutch = dutch;
 
         CinemachinePositionComposer positionComposer =
             camera.GetComponent<CinemachinePositionComposer>();
@@ -1798,8 +1816,10 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, GetBlendedTarget(inputs));
+        ConfigureBakePlayback(camera, inputs.All(x => x.Profile != null && x.Profile.scenePoseBaked), false);
 
         float fov = 0f;
+        float dutch = 0f;
         Vector3 followOffset = Vector3.zero;
         Vector3 positionDamping = Vector3.zero;
         Vector2 rotScreenPosition = Vector2.zero;
@@ -1818,6 +1838,7 @@ public class CameraProfileMixer : PlayableBehaviour
             CameraProfileBehaviour behaviour = input.Behaviour;
 
             fov += GetBiasedFov(profile, behaviour, t) * weight;
+            dutch += GetDutch(profile, t) * weight;
 
             followOffset += ApplyMirror(
                 new Vector3(
@@ -1858,6 +1879,7 @@ public class CameraProfileMixer : PlayableBehaviour
         }
 
         camera.Lens.FieldOfView = Mathf.Clamp(fov, 10f, 120f);
+        camera.Lens.Dutch = dutch;
 
         CinemachineFollow follow = camera.GetComponent<CinemachineFollow>();
 
@@ -2294,12 +2316,14 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, finalTarget);
+        ConfigureBakePlayback(camera, profile.scenePoseBaked, true);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
             GetBiasedFov(profile, behaviour, t),
             10f,
             120f
         );
+        camera.Lens.Dutch = GetDutch(profile, t);
 
         CinemachinePositionComposer positionComposer =
             camera.GetComponent<CinemachinePositionComposer>();
@@ -2382,6 +2406,13 @@ public class CameraProfileMixer : PlayableBehaviour
         return profile.fovCurve.Evaluate(t) + GetFovBias(behaviour);
     }
 
+    private static float GetDutch(CameraProfileSO profile, float t)
+    {
+        return profile != null && profile.dutchCurve != null
+            ? profile.dutchCurve.Evaluate(t)
+            : 0f;
+    }
+
     private static float GetFovBias(CameraProfileBehaviour behaviour)
     {
         return behaviour != null ? behaviour.fovBias : 0f;
@@ -2448,12 +2479,14 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, finalTarget);
+        ConfigureBakePlayback(camera, profile.scenePoseBaked, false);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
             GetBiasedFov(profile, behaviour, t),
             10f,
             120f
         );
+        camera.Lens.Dutch = GetDutch(profile, t);
 
         CinemachineFollow follow =
             camera.GetComponent<CinemachineFollow>();
@@ -2521,12 +2554,14 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, finalTarget);
+        ConfigureBakePlayback(camera, false, false);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
             GetBiasedFov(profile, behaviour, t),
             10f,
             120f
         );
+        camera.Lens.Dutch = GetDutch(profile, t);
 
         CinemachineSplineDolly dolly =
             camera.GetComponent<CinemachineSplineDolly>();
@@ -2663,6 +2698,7 @@ public class CameraProfileMixer : PlayableBehaviour
 
     private void ClearState()
     {
+        ClearBakePlayback();
         _lastProfile = null;
         _lastTarget = null;
         _lastSpline = null;
@@ -2695,6 +2731,7 @@ public class CameraProfileMixer : PlayableBehaviour
 
     public override void OnGraphStop(Playable playable)
     {
+        ClearBakePlayback();
         if (_activeMaster != null)
             ClearDepthOfField(_activeMaster);
     }

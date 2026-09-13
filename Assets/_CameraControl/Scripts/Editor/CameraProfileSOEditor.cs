@@ -73,6 +73,10 @@ public class CameraProfileSOEditor : Editor
 
         serializedObject.Update();
 
+        if (profile.scenePoseBaked)
+            EditorGUILayout.HelpBox("Scene Transform 烘焙：Target Offset 曲線保存位置／朝向構圖點。"
+                + "請以 Camera Profile Track 回放；此預覽使用固定、未旋轉的替身 Target。", MessageType.Info);
+
         DrawTagSection(profile);
         DrawMainProperties();
         DrawRawCurvesFoldout();
@@ -138,6 +142,10 @@ public class CameraProfileSOEditor : Editor
             EditorGUILayout.PropertyField(fovProp);
         }
 
+        SerializedProperty dutchProp = serializedObject.FindProperty("dutchCurve");
+        if (dutchProp != null)
+            EditorGUILayout.PropertyField(dutchProp);
+
         EditorGUILayout.Space();
 
         EditorGUILayout.HelpBox(
@@ -165,7 +173,7 @@ public class CameraProfileSOEditor : Editor
         {
             do
             {
-                if (prop.name == "m_Script" || prop.name == "tags" || prop.name == "fovCurve")
+                if (prop.name == "m_Script" || prop.name == "tags" || prop.name == "fovCurve" || prop.name == "dutchCurve")
                     continue;
 
                 EditorGUILayout.PropertyField(prop, true);
@@ -231,7 +239,8 @@ public class CameraProfileSOEditor : Editor
 
         GUI.Label(
             new Rect(labelBackground.x + 8f, labelBackground.y + 21f, labelBackground.width - 16f, 16f),
-            $"FOV: {Mathf.RoundToInt(profile.fovCurve.Evaluate(normalizedTime))}",
+            $"FOV: {Mathf.RoundToInt(profile.fovCurve.Evaluate(normalizedTime))}   Dutch: "
+                + $"{Mathf.RoundToInt(profile.dutchCurve != null ? profile.dutchCurve.Evaluate(normalizedTime) : 0f)}°",
             EditorStyles.whiteMiniLabel
         );
 
@@ -385,6 +394,8 @@ public class CameraProfilePreviewRenderer
         _previewRenderUtility.BeginPreview(previewRect, background);
 
         SetupPreviewCamera(profile, normalizedTime);
+        float dutch = profile.dutchCurve != null ? profile.dutchCurve.Evaluate(normalizedTime) : 0f;
+        _previewRenderUtility.camera.transform.rotation *= Quaternion.AngleAxis(dutch, Vector3.forward);
 
         DrawStudioScene(profile);
         DrawDummy();
@@ -517,6 +528,30 @@ public class CameraProfilePreviewRenderer
 
         Vector3 targetPosition = GetPreviewTargetPosition(profile);
         Vector3 lookTarget = targetPosition;
+
+        if (profile.scenePoseBaked)
+        {
+            Vector3 position, aim;
+            if (profile is GeneralProfileSO bakedGeneral)
+            {
+                var anchor = targetPosition + new Vector3(bakedGeneral.posTargetOffsetXCurve.Evaluate(t),
+                    bakedGeneral.posTargetOffsetYCurve.Evaluate(t), bakedGeneral.posTargetOffsetZCurve.Evaluate(t));
+                aim = targetPosition + new Vector3(bakedGeneral.rotTargetOffsetXCurve.Evaluate(t),
+                    bakedGeneral.rotTargetOffsetYCurve.Evaluate(t), bakedGeneral.rotTargetOffsetZCurve.Evaluate(t));
+                position = anchor - (aim - anchor).normalized * bakedGeneral.posDistanceCurve.Evaluate(t);
+            }
+            else if (profile is TrackingProfileSO bakedTracking)
+            {
+                position = targetPosition + new Vector3(bakedTracking.followOffsetXCurve.Evaluate(t),
+                    bakedTracking.followOffsetYCurve.Evaluate(t), bakedTracking.followOffsetZCurve.Evaluate(t));
+                aim = targetPosition + new Vector3(bakedTracking.rotTargetOffsetXCurve.Evaluate(t),
+                    bakedTracking.rotTargetOffsetYCurve.Evaluate(t), bakedTracking.rotTargetOffsetZCurve.Evaluate(t));
+            }
+            else return;
+            camera.transform.position = position;
+            SafeLookAt(camera.transform, aim);
+            return;
+        }
 
         if (profile is GeneralProfileSO general)
         {
