@@ -7,6 +7,10 @@ using System.Collections.Generic;
 public abstract class CameraProfileSO : ScriptableObject
 {
     [HideInInspector] public bool scenePoseBaked;
+    // Missing on existing assets => false: preserve their deterministic playback.
+    // A new Scene bake can opt into exactly the ordinary parameter application path.
+    [HideInInspector] public bool standardScenePlayback;
+    public bool RequiresBakedPoseInitialization => scenePoseBaked && !standardScenePlayback;
 
     [Header("--- 分類標籤管理 ---")]
     public List<CameraTagSO> tags = new List<CameraTagSO>();

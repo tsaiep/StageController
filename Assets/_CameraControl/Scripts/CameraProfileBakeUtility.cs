@@ -80,6 +80,7 @@ public static class CameraProfileBakeUtility
         try
         {
             profile.scenePoseBaked = scene;
+            profile.standardScenePlayback = scene && w.scenePlaybackMode == CameraProfileWorkflow.ScenePlaybackMode.StandardParameters;
             foreach (var f in CurveFields(profile)) f.SetValue(profile, new AnimationCurve());
             using (var sampling = new SamplingScope(w, source, sourceVcam, target, binding, selected))
             {
@@ -281,15 +282,31 @@ public static class CameraProfileBakeUtility
         {
             var camera = go.AddComponent<CinemachineCamera>();
             camera.enabled = false;
-            go.AddComponent<CinemachineRotationComposer>();
+            var rotation = go.AddComponent<CinemachineRotationComposer>();
+            rotation.Composition.DeadZone.Enabled = false;
+            rotation.Composition.HardLimits.Enabled = false;
+            rotation.Lookahead.Enabled = false;
             bool general = profile is GeneralProfileSO;
-            if (general) go.AddComponent<CinemachinePositionComposer>(); else go.AddComponent<CinemachineFollow>();
+            if (general)
+            {
+                var position = go.AddComponent<CinemachinePositionComposer>();
+                position.Composition.DeadZone.Enabled = false;
+                position.Composition.HardLimits.Enabled = false;
+                position.Lookahead.Enabled = false;
+                position.DeadZoneDepth = 0;
+            }
+            else
+                go.AddComponent<CinemachineFollow>().TrackerSettings.BindingMode = Unity.Cinemachine.TargetTracking.BindingMode.WorldSpace;
             var apply = typeof(CameraProfileMixer).GetMethod(general ? "ApplyGeneralProfile" : "ApplyTrackingProfile",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             float maxPosition = 0, maxRotation = 0, midPosition = 0, midRotation = 0;
             string firstError = "";
             for (int pass = 0; pass < 3; ++pass)
             {
+                // Each pass begins from an unrelated camera pose, as a hard cut can.
+                // Never seed a standard-mode camera with the answer being verified.
+                camera.ForceCameraPosition(new Vector3(13, 7, -19), Quaternion.Euler(17, 123, 0));
+                camera.PreviousStateIsValid = false;
                 for (int n = 0; n < poses.Count; ++n)
                 {
                     int index = pass == 0 ? n : pass == 1 ? poses.Count - 1 - n : (n % 2 == 0 ? n / 2 : poses.Count - 1 - n / 2);
@@ -318,8 +335,10 @@ public static class CameraProfileBakeUtility
             }
             if (maxPosition > PositionTolerance || maxRotation > RotationTolerance)
                 throw new InvalidOperationException("Custom Track 回放驗證未通過；未寫入 SO。\n位置誤差 "
-                    + maxPosition.ToString("0.00000") + "m，角度誤差 " + maxRotation.ToString("0.000") + "°" + firstError);
-            return "Custom Track 正播／倒播／跳時間驗證通過。\n鍵位置最大誤差 " + maxPosition.ToString("0.00000")
+                    + maxPosition.ToString("0.00000") + "m，角度誤差 " + maxRotation.ToString("0.000") + "°" + firstError
+                    + (profile.standardScenePlayback ? "\nStandard Parameters 無法精確還原此來源。可選 Deterministic Pose 重新 Bake；不會自動改用特殊初始化。" : ""));
+            return (profile.standardScenePlayback ? "Standard Parameters（一般 SO 共用解算）\n" : "Deterministic Pose（既有姿態初始化）\n")
+                + "Custom Track 正播／倒播／跳時間驗證通過。\n鍵位置最大誤差 " + maxPosition.ToString("0.00000")
                 + "m / " + maxRotation.ToString("0.000") + "°\n鍵間插值最大誤差 " + midPosition.ToString("0.00000")
                 + "m / " + midRotation.ToString("0.000") + "°"
                 + (midPosition > PositionTolerance || midRotation > RotationTolerance ? "（可提高等分數改善）" : "");
@@ -372,7 +391,10 @@ public static class CameraProfileBakeUtility
         void ConstantDiscrete(Type type, string property, int value)
         {
             var keys = new Keyframe[divisions + 1];
-            for (int i = 0; i <= divisions; ++i) keys[i] = new Keyframe((float)i / divisions, value);
+            // Discrete integer bindings store the integer bit pattern in the float
+            // curve value; numeric 4f would be read back as enum 1082130432.
+            float encoded = BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
+            for (int i = 0; i <= divisions; ++i) keys[i] = new Keyframe((float)i / divisions, encoded);
             AnimationUtility.SetEditorCurve(clip, EditorCurveBinding.DiscreteCurve("", type, property), new AnimationCurve(keys));
         }
         float rx, ry;

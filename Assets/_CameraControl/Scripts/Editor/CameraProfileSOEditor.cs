@@ -74,8 +74,8 @@ public class CameraProfileSOEditor : Editor
         serializedObject.Update();
 
         if (profile.scenePoseBaked)
-            EditorGUILayout.HelpBox("Scene Transform 烘焙：Target Offset 曲線保存位置／朝向構圖點。"
-                + "請以 Camera Profile Track 回放；此預覽使用固定、未旋轉的替身 Target。", MessageType.Info);
+            EditorGUILayout.HelpBox((profile.standardScenePlayback ? "Standard Parameters：使用一般 SO 解算。" : "Deterministic Pose：使用既有姿態初始化。")
+                + "此預覽僅展示反解構圖，使用固定、未旋轉的替身 Target；不驗證 Cinemachine 回放或混合。", MessageType.Info);
 
         DrawTagSection(profile);
         DrawMainProperties();

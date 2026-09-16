@@ -16,6 +16,7 @@ public class CameraProfileWorkflow : MonoBehaviour
     public enum BakeProfileType { General, Tracking, Dolly }
     public enum BakeSourceMode { ProceduralAnimationClip, SceneTransform }
     public enum SceneAnimationSource { AnimationClip, PlayableDirector }
+    public enum ScenePlaybackMode { StandardParameters, DeterministicPose }
 
     public BakeProfileType bakeProfileType;
     public CameraProfileSO targetProfileSO;
@@ -24,6 +25,8 @@ public class CameraProfileWorkflow : MonoBehaviour
     public BakeSourceMode bakeSourceMode;
     public AnimationClip sourceAnimationClip;
     public SceneAnimationSource sceneAnimationSource;
+    [Tooltip("Standard Parameters 與一般 SO 共用解算；姿態驗證失敗時不寫入。Deterministic Pose 保留既有 Scene Bake 初始化。")]
+    public ScenePlaybackMode scenePlaybackMode = ScenePlaybackMode.StandardParameters;
     [Tooltip("Animation Clip 的綁定根物件。留空使用來源相機。")]
     public Transform sceneAnimationRoot;
     [Tooltip("來源相機。留空使用掛載 Workflow 的 Cinemachine Camera；Timeline 模式會自動使用選定 Track 的綁定。")]
@@ -265,6 +268,8 @@ public class CameraProfileWorkflowEditor : Editor
                             {
                                 float advancedLabelWidth = EditorGUIUtility.labelWidth;
                                 EditorGUIUtility.labelWidth = Mathf.Max(110f, advancedLabelWidth - 14f);
+                                Field("scenePlaybackMode", "Playback Mode", "Standard Parameters：與舊 SO 使用相同參數解算與混合。Deterministic Pose：使用既有姿態初始化。兩者都必須通過回放驗證。");
+                                EditorGUILayout.HelpBox("Standard Parameters 以目前相機系統的設定驗證：World Space Tracking、關閉 Dead Zone／Lookahead。General 若無法通過姿態驗證，請選 Deterministic Pose；系統不會自動切換模式。", MessageType.Info);
                                 Field("animatedCameraTransform", "Source Camera", "選填。留空時會從所選 Animation Track 的綁定階層自動辨識相機。");
                                 Field("sceneTrackingTarget", "Playback Target", "選填。留空時使用來源 Cinemachine Camera 的 Follow。");
                                 Field("sceneLensCamera", "Lens Override", "通常不需要指定。一般 Unity Camera 可用它提供 FOV；Cinemachine 來源會使用自己的 Lens。");

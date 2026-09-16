@@ -1701,7 +1701,7 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, GetBlendedTarget(inputs));
-        ConfigureBakePlayback(camera, inputs.All(x => x.Profile != null && x.Profile.scenePoseBaked), true);
+        ConfigureBakePlayback(camera, inputs.All(x => x.Profile != null && x.Profile.RequiresBakedPoseInitialization), true);
 
         float fov = 0f;
         float dutch = 0f;
@@ -1816,7 +1816,7 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, GetBlendedTarget(inputs));
-        ConfigureBakePlayback(camera, inputs.All(x => x.Profile != null && x.Profile.scenePoseBaked), false);
+        ConfigureBakePlayback(camera, inputs.All(x => x.Profile != null && x.Profile.RequiresBakedPoseInitialization), false);
 
         float fov = 0f;
         float dutch = 0f;
@@ -2316,7 +2316,7 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, finalTarget);
-        ConfigureBakePlayback(camera, profile.scenePoseBaked, true);
+        ConfigureBakePlayback(camera, profile.RequiresBakedPoseInitialization, true);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
             GetBiasedFov(profile, behaviour, t),
@@ -2479,7 +2479,7 @@ public class CameraProfileMixer : PlayableBehaviour
             return;
 
         SetFollowAndLookAt(camera, finalTarget);
-        ConfigureBakePlayback(camera, profile.scenePoseBaked, false);
+        ConfigureBakePlayback(camera, profile.RequiresBakedPoseInitialization, false);
 
         camera.Lens.FieldOfView = Mathf.Clamp(
             GetBiasedFov(profile, behaviour, t),
