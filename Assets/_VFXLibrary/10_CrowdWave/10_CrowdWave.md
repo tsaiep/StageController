@@ -6,7 +6,7 @@ Notion版本
 https://www.notion.so/10_CrowdWave-3788a373d31780138b16f23824169292?source=copy_link
 ## 使用方式
 
-1. Seat Mesh 指定座位模型，觀眾將會生成在模型頂點（Vertex）之上，因此 Seat Mesh Vertex Count - 觀眾的生成數量需要填入使用模型的頂點數量。
+1. Seat Mesh 指定座位模型，觀眾將會生成在模型頂點（Vertex）之上，因此 Seat Mesh Vertex Count - 觀眾的生成數量需要填入使用模型的頂點數量。為了讓模型資訊能夠被 VFX Graph 讀取，在模型設定上開啟 Read/Write
    需要注意的是，Unity和DCC軟體的頂點數量判斷可能會不一樣，因此製作時需要
     1. 保持所有Edge為軟邊
     2. 確保只有一張UV，並且其內容是空的，不要記錄任何頂點資料
@@ -16,6 +16,21 @@ https://www.notion.so/10_CrowdWave-3788a373d31780138b16f23824169292?source=copy_
 4. Coloring則控制顏色，左右手的顏色可以分開調整，也可以配合Render Texture取樣影片的顏色，影片是根據物件座標空間的XZ軸Sample的，建議拉一個方塊用拉伸得到觀眾席的長寬，並調整偏移來 Sample 正確位置。影片播放可以參考Prefab使用的內建Videos Player，若想要在Timeline精確控制播放影片可以下載官方的timeline 套件
    https://docs.unity3d.com/Packages/com.unity.timeline@1.8/manual/samp-custom-samples.html
 5. Binding之下的 Target 配合 VFX Property Binder，設定觀眾的面向，可以動態調整目標物件
+
+## 模型輸出補充
+
+讓Blender輸出 Transform 乾淨的模型可以照以下設定:
+
+1. 確保 Blender 單位對齊 Unity
+   1. Unit System: Metric
+   2. Unit Scale: 1.00
+   3. Lenght: Meters
+
+2. 確保 Blender 模型輸出前有 Apply Transform
+   1. Position, Rotation: 0
+   2. Scale: 1.00
+
+3. 輸出設定的 Apply Scaling 設為 FBX Unit Scale；1.00; 勾選 Use Space Transform, Apply Transform, Apply Unit; -Z Forward, Y Up
 
 ## 參數解釋
 
