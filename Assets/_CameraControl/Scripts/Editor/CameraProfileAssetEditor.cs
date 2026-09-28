@@ -57,6 +57,8 @@ public class CameraProfileAssetEditor : Editor
     private bool _motionCutExpanded = true;
     private bool _playbackExpanded = true;
     private bool _generalBiasExpanded = true;
+    private bool _trackingBiasExpanded = true;
+    private bool _dollyBiasExpanded = true;
 
     private GUIStyle SectionTitle
     {
@@ -584,54 +586,56 @@ public class CameraProfileAssetEditor : Editor
 
     private void DrawTrackingBiasSettings()
     {
-        EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("Tracking Bias", EditorStyles.boldLabel);
+        DrawFoldoutSection(
+            ref _trackingBiasExpanded,
+            "Tracking Bias",
+            "在不修改 Camera Profile SO 的情況下調整 Tracking 鏡頭參數。",
+            () =>
+            {
+                DrawLensBiasFields();
+                EditorGUILayout.Space(2);
 
-        EditorGUI.indentLevel++;
+                EditorGUILayout.LabelField("Cinemachine Follow Offset", EditorStyles.miniBoldLabel);
 
-        DrawLensBiasFields();
-        EditorGUILayout.Space(2);
+                EditorGUILayout.PropertyField(
+                    _followOffsetXBiasProp,
+                    new GUIContent("Follow Offset X Bias")
+                );
+                EditorGUILayout.PropertyField(
+                    _followOffsetYBiasProp,
+                    new GUIContent("Follow Offset Y Bias")
+                );
+                EditorGUILayout.PropertyField(
+                    _followOffsetZBiasProp,
+                    new GUIContent("Follow Offset Z Bias")
+                );
 
-        EditorGUILayout.LabelField("Cinemachine Follow Offset", EditorStyles.miniBoldLabel);
-
-        EditorGUILayout.PropertyField(
-            _followOffsetXBiasProp,
-            new GUIContent("Follow Offset X Bias")
+                EditorGUILayout.Space(2);
+                DrawRotationTargetOffsetBiasFields();
+            }
         );
-        EditorGUILayout.PropertyField(
-            _followOffsetYBiasProp,
-            new GUIContent("Follow Offset Y Bias")
-        );
-        EditorGUILayout.PropertyField(
-            _followOffsetZBiasProp,
-            new GUIContent("Follow Offset Z Bias")
-        );
-
-        EditorGUILayout.Space(2);
-        DrawRotationTargetOffsetBiasFields();
-
-        EditorGUI.indentLevel--;
     }
 
     private void DrawDollyBiasSettings()
     {
-        EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("Dolly Bias", EditorStyles.boldLabel);
+        DrawFoldoutSection(
+            ref _dollyBiasExpanded,
+            "Dolly Bias",
+            "在不修改 Camera Profile SO 的情況下調整 Dolly 鏡頭參數。",
+            () =>
+            {
+                DrawLensBiasFields();
+                EditorGUILayout.Space(2);
 
-        EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(
+                    _splinePositionBiasProp,
+                    new GUIContent("Spline Position Bias")
+                );
 
-        DrawLensBiasFields();
-        EditorGUILayout.Space(2);
-
-        EditorGUILayout.PropertyField(
-            _splinePositionBiasProp,
-            new GUIContent("Spline Position Bias")
+                EditorGUILayout.Space(2);
+                DrawRotationTargetOffsetBiasFields();
+            }
         );
-
-        EditorGUILayout.Space(2);
-        DrawRotationTargetOffsetBiasFields();
-
-        EditorGUI.indentLevel--;
     }
 
     private void DrawLensBiasFields()
